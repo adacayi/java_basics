@@ -10,7 +10,7 @@ import java.util.List;
 public class SortSample {
 
 	public static void main(String[] args) {
-		List<Integer> values = new ArrayList<Integer>(Arrays.asList(4, 2, 3, 5));
+		List<Integer> values = new ArrayList<>(Arrays.asList(4, 2, 3, 5));
 		Comparator<Integer> ascending = Comparator.comparing(p -> p);
 		Comparator<Integer> descending = ascending.reversed();
 		values.sort(ascending);

@@ -6,7 +6,7 @@ import java.util.Map;
 public class HashMapSample {
 
 	public static void main(String[] args) {
-		Map<String, String> hashMap = new HashMap<String, String>();
+		Map<String, String> hashMap = new HashMap<>();
 		hashMap.put("Ahmet", "Sanver");
 		hashMap.put("Mustafa", null); // If we used Hashtable instead, null value would give an exception
 		hashMap.put("Muhammed", "oldValue");

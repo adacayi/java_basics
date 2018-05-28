@@ -26,14 +26,14 @@ public class SortingWithMultipleFields {
 
 	public static void main(String[] args) {
 		List<Person> people = new ArrayList<Person>();
-		people.addAll(Arrays.asList(new Person[] { new Person("Ahmet", "Turkiye", 1), new Person("Ahmet", "England", 3),
+		people.addAll(Arrays.asList(new Person("Ahmet", "Turkiye", 1), new Person("Ahmet", "England", 3),
 				new Person("Ahmet", "England", 2), new Person("Mustafa", "England", 2),
-				new Person("Mustafa", "Turkiye", 5), new Person("Mustafa", "Turkiye", 7) }));
+				new Person("Mustafa", "Turkiye", 5), new Person("Mustafa", "Turkiye", 7)));
 		// To sort with name descending, country ascending and age descending:
 		Comparator<Person> nameDescending = Comparator.comparing((Person p) -> p.name).reversed();
 		Comparator<Person> ageDescending = Comparator.comparing((Person p) -> p.age).reversed();
 		people.sort(nameDescending.thenComparing(p -> p.country).thenComparing(ageDescending));
-		String content=people.stream().map(p -> p.toString()).collect(Collectors.joining("\n"));
+		String content = people.stream().map(p -> p.toString()).collect(Collectors.joining("\n"));
 		System.out.println(content);
 	}
 }

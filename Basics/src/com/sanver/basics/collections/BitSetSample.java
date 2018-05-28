@@ -13,12 +13,12 @@ public class BitSetSample {
 
 		for (i = 0; i < length; i++) {
 			if (i % 2 == 0)
-				divisibleBy2.set(i);
+				divisibleBy2.set(i, true);// This is the same as divisibleBy2.set(i)
 			if (i % 3 == 0)
 				divisibleBy3.set(i);
 		}
 
-		divisibleBy2Or3=(BitSet) divisibleBy2.clone();
+		divisibleBy2Or3 = (BitSet) divisibleBy2.clone();
 		divisibleBy2And3 = (BitSet) divisibleBy2.clone();
 		divisibleBy2Or3.or(divisibleBy3);
 		divisibleBy2And3.and(divisibleBy3);

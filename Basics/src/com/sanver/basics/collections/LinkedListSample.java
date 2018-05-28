@@ -3,11 +3,12 @@ package com.sanver.basics.collections;
 import java.util.ListIterator;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 public class LinkedListSample {
 
 	public static void main(String[] args) {
-		LinkedList<String> list = new LinkedList<String>(Arrays.asList("Ahmet","Mustafa","Muhammed"));
+		List<String> list = new LinkedList<>(Arrays.asList("Ahmet","Mustafa","Muhammed"));
 		list.add("Ibrahim");
 		list.forEach(System.out::println);
 

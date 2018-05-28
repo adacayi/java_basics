@@ -1,4 +1,5 @@
 package com.sanver.basics.codeblocks;
+
 class Trial {
 	{
 		System.out.println("Non static block Trial");
@@ -18,6 +19,10 @@ class StaticNonStaticCodeBlockSample {
 	}
 	static {
 		System.out.println("Selamunaleykum");
+	}
+
+	public StaticNonStaticCodeBlockSample() {
+		System.out.println("Constructor");
 	}
 
 	public static void main(String[] args) {
