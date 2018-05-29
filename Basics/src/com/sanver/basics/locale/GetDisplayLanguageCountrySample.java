@@ -12,12 +12,13 @@ public class GetDisplayLanguageCountrySample {
 		System.out.println("localeGB.getDisplayLanguage(): " + localeGB.getDisplayLanguage());
 		System.out.println("localeGB.getDisplayCountry(): " + localeGB.getDisplayCountry());
 		System.out.println("localeGB.getDisplayLanguage(localeFrance): " + localeGB.getDisplayLanguage(localeFrance));
-		// The above code shows the display language of localeUK in French (language of
+		// The above code shows the display language of localeGB in French (language of
 		// localeFrance)
 		System.out.println("localeFrance.getDisplayLanguage(localeGB): " + localeFrance.getDisplayLanguage(localeGB));
-		// The above code Shows the display language of localeFrance in English
+		// The above code shows the display language of localeFrance in English
 		// (language of localeGB)
 		System.out.println("localeGB.getDisplayCountry(localeFrance): " + localeGB.getDisplayCountry(localeFrance));
 		System.out.println("localeFrance.getDisplayCountry(localeGB): " + localeFrance.getDisplayCountry(localeGB));
+		System.out.println("localeFrance.getDisplayCountry(): " + localeFrance.getDisplayCountry());
 	}
 }

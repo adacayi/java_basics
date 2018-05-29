@@ -1,44 +1,26 @@
 package com.sanver.basics.locale;
 
-import java.util.ListResourceBundle;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-class SRBundel extends ListResourceBundle {
-	public Object[][] getContents() {
-		Object[][] resources = new Object[2][2];
-		resources[0][0] = "Hello";
-		resources[0][1] = "Hello";
-		return resources;
-	}
-}
-
-class SRBundel_de_CH extends ListResourceBundle {
-	protected Object[][] getContents() {
-		Object[][] resources = new Object[2][2];
-		resources[0][0] = "Hello";
-		resources[0][1] = "Guten Tag";
-		return resources;
-	}
-}
-
-class SRBundel_hi_IN extends ListResourceBundle {
-	protected Object[][] getContents() {
-		Object[][] resources = new Object[2][2];
-		resources[0][0] = "Hello";
-		resources[0][1] = "Namaste";
-		return resources;
-	}
-}
-
 public class ResourceBundleSample {
 
-	public static void main(String[] args) throws ClassNotFoundException {
-		
-		// I couldn't make ResourceBundle work. I have to search thoroughly.
-		Locale indian = new Locale("hi");
-		LocaleHelper.show(indian);
-		ResourceBundle bundle = ResourceBundle.getBundle("SRBundel", indian);
-		System.out.println(bundle.keySet());
+	public static void main(String[] args) {
+		Locale[] locales = { Locale.getDefault(), new Locale("de", "ch"), new Locale("hi", "in") };
+		Arrays.asList(locales).forEach(l -> showBundle(l));
+	}
+
+	public static void showBundle(Locale locale) {
+		LocaleHelper.show(locale);
+		ResourceBundle bundle = ResourceBundle.getBundle("com.sanver.basics.locale.SRBundel", locale);// We have to use
+																										// package name
+																										// plus class
+																										// name to
+																										// access the
+																										// bundle class
+		System.out.println();
+		bundle.keySet().forEach(k -> System.out.printf("Key: %s Value: %s\n", k, bundle.getString(k)));
+		System.out.println();
 	}
 }

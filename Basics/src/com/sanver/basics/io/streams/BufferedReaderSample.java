@@ -13,13 +13,13 @@ public class BufferedReaderSample {
 
 		try (FileInputStream stream = new FileInputStream(fileName);
 				InputStreamReader inputStreamReader = new InputStreamReader(stream, "Windows-1254");
-				BufferedReader reader = new BufferedReader(inputStreamReader);) {
+				BufferedReader reader = new BufferedReader(inputStreamReader)) {
 			StringBuffer buffer = new StringBuffer();
 			int length;
-			reader.lines().forEach(l->buffer.append(l+"\n"));
+			reader.lines().forEach(l -> buffer.append(l + "\n"));
 
 			length = buffer.length();
-			
+
 			if (length != 0)
 				buffer.deleteCharAt(length - 1);
 

@@ -17,7 +17,7 @@ public class FunctionInterfaceSample {
 			return calculate.apply(birthDate);
 		}
 
-		public int getAge(IntFunction<Integer> calculate) {
+		public <T> T getAge(IntFunction<T> calculate) {
 			return calculate.apply(birthDate);
 		}
 	}
@@ -27,9 +27,9 @@ public class FunctionInterfaceSample {
 		Person Ahmet = sample.new Person(2010);
 		int currentYear = LocalDate.now().getYear();
 		Function<Integer, Integer> calculate = birthDate -> currentYear - birthDate;
-		IntFunction<Integer> calculateInt = birthDate -> currentYear - birthDate;
+		IntFunction<String> calculateInt = birthDate -> "Your age is " + (currentYear - birthDate);
 
-		System.out.println(currentYear);
+		System.out.println("Current year is " + currentYear);
 		System.out.println(Ahmet.getAge(calculate));
 		System.out.println(Ahmet.getAge(calculateInt));
 	}

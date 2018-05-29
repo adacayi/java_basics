@@ -32,7 +32,7 @@ public class CallableStatementSample {
 				CallableStatement callableStatement = conn.prepareCall("EXEC dbo.sel_employeeByColumns ? ");) {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			System.out.println("Connected to database: " + databaseName + "\n");
-			callableStatement.setString(1, "Ahmet");
+			callableStatement.setString(1, "Ahmet");// Index number in CallableStatement starts with 1.
 
 			try (ResultSet result = callableStatement.executeQuery()) {
 				resultMeta = result.getMetaData();

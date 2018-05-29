@@ -4,6 +4,7 @@ public class PrintfSample {
 
 	public static void main(String[] args) {
 		double money = 123457.3234;
+		System.out.printf("%-,15.2f \n", money);
 		System.out.printf("%,15.2f \n", money);
 		System.out.printf("%0,15.2f \n", money);
 		System.out.printf("%0,1.6f \n", money);

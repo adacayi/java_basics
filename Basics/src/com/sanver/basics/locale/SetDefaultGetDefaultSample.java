@@ -9,7 +9,9 @@ public class SetDefaultGetDefaultSample {
 		Locale localeFrance = new Locale("fr", "FR");
 		Locale.setDefault(localeFrance);
 		LocaleHelper.show(defaultLocale);
+		System.out.println();
 		LocaleHelper.show(localeFrance);
+		System.out.println();
 		LocaleHelper.show(Locale.getDefault());
 	}
 }
