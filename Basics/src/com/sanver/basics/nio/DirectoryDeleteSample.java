@@ -11,8 +11,9 @@ public class DirectoryDeleteSample {
 	static Path inner;
 
 	public static void main(String[] args) {
-		temporary = Paths.get("temporary");
-		inner = Paths.get("temporary\\inner");
+		String base = "src\\com\\sanver\\basics\\nio";
+		temporary = Paths.get(base + "\\temporary");
+		inner = Paths.get(base + "\\temporary\\inner");
 		try {
 			System.out.println("Directory to be generated: " + temporary.toAbsolutePath());
 			System.out.println("\nCleaning first if exists..\n");
@@ -23,7 +24,7 @@ public class DirectoryDeleteSample {
 			System.out.println("\nContent of parent of " + temporary + "\n");
 			Files.list(temporary.toAbsolutePath().getParent()).forEach(x -> System.out.println(x.getFileName()));
 			System.out.println("\nContent of " + temporary + "\n");
-			Files.list(temporary).forEach(System.out::println);
+			Files.list(temporary).forEach(x -> System.out.println(x.getFileName()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
