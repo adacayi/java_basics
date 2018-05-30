@@ -12,5 +12,4 @@ public class InitializingMultipleVariablesInFor {
 		for (int i = 1, j[] = { 3 }; i < j[0]; i++)
 			System.out.println("i= " + i);
 	}
-
 }

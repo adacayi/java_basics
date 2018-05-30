@@ -1,6 +1,6 @@
 package com.sanver.basics.statics;
 
-import static java.lang.Math.PI;
+import static java.lang.Math.PI;// To get all the static fields and methods we can use import static java.lang.Math.*;
 
 public class StaticImport {
 
@@ -9,7 +9,7 @@ public class StaticImport {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("The perimeter of a radius 1 circle is " + getPerimeter(1));
+		System.out.println("The perimeter of a circle with radius 1 is " + getPerimeter(1));
 	}
 
 }

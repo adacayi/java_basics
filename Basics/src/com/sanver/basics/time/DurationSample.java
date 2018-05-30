@@ -21,6 +21,6 @@ public class DurationSample {
 	}
 
 	public static void showDuration(Duration duration) {
-		System.out.printf("Duration is %02d:%03d\n", duration.getSeconds(), duration.getNano() / 1000000);
+		System.out.printf("Duration is %02d:%03d\n", duration.getSeconds(), duration.getNano() / 1_000_000);
 	}
 }

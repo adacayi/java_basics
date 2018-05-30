@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class UsingLoopVariableWhileGeneratingThreads {
@@ -22,7 +21,7 @@ public class UsingLoopVariableWhileGeneratingThreads {
 			}
 
 			System.out.println("Task " + x + " finished.");
-		})).collect(Collectors.toList()).toArray(new Future<?>[operationCount]);
+		})).toArray(x -> new Future<?>[operationCount]);
 
 		for (Future<?> task : taskArray) {
 			try {

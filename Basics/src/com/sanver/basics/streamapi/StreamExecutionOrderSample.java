@@ -1,13 +1,11 @@
 package com.sanver.basics.streamapi;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class StreamExecutionOrderSample {
 
 	public static void main(String[] args) {
-		int[] numbers = { 1, 2, 3, 4, 5 };
-		IntStream stream = Arrays.stream(numbers).filter(x -> {
+		IntStream stream = IntStream.of( 1, 2, 3, 4, 5).filter(x -> {
 			System.out.println("Filter " + x);
 			return x % 2 == 0;
 		});

@@ -41,6 +41,7 @@ public class ExecutorServiceWithCallableSample {
 		
 		try {
 			System.out.println(future.get()[0]);
+			System.out.println(value[0]);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {

@@ -40,16 +40,7 @@ public class ObjectOutputStreamSample {
 		try (FileInputStream stream = new FileInputStream(file);
 				InputStreamReader inputStreamReader = new InputStreamReader(stream, "Windows-1254");
 				BufferedReader reader = new BufferedReader(inputStreamReader);) {
-			String readString;
-
-			while (true) {
-				readString = reader.readLine();
-
-				if (readString == null)
-					break;
-
-				System.out.println(readString);
-			}
+			reader.lines().forEach(System.out::println);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {

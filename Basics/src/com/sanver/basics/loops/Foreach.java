@@ -5,16 +5,11 @@ import java.util.*;
 public class Foreach {
 
 	public static void main(String[] args) {
-		List<String> list = new ArrayList<String>(2);
-		list.add("Ahmet");
-		list.add("Mustafa");
+		List<String> list = new ArrayList<>(Arrays.asList("Ahmet", "Mustafa"));
 
 		for (String item : list)
 			System.out.println(item);
 
-		list.forEach(a -> {
-			System.out.print(a);
-			System.out.println(", ");
-		});
+		list.forEach(a -> System.out.println(a));
 	}
 }

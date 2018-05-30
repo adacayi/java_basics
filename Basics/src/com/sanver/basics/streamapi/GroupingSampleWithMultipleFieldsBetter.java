@@ -2,6 +2,8 @@ package com.sanver.basics.streamapi;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,67 +76,50 @@ public class GroupingSampleWithMultipleFieldsBetter {
 		@Override
 		public int compareTo(Person o2) {
 			Person o1 = this;
-
-			if (o1.country == null || o2.country == null) {
-				if (o1.country != null)
-					return 1;
-				else if (o2.country != null)
-					return -1;
-			} else if (!o1.country.equals(o2.country))
-				return o1.country.compareTo(o2.country);
-
-			if (o1.city == null || o2.city == null) {
-				if (o1.city != null)
-					return 1;
-				else if (o2.city != null)
-					return -1;
-			} else if (!o1.city.equals(o2.city))
-				return o1.city.compareTo(o2.city);
-
-			if (o1.name == null || o2.name == null) {
-				if (o1.name != null)
-					return 1;
-				else if (o2.name != null)
-					return -1;
-			} else if (!o1.name.equals(o2.name))
-				return o1.name.compareTo(o2.name);
-
-			return o1.gender().compareTo(o2.gender());
+			Comparator<Person> comparator = Comparator.comparing((Person p) -> p.country == null ? "" : p.country)
+					.thenComparing(p -> p.city == null ? "" : p.city).thenComparing(p -> p.name == null ? "" : p.name)
+					.thenComparing(p -> p.gender());// If we do not check for null and replace for a not null value we
+													// get an error in runtime.
+			return comparator.compare(o1, o2);
 		}
 	}
 
 	static class Grouper<T> {
 
 		private List<T> list = new ArrayList<>();
+		private List<Field> fields;
+
+		public Grouper(T type) {// This constructor is coded because Grouper class does not know which
+			// generic type it has at construction. Hence we provide
+			// an object of that type, so it can infer and get its
+			// fields while constructing.
+			fields = Arrays.asList(type.getClass().getDeclaredFields());
+		}
 
 		public T group(T obj) {
 
-			Optional<T> result = list.stream().filter(o -> {
+			Optional<T> result = list.parallelStream().filter(o -> !fields.parallelStream().anyMatch(field -> {
 				Object value1, value2;
-				Field[] fields = o.getClass().getDeclaredFields();
+				try {
+					value1 = field.get(obj);
+					value2 = field.get(o);
 
-				for (Field field : fields) {
-					try {
-						value1 = field.get(obj);
-						value2 = field.get(o);
+					if (value1 == null || value2 == null) {
+						if (value1 != value2)
+							return true;
 
-						if (value1 == null || value2 == null) {
-							if (value1 != value2)
-								return false;
-							else
-								continue;
-						}
-
-						if (!value1.equals(value2))
-							return false;
-
-					} catch (IllegalArgumentException | IllegalAccessException e) {
-						e.printStackTrace();
 						return false;
 					}
+
+					if (!value1.equals(value2))
+						return true;
+
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+					return true;
 				}
-				return true;
-			}).findFirst();
+				return false;
+			})).findFirst();
 
 			if (result.isPresent())
 				return result.get();
@@ -146,7 +131,10 @@ public class GroupingSampleWithMultipleFieldsBetter {
 
 	public static void main(String[] args) {
 		int personCount = 16;
-		Grouper<Person> grouper = new Grouper<>();
+		Grouper<Person> grouper = new Grouper<>(new Person()); // This is done because Grouper class does not know which
+																// generic type it has at construction. Hence we provide
+																// an object of that type, so it can infer and get its
+																// fields while constructing.
 		List<Person> personList = IntStream.rangeClosed(1, personCount).mapToObj(x -> {
 			Person p = new Person();
 			Tuple<String, Boolean> name = getRandomName();

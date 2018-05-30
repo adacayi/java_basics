@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class ArrayReader<T> extends RecursiveAction {
@@ -24,7 +23,7 @@ class ArrayReader<T> extends RecursiveAction {
 	}
 
 	protected void compute() {
-		if (high - low <= MAX) {//This if statement is the part where the divided job is executed.
+		if (high - low <= MAX) {// This if statement is the part where the divided job is executed.
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -34,13 +33,11 @@ class ArrayReader<T> extends RecursiveAction {
 				System.out.printf("Writing %d-%d: ", low, high);
 				for (int i = low; i < high; i++)
 					System.out.print(array[i] + " ");
-				System.out.println();
-				System.out.printf("%d-%d finished\n", low, high);
-				System.out.println();
-				return;
+				System.out.printf("\n%d-%d finished\n\n", low, high);
 			}
+			return;
 		}
-		
+
 		// This part is responsible for job division
 		int mid = (low + high) / 2;
 		ArrayReader<T> reader1 = new ArrayReader<>(array, low, mid);
@@ -56,7 +53,7 @@ public class RecursiveActionSample {
 	public static void main(String[] args) {
 		ForkJoinPool pool = new ForkJoinPool();
 		LocalTime start = LocalTime.now();
-		Integer[] array = IntStream.range(0, 20).boxed().collect(Collectors.toList()).toArray(new Integer[0]);
+		Integer[] array = IntStream.range(0, 20).boxed().toArray(x -> new Integer[20]);
 		pool.invoke(new ArrayReader<Integer>(array, 0, array.length));
 		Duration duration = Duration.between(start, LocalTime.now());
 		System.out.printf("Time elapsed is %02d:%03d", duration.getSeconds(), duration.getNano() / 1000000);

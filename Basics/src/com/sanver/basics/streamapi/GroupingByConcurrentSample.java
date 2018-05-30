@@ -13,9 +13,7 @@ public class GroupingByConcurrentSample {
 		ConcurrentMap<String, List<Integer>> result = list.parallelStream()
 				.collect(Collectors.groupingByConcurrent(i -> i % 2 == 0 ? "Even" : "Odd"));
 		result.forEach((k, v) -> {
-			System.out.print(k + " ");
-			v.forEach(x -> System.out.print(x + " "));
-			System.out.println();
+			System.out.println(k + " " + v.stream().map(x -> x.toString()).collect(Collectors.joining(", ")));
 		});
 	}
 }

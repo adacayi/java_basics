@@ -23,11 +23,11 @@ public class OptionalSample {
 		System.out.println(optional.isPresent());
 		System.out.println(doubleOptional);
 		System.out.println(doubleOptional.orElse(3.2));
-		OptionalDouble optionalDouble=DoubleStream.of(2,3,4).average();
+		OptionalDouble optionalDouble = DoubleStream.of(2, 3, 4).average();
 		System.out.println(optionalDouble);
 		System.out.println(optionalDouble.isPresent());
 		System.out.println(optionalDouble.getAsDouble());
-		optionalDouble=OptionalDouble.empty();
+		optionalDouble = OptionalDouble.empty();
 		System.out.println(optionalDouble);
 	}
 

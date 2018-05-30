@@ -42,30 +42,25 @@ public class ExternalSerializationAndDeserializationSample {
 		try (FileInputStream stream = new FileInputStream(file);
 				InputStreamReader inputStreamReader = new InputStreamReader(stream, "Windows-1254");
 				BufferedReader reader = new BufferedReader(inputStreamReader);) {
-			String readString;
-
-			while (true) {
-				readString = reader.readLine();
-
-				if (readString == null)
-					break;
-
-				System.out.println(readString);
-
-			}
+			reader.lines().forEach(System.out::println);
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		EmployeeExternalizable deserializedEmployee = new EmployeeExternalizable(null, null, 0);
+
+		EmployeeExternalizable deserializedEmployee = new EmployeeExternalizable(null, null, 0); // We generate an empty
+																									// object and then
+																									// call its
+																									// readExternal
+																									// method to fill
+																									// the values.
 
 		try (InputStream stream = Files.newInputStream(path);
 				BufferedInputStream buffer = new BufferedInputStream(stream);
 				ObjectInputStream reader = new ObjectInputStream(buffer)) {
 			deserializedEmployee.readExternal(reader);
-			System.out.println(
-					"Object deserialized.\nValue: \n");
+			System.out.println("Object deserialized.\nValue: \n");
 			System.out.println(deserializedEmployee);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

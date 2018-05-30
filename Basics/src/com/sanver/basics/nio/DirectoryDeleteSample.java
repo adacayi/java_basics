@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 
 public class DirectoryDeleteSample {
 	static Path temporary;
@@ -13,26 +14,32 @@ public class DirectoryDeleteSample {
 		temporary = Paths.get("temporary");
 		inner = Paths.get("temporary\\inner");
 		try {
-			clear();// If directory already exists then creating will give an exception, so we
-					// delete it.
+			System.out.println("Directory to be generated: " + temporary.toAbsolutePath());
+			System.out.println("\nCleaning first if exists..\n");
+			deleteFolder(temporary);// If directory already exists then creating will give an exception, so we
+			// delete it.
 			Files.createDirectory(temporary);
 			Files.createDirectory(inner);
-			Files.list(temporary.toAbsolutePath().getParent()).forEach(x->System.out.println(x.getFileName()));
-			System.out.println();
+			System.out.println("\nContent of parent of " + temporary + "\n");
+			Files.list(temporary.toAbsolutePath().getParent()).forEach(x -> System.out.println(x.getFileName()));
+			System.out.println("\nContent of " + temporary + "\n");
 			Files.list(temporary).forEach(System.out::println);
-			clear();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	static void clear() throws IOException {
-		if (!Files.exists(temporary))
+	static void deleteFolder(Path folder) throws IOException {
+		if (!Files.exists(folder))
 			return;
 
-		if (Files.exists(inner))// To delete a folder it must be empty. It cannot even contain empty subfolders.
-			Files.delete(inner);
-
-		Files.delete(temporary);
+		Files.walk(folder).sorted(Comparator.reverseOrder()).peek(f -> System.out.println("Deleting " + f))
+				.forEach(t -> {
+					try {
+						Files.deleteIfExists(t);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				});
 	}
 }

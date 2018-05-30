@@ -54,7 +54,7 @@ public class SimpleReflectionSample {
 
 	public static void main(String[] args) {
 		Class<Person> person = Person.class;
-		Constructor<?>[] constructors = person.getConstructors();
+		List<Constructor<?>> constructors = Arrays.asList(person.getConstructors());
 		List<Method> methods = Arrays.asList(person.getDeclaredMethods());
 		List<Method> inheritedMethods = Arrays.stream(person.getMethods()).filter(x -> !methods.contains(x))
 				.collect(Collectors.toList());
@@ -65,7 +65,7 @@ public class SimpleReflectionSample {
 				.filter(x -> !inheritedFields.contains(x)).collect(Collectors.toList());
 
 		System.out.println("Constructors\n");
-		Arrays.stream(constructors).forEach(m -> System.out.println(m));
+		constructors.forEach(m -> System.out.println(m));
 		System.out.println("\nMethods excluding inherited methods\n");
 		methods.forEach(m -> System.out.println(m));
 		System.out.println("\nInherited public methods\n");
@@ -74,7 +74,7 @@ public class SimpleReflectionSample {
 		fields.forEach(System.out::println);
 		System.out.println("\nInherited public fields\n");
 		inheritedFields.forEach(System.out::println);
-		System.out.println("\nInherited non-public fields\n");
+		System.out.println("\nNon-public fields of base class\n");
 		nonPublicInheritedFields.forEach(System.out::println);
 		System.out.println("\nMethod Execution\n");
 
@@ -84,8 +84,8 @@ public class SimpleReflectionSample {
 			System.out.println("Constructor execution: " + ahmet);
 			Person mustafa = new Person("Mustafa", "England", "Kent");
 			System.out.println("toString method execution: " + person.getMethod("toString").invoke(mustafa));
-			System.out.println("compareTo method execution: "
-					+ person.getMethod("compareTo", person).invoke(mustafa, ahmet));
+			System.out.println(
+					"compareTo method execution: " + person.getMethod("compareTo", person).invoke(mustafa, ahmet));
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();

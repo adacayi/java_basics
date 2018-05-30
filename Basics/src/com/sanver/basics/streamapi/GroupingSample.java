@@ -32,10 +32,9 @@ public class GroupingSample {
 		System.out.println("Genders:\n");
 		people.keySet().forEach(gender -> System.out.println(gender ? "Male" : "Female"));
 		System.out.println("\nDetailed Info:\n");
-		people.forEach((k,v)->{
-			System.out.print(k ? "Male: " : "Female: ");
-			v.forEach(person->System.out.print(person + ", "));
-			System.out.println();
+		people.forEach((k, v) -> {
+			System.out.println(
+					(k ? "Male: " : "Female: ") + v.stream().map(Person::toString).collect(Collectors.joining(", ")));
 		});
 	}
 }

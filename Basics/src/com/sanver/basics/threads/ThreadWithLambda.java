@@ -24,6 +24,5 @@ public class ThreadWithLambda {
 		new Thread(third).start();
 		first.start();
 		second.start();
-
 	}
 }
