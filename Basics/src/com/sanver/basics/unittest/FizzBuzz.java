@@ -11,7 +11,7 @@ public class FizzBuzz {
 	public String fizzBuzz(int number) {
 
 		if (number < 0)
-			throw new RuntimeException("Number must be non-negative");
+			throw new IllegalArgumentException("Number must be non-negative");
 
 		if (number % 3 == 0 && number % 5 == 0)
 			return "fizz buzz";

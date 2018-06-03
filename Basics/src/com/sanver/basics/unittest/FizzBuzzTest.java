@@ -44,7 +44,7 @@ class FizzBuzzTest {
 
 	@Test
 	void testFizzBuzzNonNegativeException() {
-		Assertions.assertThrows(RuntimeException.class, () -> buzzer.fizzBuzz(-1),
+		Assertions.assertThrows(IllegalArgumentException.class, () -> buzzer.fizzBuzz(-1),
 				"Negative numbers should throw an exception");
 	}
 }
