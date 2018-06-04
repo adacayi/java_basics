@@ -35,17 +35,6 @@ public class FizzBuzz {
 							// object return value.
 			throw new RuntimeException("Insert operation failed");
 
-		if (number < 0)
-			throw new IllegalArgumentException("Number must be non-negative");
-
-		if (number % 3 == 0 && number % 5 == 0)
-			return "fizz buzz";
-		if (number % 3 == 0)
-			return "fizz";
-
-		if (number % 5 == 0)
-			return "buzz";
-
-		return "";
+		return fizzBuzz(number);
 	}
 }
