@@ -29,7 +29,11 @@ public class FizzBuzz {
 
 	public String fizzBuzzWithLogger(int number, Statement stm) throws SQLException {
 
-		stm.executeUpdate("INSERT INTO dbo.logTable (Value) VALUES(" + number + ")");
+		int rowCount = stm.executeUpdate("INSERT INTO dbo.logTable (Value) VALUES(" + number + ")");
+
+		if (rowCount > 1) // This control is unnecessary and is only added to check mocked statement
+							// object return value.
+			throw new RuntimeException("Insert operation failed");
 
 		if (number < 0)
 			throw new IllegalArgumentException("Number must be non-negative");
