@@ -90,7 +90,7 @@ public class MockAdvanced {
 
 	@Test
 	void calculateGeneral() {
-		Mockito.when(calculatorMock.calculate(Mockito.any(), Mockito.any())).thenAnswer(
+		Mockito.when(calculatorMock.calculate(Mockito.any(), Mockito.any())).then(
 				m -> new Number(((Number) m.getArgument(0)).getNumber() + ((Number) m.getArgument(1)).getNumber()));
 		// We cannot combine matchers with values i.e. this would give an error
 		// calculator.calculate(Mockito.any(), new Number(0))
