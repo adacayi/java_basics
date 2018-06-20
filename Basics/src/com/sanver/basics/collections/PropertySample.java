@@ -11,19 +11,23 @@ import java.util.Properties;
 public class PropertySample {
 
 	public static void main(String[] args) {
+		String separator = "\n-----------------------------------------------------------------------------------\n";
 		System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v)); // To show all system properties
-		String file = "bin\\com\\sanver\\basics\\collections\\mail.properties";
+		System.out.println(separator);
+		System.out.println("\nAnother way of getting properties:\n");
 		Iterator<?> iterator = (Iterator<?>) System.getProperties().propertyNames();
 		String key;
 		while (iterator.hasNext()) {
 			key = (String) iterator.next();
 			System.out.println(key + ": " + System.getProperty(key));
 		}
+
+		String file = "src\\com\\sanver\\basics\\collections\\mail.properties";
 		Properties properties = new Properties(); // You can initialise it like new Properties(System.getProperties()).
-		// If done so then the initial system properties will be set to properties. 
+		// If done so then the initial system properties will be set to properties.
 		// This is different from properties = System.getProperties() in which
 		// if you make any changes to the properties, System properties changes.
-		System.out.println("\n-----------------------------------------------------------------------------------\n");
+		System.out.println(separator);
 		try (BufferedInputStream stream = new BufferedInputStream(Files.newInputStream(Paths.get(file)))) {
 			properties.load(stream);// the properties will be added to the existing properties object.
 			System.setProperties(properties);// This cleans all the initial properties in System
