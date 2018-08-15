@@ -1,37 +1,38 @@
 package com.sanver.basics.codeblocks;
 
-class Trial {
-	{
-		System.out.println("Non static block Trial");
-	}
-	static {
-		System.out.println("Selamunaleykum Trial");
-	}
+class A {
+    {
+        System.out.printf("Selamunaleykum\n");
+    }
 
-	public Trial() {
-		System.out.println("Ve aleykumselam Trial");
-	}
+    static {
+        System.out.printf("This is static block in A\n");
+    }
+
+    public A() {
+        System.out.printf("A is generated\n\n");
+    }
 }
 
-class StaticNonStaticCodeBlockSample {
-	{
-		System.out.println("Non static block");
-	}
-	static {
-		System.out.println("Selamunaleykum");
-	}
+class B extends A {
+    static {
+        System.out.printf("This is static block in B\n");
+    }
 
-	public StaticNonStaticCodeBlockSample() {
-		System.out.println("Constructor");
-	}
+    {
+        System.out.printf("Ve aleykumselam\n");
+    }
 
-	public static void main(String[] args) {
-		System.out.println("Ve aleykumselam");
-		System.out.println();
-		new StaticNonStaticCodeBlockSample();
-		System.out.println();
-		new Trial();
-		System.out.println();
-		new Trial();
-	}
+    public B() {
+        System.out.printf("B is generated\n\n");
+    }
+}
+
+public class StaticNonStaticCodeBlockSample {
+    public static void main(String... args) {
+        new A();
+        new B();
+        new A();
+        new B();
+    }
 }

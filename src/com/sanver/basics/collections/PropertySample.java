@@ -10,32 +10,37 @@ import java.util.Properties;
 
 public class PropertySample {
 
-	public static void main(String[] args) {
-		String separator = "\n-----------------------------------------------------------------------------------\n";
-		System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v)); // To show all system properties
-		System.out.println(separator);
-		System.out.println("\nAnother way of getting properties:\n");
-		Iterator<?> iterator = (Iterator<?>) System.getProperties().propertyNames();
-		String key;
-		while (iterator.hasNext()) {
-			key = (String) iterator.next();
-			System.out.println(key + ": " + System.getProperty(key));
-		}
+    public static void main(String[] args) {
+        String separator = "\n-----------------------------------------------------------------------------------\n";
+        System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v)); // To show all system properties
+        System.out.println(separator);
+        System.out.println("\nAnother way of getting properties:\n");
+        Iterator<?> iterator = (Iterator<?>) System.getProperties().propertyNames();
+        String key;
+        while (iterator.hasNext()) {
+            key = (String) iterator.next();
+            System.out.println(key + ": " + System.getProperty(key));
+        }
 
-		String file = "src\\com\\sanver\\basics\\collections\\mail.properties";
-		Properties properties = new Properties(); // You can initialise it like new Properties(System.getProperties()).
-		// If done so then the initial system properties will be set to properties.
-		// This is different from properties = System.getProperties() in which
-		// if you make any changes to the properties, System properties changes.
-		System.out.println(separator);
-		try (BufferedInputStream stream = new BufferedInputStream(Files.newInputStream(Paths.get(file)))) {
-			properties.load(stream);// the properties will be added to the existing properties object.
-			System.setProperties(properties);// This cleans all the initial properties in System
-			System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v));
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-	}
+        System.out.println(separator);
+        String file = "src\\com\\sanver\\basics\\collections\\mail.properties";
+        Properties properties = new Properties();
+        Properties systemProperties = System.getProperties();
+        properties.putAll(System.getProperties());
+        properties.setProperty("user.home", "Morden");// This won't change System properties.
+        System.out.printf("%s\n", System.getProperty("user.home"));
+        System.out.printf("%s\n", properties.getProperty("user.home"));
+        systemProperties.setProperty("user.home", "Morden");// This will change System properties
+        System.out.printf("%s\n", System.getProperty("user.home"));
+        System.out.println(separator);
+        try (BufferedInputStream stream = new BufferedInputStream(Files.newInputStream(Paths.get(file)))) {
+            properties.load(stream);// the properties will be added to the existing properties object.
+            System.setProperties(properties);// This cleans all the initial properties in System
+            System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v));
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
