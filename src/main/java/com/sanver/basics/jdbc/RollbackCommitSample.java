@@ -14,7 +14,7 @@ public class RollbackCommitSample {
 		int id = 0;
 		try (Connection conn = DriverManager.getConnection(
 				"jdbc:sqlserver://DESKTOP-QLKEH1D;databaseName=" + databaseName + ";integratedSecurity=true;", "", "");
-				Statement stm = conn.createStatement();) {
+				Statement stm = conn.createStatement()) {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			conn.setAutoCommit(false);
 			stm.executeUpdate("INSERT INTO Employee (Name) VALUES('Sadi')");

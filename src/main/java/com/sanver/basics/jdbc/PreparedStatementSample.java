@@ -33,7 +33,7 @@ public class PreparedStatementSample {
 				"jdbc:sqlserver://DESKTOP-QLKEH1D;databaseName=" + databaseName + ";integratedSecurity=true;", "", "");
 				Statement stm = conn.createStatement();
 				PreparedStatement preparedStatement = conn
-						.prepareStatement("SELECT * FROM Employee e WITH(NOLOCK) WHERE e.EmployeeId=?");) {
+						.prepareStatement("SELECT * FROM Employee e WITH(NOLOCK) WHERE e.EmployeeId=?")) {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			System.out.println("Connected to database: " + databaseName + "\n");
 

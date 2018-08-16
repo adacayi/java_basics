@@ -14,7 +14,7 @@ public class BufferedWriterSample {
 
 		try (FileOutputStream stream = new FileOutputStream(fileName);
 				OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stream, "Windows-1254");
-				BufferedWriter writer = new BufferedWriter(outputStreamWriter);) {
+				BufferedWriter writer = new BufferedWriter(outputStreamWriter)) {
 			writer.write(message);
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());

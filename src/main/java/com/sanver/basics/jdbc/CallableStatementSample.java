@@ -4,7 +4,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class CallableStatementSample {
@@ -24,30 +23,16 @@ public class CallableStatementSample {
 		// Network Configuration and enable TCP/IP
 
 		String databaseName = "jdbcsample";
-		int i, columnCount;
-		ResultSetMetaData resultMeta;
 
 		try (Connection conn = DriverManager.getConnection(
 				"jdbc:sqlserver://DESKTOP-QLKEH1D;databaseName=" + databaseName + ";integratedSecurity=true;", "", "");
-				CallableStatement callableStatement = conn.prepareCall("EXEC dbo.sel_employeeByColumns ? ");) {
+				CallableStatement callableStatement = conn.prepareCall("EXEC dbo.sel_employeeByColumns ? ")) {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			System.out.println("Connected to database: " + databaseName + "\n");
 			callableStatement.setString(1, "Ahmet");// Index number in CallableStatement starts with 1.
 
 			try (ResultSet result = callableStatement.executeQuery()) {
-				resultMeta = result.getMetaData();
-				columnCount = resultMeta.getColumnCount();
-
-				for (i = 1; i <= columnCount; i++)// Be careful to start the index from 1
-					System.out.printf("%-15s", resultMeta.getColumnName(i));
-				System.out.println();
-
-				while (result.next()) {
-					for (i = 1; i <= columnCount; i++) // Be careful to start the index from 1
-						System.out.printf("%-15s", result.getObject(i));
-
-					System.out.println();
-				}
+				ResultSetHelper.printResultData(result);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
