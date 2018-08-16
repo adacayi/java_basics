@@ -6,7 +6,7 @@ import java.io.IOException;
 public class FileSample {
 
 	public static void main(String[] args) {
-		String baseDirectory = "src\\com\\sanver\\basics\\io\\";
+		String baseDirectory = "src/main/java/com/sanver/basics/io/";
 		String fileName = "Trial.txt.bak";
 		String newFileName = "Trial.txt";
 		File file = new File(baseDirectory + fileName);

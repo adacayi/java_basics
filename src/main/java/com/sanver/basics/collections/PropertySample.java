@@ -24,7 +24,7 @@ public class PropertySample {
         }
 
         System.out.println(separator);
-        String file = "src\\main\\java\\com\\sanver\\basics\\collections\\mail.properties";
+        String pathString = "src/main/java/com/sanver/basics/collections/mail.properties";
         Properties properties = new Properties();
         Properties systemProperties = System.getProperties();
         properties.putAll(System.getProperties());// This will copy all system properties to properties.
@@ -36,7 +36,7 @@ public class PropertySample {
         System.out.printf("%s\n", System.getProperty("user.home"));
         System.out.println(separator);
         properties = new Properties();
-        try (BufferedInputStream stream = new BufferedInputStream(Files.newInputStream(Paths.get(file)))) {
+        try (BufferedInputStream stream = new BufferedInputStream(Files.newInputStream(Paths.get(pathString)))) {
             properties.load(stream);// the properties will be added to the existing properties object.
             System.setProperties(properties);// This cleans all the initial properties in System
             System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v));

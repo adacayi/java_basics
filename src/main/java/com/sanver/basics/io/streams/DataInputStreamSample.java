@@ -17,7 +17,7 @@ public class DataInputStreamSample {
 		double value3 = 3.14159265;
 		double value4 = 2.23;
 		int value5 = 1821178321;
-		String fileName = "src\\com\\sanver\\basics\\io\\streams\\TrialWithNumbers.txt";
+		String fileName = "src/main/java/com/sanver/basics/io/streams/TrialWithNumbers.txt";
 		try (FileOutputStream stream = new FileOutputStream(fileName);
 				BufferedOutputStream buff = new BufferedOutputStream(stream);
 				DataOutputStream writer = new DataOutputStream(buff)) {

@@ -7,7 +7,7 @@ import java.io.IOException;
 public class FileInputStreamSample {
 
 	public static void main(String[] args) {
-		String fileName = "bin\\com\\sanver\\basics\\io\\streams\\trial.txt";
+		String fileName = "src/main/java/com/sanver/basics/io/streams/trial.txt";
 
 		try (FileInputStream stream = new FileInputStream(fileName)) {
 			int read = 0;
