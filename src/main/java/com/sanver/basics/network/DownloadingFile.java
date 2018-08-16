@@ -14,11 +14,10 @@ public class DownloadingFile {
 
 	public static void main(String[] args) {
 		String urlAddress = "https://cdn.pixabay.com/photo/2016/09/03/23/18/rose-1642970_1280.jpg";
-		Path path = Paths.get("src\\com\\sanver\\basics\\network\\rose.jpg");
-		URL url;
+		Path path = Paths.get("src/main/java/com/sanver/basics/network/rose.jpg");
 
 		try {
-			url = new URL(urlAddress);
+			URL url = new URL(urlAddress);
 			URLConnection connection = url.openConnection();
 			Files.copy(new BufferedInputStream(connection.getInputStream()), path, StandardCopyOption.REPLACE_EXISTING);
 			System.out.println("Copy operation is done.");
