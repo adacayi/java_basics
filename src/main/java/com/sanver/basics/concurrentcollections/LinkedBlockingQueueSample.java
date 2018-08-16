@@ -8,7 +8,7 @@ public class LinkedBlockingQueueSample {
 	static int value = 0;
 
 	public static void main(String[] args) {
-		BlockingQueue<Integer> queue = new LinkedBlockingQueue<Integer>();
+		BlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
 
 		Thread read = new Thread(() -> {
 			int value;
