@@ -7,13 +7,11 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 
 public class DirectoryDeleteSample {
-	static Path temporary;
-	static Path inner;
 
 	public static void main(String[] args) {
-		String base = "src\\com\\sanver\\basics\\nio";
-		temporary = Paths.get(base + "\\temporary");
-		inner = Paths.get(base + "\\temporary\\inner");
+		String base = "src/main/java/com/sanver/basics/nio";
+		Path temporary = Paths.get(base + "/temporary");
+		Path inner = Paths.get(base + "/temporary/inner");
 		try {
 			System.out.println("Directory to be generated: " + temporary.toAbsolutePath());
 			System.out.println("\nCleaning first if exists..\n");
@@ -22,7 +20,7 @@ public class DirectoryDeleteSample {
 			Files.createDirectory(temporary);
 			Files.createDirectory(inner);
 			System.out.println("\nContent of parent of " + temporary + "\n");
-			Files.list(temporary.toAbsolutePath().getParent()).forEach(x -> System.out.println(x.getFileName()));
+			Files.list(temporary.getParent()).forEach(x -> System.out.println(x.getFileName()));
 			System.out.println("\nContent of " + temporary + "\n");
 			Files.list(temporary).forEach(x -> System.out.println(x.getFileName()));
 		} catch (IOException e) {
@@ -30,7 +28,7 @@ public class DirectoryDeleteSample {
 		}
 	}
 
-	static void deleteFolder(Path folder) throws IOException {
+	private static void deleteFolder(Path folder) throws IOException {
 		if (!Files.exists(folder))
 			return;
 

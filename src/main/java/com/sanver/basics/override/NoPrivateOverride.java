@@ -1,39 +1,39 @@
 package com.sanver.basics.override;
 
 class A1 {
-	private void write() {
-		System.out.println("A");
-	}
+    private void writePrivate() {
+        System.out.println("A from private");
+    }
 
-	public void get() {
-		write();
-	}
-	public void get1() {
-		write();
-	}
+    protected void writeProtected() {
+        System.out.println("A from protected");
+    }
+
+    public void getPrivate() {
+        writePrivate();
+    }
+
+    public void getProtected() {
+        writeProtected();
+    }
 }
 
 class B1 extends A1 {
-	private void write() {
-		System.out.println("B");
-	}
+    private void writePrivate() {
+        System.out.println("B from private");
+    }
 
-	public void getNew() {
-		write();
-	}
-	public void get1() {
-		write();
-	}
+    protected void writeProtected() {
+        System.out.println("B from protected");
+    }
 }
 
 public class NoPrivateOverride {
 
-	public static void main(String[] args) {
-		B1 b = new B1();
-		b.get();
-		b.getNew();
-		b.get1();
-		((A1)b).get1();
-	}
+    public static void main(String[] args) {
+        B1 b = new B1();
+        b.getPrivate();
+        b.getProtected();
+    }
 
 }

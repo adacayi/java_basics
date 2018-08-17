@@ -8,10 +8,6 @@ class A {
 		System.out.println("A");
 		System.out.println();
 	}
-
-	static void getStatic() {
-		System.out.println("A Static");
-	}
 }
 
 class B extends A {
@@ -19,20 +15,12 @@ class B extends A {
 		System.out.println("B");
 		super.getName();
 	}
-
-	static void getStatic() {
-		System.out.println("B Static");
-	}
 }
 
 class C extends B {
 	void getName() {
 		System.out.println("C");
 		super.getName();
-	}
-
-	static void getStatic() {
-		System.out.println("C Static");
 	}
 }
 
@@ -57,12 +45,5 @@ public class SimpleOverrideSample {
 		d.getName();
 		((A) b).getName();
 		((A) c).getName();
-		System.out.println("For statics: ");
-		a.getStatic();
-		b.getStatic();
-		c.getStatic();
-		d.getStatic();
-		((A) b).getStatic();
-		((A) c).getStatic();
 	}
 }
