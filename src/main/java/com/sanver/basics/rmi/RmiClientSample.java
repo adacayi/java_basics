@@ -9,7 +9,7 @@ public class RmiClientSample {
 
 	public static void main(String[] args) {
 		try {
-			EchoInterface stub = (EchoInterface) Naming.lookup(ServerStartForRmiServerSample.address);
+			EchoInterface stub = (EchoInterface) Naming.lookup(ServerStartForRmiServerSample.ADDRESS);
 			System.out.println(stub.helloWorld());
 			System.out.println(stub.echo("Ve aleykumselam"));
 			System.out.println("The time is " + stub.getTime());
