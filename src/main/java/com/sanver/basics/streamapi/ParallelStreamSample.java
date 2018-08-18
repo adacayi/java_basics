@@ -7,24 +7,17 @@ import java.util.stream.IntStream;
 
 public class ParallelStreamSample {
 
-	public static void main(String[] args) {
-		int personCount = 10;
-		List<Integer> idList = IntStream.range(0, personCount).boxed().collect(Collectors.toList());
-		List<Integer> newList = new ArrayList<>();
-		idList = idList.parallelStream().collect(Collectors.toList());// The order does not change here for efficiency I
-																		// think.
-		System.out.println(idList);
-		idList = idList.parallelStream().peek(x -> System.out.print(x + " ")).collect(Collectors.toList());// Order
-																											// changes
-																											// here,
-																											// because a
-																											// print
-																											// method is
-		// called, which optimization might not guess
-		// its runtime. However collect results in an orderer list.
-		System.out.println();
-		System.out.println(idList);
-		idList.parallelStream().forEach(x -> newList.add(x));
-		System.out.println(newList);
-	}
+    public static void main(String[] args) {
+        int length = 10;
+        List<Integer> idList = IntStream.range(0, length).boxed().collect(Collectors.toList());
+        List<Integer> newList = new ArrayList<>();
+        idList = idList.parallelStream().collect(Collectors.toList());// collect method preserves order
+        System.out.println(idList);
+        idList = idList.parallelStream().peek(x -> System.out.print(x + " ")).collect(Collectors.toList());
+        // Collect method preserves order but peek shows that elements are accesses in parallel
+        System.out.println();
+        System.out.println(idList);
+        idList.parallelStream().forEach(x -> newList.add(x));
+        System.out.println(newList);
+    }
 }
