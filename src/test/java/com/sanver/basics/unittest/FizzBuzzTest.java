@@ -11,12 +11,12 @@ class FizzBuzzTest {
     static FizzBuzz buzzer;
 
     @BeforeAll
-    static void setUp() {
+    static void initAll() {
         buzzer = new FizzBuzz();
     }
 
     @AfterAll
-    static void tearDown() {
+    static void tearDownAll() {
         buzzer = null;
     }
 

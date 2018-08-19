@@ -21,13 +21,13 @@ class MockWithAnnotationSample {
     Statement statement;
 
     @BeforeAll
-    public void setUp() {
+    public void initAll() {
         MockitoAnnotations.initMocks(this);
         buzzer = new FizzBuzz();
     }
 
     @AfterAll
-    public void tearDown() {
+    public void tearDownAll() {
         statement = null;
     }
 

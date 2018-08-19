@@ -14,7 +14,7 @@ class MockWithWhenThen {
 	FizzBuzz buzzer = new FizzBuzz();
 
 	@BeforeEach
-	public void setUp() {
+	public void init() {
 		statement = Mockito.mock(Statement.class);
 	}
 

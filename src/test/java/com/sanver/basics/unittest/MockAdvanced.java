@@ -61,7 +61,7 @@ public class MockAdvanced {
     Calculator calculatorSpy;
 
     @BeforeEach
-    void setUp() {
+    void init() {
         MockitoAnnotations.initMocks(this);
     }
 

@@ -16,17 +16,17 @@ class FizzBuzzConsoleTest {
     private final PrintStream originalError = System.err;
 
     @BeforeAll
-    public static void setUp() {
+    public static void initAll() {
         buzzer = new FizzBuzz();
     }
 
     @AfterAll
-    public static void tearDown() {
+    public static void tearDownAll() {
         buzzer = null;
     }
 
     @BeforeEach
-    public void setUpStreams() {
+    public void init() {
         outStream = new ByteArrayOutputStream();
         errStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outStream));
@@ -34,7 +34,7 @@ class FizzBuzzConsoleTest {
     }
 
     @AfterEach
-    public void tearDownStreams() {
+    public void tearDown() {
         try {
             outStream.close();
             errStream.close();
