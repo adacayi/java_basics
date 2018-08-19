@@ -19,14 +19,14 @@ class MockWithWhenThen {
 	}
 
 	@Test
-	void fizzBuzzWithLoggerScriptWithInvalidValue() throws SQLException {
+	void should_ThrowException_When_Minus1IsSentToLogger() throws SQLException {
 		String query = "INSERT INTO dbo.logTable (Value) VALUES(-1)";
 		Mockito.when(statement.executeUpdate(query)).thenThrow(new SQLException());
 		Assertions.assertThrows(SQLException.class, () -> buzzer.fizzBuzzWithLogger(-1, statement));
 	}
 
 	@Test
-	void fizzBuzzWithLoggerScriptWithValidValue() throws SQLException {
+	void should_WorkWithoutException_When_1IsSentToLogger() throws SQLException {
 		String query = "INSERT INTO dbo.logTable (Value) VALUES(-1)";
 		Mockito.when(statement.executeUpdate(query)).thenThrow(new SQLException());
 		buzzer.fizzBuzzWithLogger(1, statement);// If exception is thrown test will fail. Hence calling the method is
@@ -34,7 +34,7 @@ class MockWithWhenThen {
 	}
 
 	@Test
-	void fizzBuzzWithLoggerScriptAffectedRowCount() throws SQLException {
+	void should_ReturnRowCount1_When_3IsSentToLogger() throws SQLException {
 		Mockito.when(statement.executeUpdate(Mockito.anyString())).thenReturn(1);
 		buzzer.fizzBuzzWithLogger(3, statement);
 	}

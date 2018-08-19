@@ -15,25 +15,26 @@ import org.mockito.MockitoAnnotations;
 @TestInstance(Lifecycle.PER_CLASS)
 class MockWithAnnotationSample {
 
-	FizzBuzz buzzer;
+    FizzBuzz buzzer;
 
-	@Mock
-	Statement statement;
+    @Mock
+    Statement statement;
 
-	@BeforeAll
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-		buzzer = new FizzBuzz();
-	}
+    @BeforeAll
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        buzzer = new FizzBuzz();
+    }
 
-	@AfterAll
-	public void tearDown() {
-		statement = null;
-	}
+    @AfterAll
+    public void tearDown() {
+        statement = null;
+    }
 
-	@Test
-	void fizzBuzzWithLoggerDivisibleBy3() throws SQLException {
-		buzzer.fizzBuzzWithLogger(3, statement);
-		Mockito.verify(statement, Mockito.times(1)).executeUpdate("INSERT INTO dbo.logTable (Value) VALUES(3)");
-	}
+    @Test
+    void fizzBuzzWithLoggerDivisibleBy3() throws SQLException {
+        buzzer.fizzBuzzWithLogger(3, statement);
+        Mockito.verify(statement, Mockito.times(1)).
+                executeUpdate("INSERT INTO dbo.logTable (Value) VALUES(3)");
+    }
 }
