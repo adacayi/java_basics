@@ -3,6 +3,7 @@ package com.sanver.basics.unittest;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+// Check for unit tests for this class in src/test/java
 public class FizzBuzz {
 
     public static void main(String[] args) {
