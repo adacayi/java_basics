@@ -3,17 +3,19 @@ package com.sanver.basics.unittest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Supplier;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class is written for TDD of SetImplementation class in src/main/java/unittest
  */
 public class SetImplementationTest {
-    SetImplementation set;
+    SetImplementation<String> set;
 
     @BeforeEach
     public void init() {
-        set = new SetImplementation();
+        set = new SetImplementation<>();
     }
 
     @Test
@@ -82,5 +84,28 @@ public class SetImplementationTest {
         }
 
         assertTrue(set.getCapacity() <= 10);
+    }
+
+    @Test
+    public void should_ReturnTrue_When_ElementExists() {
+        String value = "1";
+        set.add(value);
+        assertTrue(set.contains(value));
+    }
+
+    @Test
+    public void should_ReturnFalse_When_ElementNotExists() {
+        String value = "1";
+        set.add(value);
+        assertFalse(set.contains(value.concat("1")));
+    }
+
+    @Test
+    public void should_BeAbleToAddCustomObjects() {
+        SetImplementation<Supplier> customSet = new SetImplementation<>();
+        Supplier s = () -> 1;
+        customSet.add(s);
+        assertEquals(1, set.getSize());
+        assertTrue(customSet.contains(s));
     }
 }

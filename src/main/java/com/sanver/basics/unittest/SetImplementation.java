@@ -6,26 +6,26 @@ import java.util.Arrays;
  * This class is coded with TDD principles.
  * The unit tests are in src/test/java/unittest/SetImplementationTest.java
  */
-public class SetImplementation {
+public class SetImplementation<E> {
     private int initialCapacity = 10;
     private final int SIZE_CHANGE = 10;
     private int lastIndex = 0;
-    private String[] set;
+    private Object[] set;
 
     public SetImplementation() {
-        set = new String[initialCapacity];
+        set = new Object[initialCapacity];
     }
 
     public SetImplementation(int capacity) {
         initialCapacity = capacity;
-        set = new String[initialCapacity];
+        set = new Object[initialCapacity];
     }
 
     public int getSize() {
         return lastIndex;
     }
 
-    public void add(String element) {
+    public void add(E element) {
         if (lastIndex == set.length) {
             set = Arrays.copyOf(set, lastIndex + SIZE_CHANGE);
         }
@@ -39,7 +39,7 @@ public class SetImplementation {
         lastIndex++;
     }
 
-    public boolean remove(String element) {
+    public boolean remove(E element) {
         for (int i = 0; i < lastIndex; i++) {
             if (set[i].equals(element)) {
                 set[i] = set[lastIndex - 1];
@@ -56,5 +56,13 @@ public class SetImplementation {
 
     public int getCapacity() {
         return set.length;
+    }
+
+    public boolean contains(E value) {
+        for (Object item : set) {
+            if (item == value)
+                return true;
+        }
+        return false;
     }
 }
