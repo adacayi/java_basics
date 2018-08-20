@@ -14,23 +14,16 @@ public class ConcurrentMapSample {
         result.forEach((k, v) -> System.out
                 .println(k + " " + v.stream().map(x -> x.toString()).collect(Collectors.joining(", "))));
 
-        Map map = new ConcurrentHashMap<Integer, String>(); // Change this to HashMap to see
-        // ConcurrentModificationException
-        int length = 10_000;
+        Map map = new ConcurrentHashMap<String,Integer>(); // Change this to HashMap to see varying sizes.
+        int count = 10_000;
         Runnable first = () -> {
-            for (int i = 0; i < length; i++) {
+            for (int i = 0; i < count; i++) {
                 map.put(i, Integer.toString(i));
             }
         };
         Runnable second = () -> {
-            Set keyset;
-            for (int i = 0; i < length; ) {
-                keyset = map.keySet();
-                if (keyset != null && keyset.size() > 0) {
-                    map.remove(keyset.iterator().next()); // This line will get ConcurrentModificationException
-                    // if the map is not concurrent
-                    i++;
-                }
+            for (int i = count; i < 2*count; i++) {
+                map.put(i, Integer.toString(i));
             }
         };
         Thread t1 = new Thread(first);
