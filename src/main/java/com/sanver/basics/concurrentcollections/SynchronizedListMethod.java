@@ -1,4 +1,4 @@
-package com.sanver.basics.collections;
+package com.sanver.basics.concurrentcollections;
 
 import java.util.ArrayList;
 import java.util.Collections;
