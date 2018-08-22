@@ -11,7 +11,7 @@ class ArrayReader<T> extends RecursiveAction {
 	 * 
 	 */
 	private static final long serialVersionUID = 6824918032836548869L;
-	private static Object lock = new Object();
+	private static final Object lock = new Object();
 	private T[] array;
 	private int low, high;
 	private static final int MAX = 5;
@@ -54,7 +54,7 @@ public class RecursiveActionSample {
 		ForkJoinPool pool = new ForkJoinPool();
 		LocalTime start = LocalTime.now();
 		Integer[] array = IntStream.range(0, 20).boxed().toArray(x -> new Integer[20]);
-		pool.invoke(new ArrayReader<Integer>(array, 0, array.length));
+		pool.invoke(new ArrayReader<>(array, 0, array.length));
 		Duration duration = Duration.between(start, LocalTime.now());
 		System.out.printf("Time elapsed is %02d:%03d", duration.getSeconds(), duration.getNano() / 1000000);
 	}
