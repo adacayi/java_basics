@@ -2,7 +2,7 @@ package com.sanver.basics.designPatterns;
 
 class Connection {
     private static Connection single_instance;
-    private final static Object lock = new Object();
+    private static final Object lock = new Object();
 
     private Connection() {
     }
