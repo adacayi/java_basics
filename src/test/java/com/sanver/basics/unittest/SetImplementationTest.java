@@ -105,7 +105,7 @@ public class SetImplementationTest {
         SetImplementation<Supplier> customSet = new SetImplementation<>();
         Supplier s = () -> 1;
         customSet.add(s);
-        assertEquals(1, set.getSize());
+        assertEquals(1, customSet.getSize());
         assertTrue(customSet.contains(s));
     }
 }
