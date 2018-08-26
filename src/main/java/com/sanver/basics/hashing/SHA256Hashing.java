@@ -18,7 +18,7 @@ public class SHA256Hashing {
             }
         }
         digest.update(message.getBytes());
-        return new BigInteger(1, digest.digest()).toString(16);
+        return String.format("%064x", new BigInteger(1, digest.digest()));
     }
 
     public static void main(String... args) {
