@@ -9,7 +9,6 @@ public class IPMatching {
         String pattern = zeroTo255 + "." + zeroTo255 + "." + zeroTo255 + "." + zeroTo255;
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
-
                 System.out.print("Ip: ");
                 String text = scanner.nextLine();
                 if (text.trim().isEmpty())

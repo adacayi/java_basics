@@ -7,12 +7,14 @@ public class AggressiveMatching {
 
     public static void main(String... args) {
         String message = "abdullah.sanver.sancode.co.uk~~~";
-        Pattern pattern = Pattern.compile("[\\w.]+\\.\\w{2,6}");
+        String patternString = "[\\w.]+\\.\\w{2,6}";
+        Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(message);
         System.out.println(message);
         while (matcher.find()) {
             System.out.println(matcher.group());
         }
         System.out.printf("Is it a complete match: %s\n", matcher.matches() ? "Yes" : "No");
+        System.out.printf("Is it a complete match: %s\n", message.matches(patternString) ? "Yes" : "No");
     }
 }
