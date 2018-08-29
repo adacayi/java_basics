@@ -3,7 +3,7 @@ package com.sanver.basics.regex;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PatternMathcerSample {
+public class PatternMatcherSample {
     private static final String EXAMPLE_TEST = "This is my small example string which I'm going to use for pattern matching.";
 
     public static void main(String[] args) {
