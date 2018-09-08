@@ -31,5 +31,14 @@ public class ScannerSample {
             System.out.println(scanner.nextDouble());
             System.out.println(scanner.nextDouble());
         }
+
+        //region to show hasNext usage
+        try (Scanner scanner = new Scanner(new ByteArrayInputStream("2 3 4 5 7".getBytes()))) {
+            System.out.println("\nShowing scanner.hasNext usage");
+            while (scanner.hasNextInt()) {
+                System.out.printf("%d ", scanner.nextInt());
+            }
+            System.out.println();
+        }
     }
 }
