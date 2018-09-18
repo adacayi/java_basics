@@ -30,13 +30,18 @@ public class RegexTester {
                         System.out.println(text);
                     }
 
+                    if (matcher.group().isEmpty()) // Sometimes the group comes empty. Don't know the reason. To avoid mistakes we skip those groups.
+                        // i.e. give the regex pattern as \w* to see empty groups.
+                        continue;
+
                     start = matcher.start();
                     end = matcher.end() - 1;
                     if (start == end) {
                         System.out.printf("%" + (start + 1 - index) + "s", "|");
                     } else {
                         System.out.printf("%" + (start + 1 - index) + "s", "^");
-                        System.out.printf("%" + (end - start - index) + "s", "^");
+                        index = start + 1;
+                        System.out.printf("%" + (end + 1 - index) + "s", "^");
                     }
                     index = end + 1;
                     if (groupCount >= 1) {
