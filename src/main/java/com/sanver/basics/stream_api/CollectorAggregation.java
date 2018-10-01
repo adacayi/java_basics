@@ -14,6 +14,14 @@ public class CollectorAggregation {
         String name;
         int age;
 
+        public String getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
         public Person(String name, int age) {
             this.name = name;
             this.age = age;
@@ -24,22 +32,22 @@ public class CollectorAggregation {
         Person[] people = {new Person("Ahmet", 3), new Person("Mustafa", 3),
                 new Person("Fatima", 6)};
         Supplier<Stream<Person>> supplier = () -> Arrays.stream(people);
-        System.out.println("Sum of ages is " + supplier.get().collect(Collectors.summingInt(p -> p.age)));
+        System.out.println("Sum of ages is " + supplier.get().collect(Collectors.summingInt(Person::getAge)));
         System.out.println("Sum of ages is " + supplier.get().mapToInt(p -> p.age).sum());
         System.out.println("Count of ages is " + supplier.get().collect(Collectors.counting()));
         System.out.println("Count of ages is " + supplier.get().count());
-        System.out.println("Average age is " + supplier.get().collect(Collectors.averagingInt(p -> p.age)));
-        System.out.println("Average age is " + supplier.get().mapToInt(p -> p.age).average().orElse(0));
+        System.out.println("Average age is " + supplier.get().collect(Collectors.averagingInt(Person::getAge)));
+        System.out.println("Average age is " + supplier.get().mapToInt(Person::getAge).average().orElse(0));
         System.out.println("Minimum age is "
-                + supplier.get().collect(Collectors.minBy(Comparator.comparing((Person p) -> p.age))).
+                + supplier.get().collect(Collectors.minBy(Comparator.comparing(Person::getAge))).
                 orElse(new Person("", 0)).age);
         // This is shorter and you don’t need to define a Comparator
         System.out.println("Minimum age is " + supplier.get().mapToInt(p -> p.age).min().orElse(0));
         System.out.println("Maximum age is "
-                + supplier.get().collect(Collectors.maxBy(Comparator.comparing((Person p) -> p.age))).
+                + supplier.get().collect(Collectors.maxBy(Comparator.comparing(Person::getAge))).
                 orElse(new Person("", 0)).age);
         System.out.println("Maximum age is " + supplier.get().mapToInt(p -> p.age).max().orElse(0));
-        System.out.println("Summary: " + supplier.get().collect(Collectors.summarizingInt(p -> p.age)));
+        System.out.println("Summary: " + supplier.get().collect(Collectors.summarizingInt(Person::getAge)));
         System.out.println(supplier.get().map(p -> p.name + " with age " + p.age)
                 .collect(Collectors.joining(" and ", "People in the collection are ", ".")));
         System.out.println(

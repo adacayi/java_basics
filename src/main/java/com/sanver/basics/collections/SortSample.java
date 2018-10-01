@@ -2,7 +2,6 @@ package com.sanver.basics.collections;
 
 import java.util.Collections;
 import java.util.Comparator;
-//import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +10,7 @@ public class SortSample {
 
 	public static void main(String[] args) {
 		List<Integer> values = new ArrayList<>(Arrays.asList(4, 2, 3, 5));
-		Comparator<Integer> ascending = Comparator.comparing(p -> p);
+		Comparator<Integer> ascending = Comparator.naturalOrder();
 		Comparator<Integer> descending = ascending.reversed();
 		values.sort(ascending);
 		System.out.println(values);

@@ -10,85 +10,99 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class PersonBase {
-	String fathersName;
-	@SuppressWarnings("unused")
-	private String mothersMaidenName;
-	public String birthPlace;
+    String fathersName;
+    @SuppressWarnings("unused")
+    private String mothersMaidenName;
+    public String birthPlace;
 }
 
 class Person extends PersonBase implements Comparable<Person> {
-	int id;
-	String name;
-	boolean isMale;
-	String country;
-	String city;
+    int id;
+    String name;
+    boolean isMale;
+    String country;
+    String city;
 
-	public String gender() {
-		return isMale ? "Male" : "Female";
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String toString() {
-		return id + " " + name + " " + country + " " + city;
-	}
+    public String getCountry() {
+        return country;
+    }
 
-	public Person() {
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public Person(String name, String country, String city) {
-		this.name = name;
-		this.country = country;
-		this.city = city;
-		this.fathersName = "Abdullah";
-	}
+    public String gender() {
+        return isMale ? "Male" : "Female";
+    }
 
-	@Override
+    public String toString() {
+        return id + " " + name + " " + country + " " + city;
+    }
 
-	public int compareTo(Person o2) {
-		Comparator<Person> comparer = Comparator.comparing((Person p) -> p.country).thenComparing(p -> p.city)
-				.thenComparing(p -> p.name);
-		return comparer.compare(this, o2);
-	}
+    public Person() {
+    }
+
+    public Person(String name, String country, String city) {
+        this.name = name;
+        this.country = country;
+        this.city = city;
+        this.fathersName = "Abdullah";
+    }
+
+    @Override
+
+    public int compareTo(Person o2) {
+        Comparator<String> stringComparator = Comparator.nullsLast(String::compareToIgnoreCase);
+        Comparator<Person> comparator = Comparator.comparing(Person::getCountry, stringComparator)
+                .thenComparing(Person::getCity, stringComparator)
+                .thenComparing(Person::getName, stringComparator);
+        return comparator.compare(this, o2);
+    }
 }
 
 public class SimpleReflectionSample {
 
-	public static void main(String[] args) {
-		Class<Person> person = Person.class;
-		List<Constructor<?>> constructors = Arrays.asList(person.getConstructors());
-		List<Method> methods = Arrays.asList(person.getDeclaredMethods());
-		List<Method> inheritedMethods = Arrays.stream(person.getMethods()).filter(x -> !methods.contains(x))
-				.collect(Collectors.toList());
-		List<Field> fields = Arrays.asList(person.getDeclaredFields());
-		List<Field> inheritedFields = Arrays.stream(person.getFields()).filter(x -> !fields.contains(x))
-				.collect(Collectors.toList());
-		List<Field> nonPublicInheritedFields = Arrays.stream(person.getSuperclass().getDeclaredFields())
-				.filter(x -> !inheritedFields.contains(x)).collect(Collectors.toList());
+    public static void main(String[] args) {
+        Class<Person> person = Person.class;
+        List<Constructor<?>> constructors = Arrays.asList(person.getConstructors());
+        List<Method> methods = Arrays.asList(person.getDeclaredMethods());
+        List<Method> inheritedMethods = Arrays.stream(person.getMethods()).filter(x -> !methods.contains(x))
+                .collect(Collectors.toList());
+        List<Field> fields = Arrays.asList(person.getDeclaredFields());
+        List<Field> inheritedFields = Arrays.stream(person.getFields()).filter(x -> !fields.contains(x))
+                .collect(Collectors.toList());
+        List<Field> nonPublicInheritedFields = Arrays.stream(person.getSuperclass().getDeclaredFields())
+                .filter(x -> !inheritedFields.contains(x)).collect(Collectors.toList());
 
-		System.out.println("Constructors\n");
-		constructors.forEach(m -> System.out.println(m));
-		System.out.println("\nMethods excluding inherited methods\n");
-		methods.forEach(m -> System.out.println(m));
-		System.out.println("\nInherited public methods\n");
-		inheritedMethods.forEach(m -> System.out.println(m));
-		System.out.println("\nFields excludes inherited fields\n");
-		fields.forEach(System.out::println);
-		System.out.println("\nInherited public fields\n");
-		inheritedFields.forEach(System.out::println);
-		System.out.println("\nNon-public fields of base class\n");
-		nonPublicInheritedFields.forEach(System.out::println);
-		System.out.println("\nMethod Execution\n");
+        System.out.println("Constructors\n");
+        constructors.forEach(System.out::println);
+        System.out.println("\nMethods excluding inherited methods\n");
+        methods.forEach(System.out::println);
+        System.out.println("\nInherited public methods\n");
+        inheritedMethods.forEach(System.out::println);
+        System.out.println("\nFields excludes inherited fields\n");
+        fields.forEach(System.out::println);
+        System.out.println("\nInherited public fields\n");
+        inheritedFields.forEach(System.out::println);
+        System.out.println("\nNon-public fields of base class\n");
+        nonPublicInheritedFields.forEach(System.out::println);
+        System.out.println("\nMethod Execution\n");
 
-		try {
-			Person ahmet = person.getConstructor(String.class, String.class, String.class).newInstance("Ahmet",
-					"England", "London");
-			System.out.println("Constructor execution: " + ahmet);
-			Person mustafa = new Person("Mustafa", "England", "Kent");
-			System.out.println("toString method execution: " + person.getMethod("toString").invoke(mustafa));
-			System.out.println(
-					"compareTo method execution: " + person.getMethod("compareTo", person).invoke(mustafa, ahmet));
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            Person ahmet = person.getConstructor(String.class, String.class, String.class).newInstance("Ahmet",
+                    "England", "London");
+            System.out.println("Constructor execution: " + ahmet);
+            Person mustafa = new Person("Mustafa", "England", "Kent");
+            System.out.println("toString method execution: " + person.getMethod("toString").invoke(mustafa));
+            System.out.println(
+                    "compareTo method execution: " + person.getMethod("compareTo", person).invoke(mustafa, ahmet));
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
+            e.printStackTrace();
+        }
+    }
 }

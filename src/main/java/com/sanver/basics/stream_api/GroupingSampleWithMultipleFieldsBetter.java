@@ -67,7 +67,19 @@ public class GroupingSampleWithMultipleFieldsBetter {
         String country;
         String city;
 
-        public String gender() {
+        public String getName() {
+            return name;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public String getGender() {
             return isMale ? "Male" : "Female";
         }
 
@@ -78,10 +90,12 @@ public class GroupingSampleWithMultipleFieldsBetter {
         @Override
         public int compareTo(Person o2) {
             Person o1 = this;
-            Comparator<Person> comparator = Comparator.comparing((Person p) -> p.country == null ? "" : p.country)
-                    .thenComparing(p -> p.city == null ? "" : p.city).thenComparing(p -> p.name == null ? "" : p.name)
-                    .thenComparing(Person::gender);// If we do not check for null and replace for a not null value we
-            // get an error in runtime.
+
+            Comparator<String> stringComparator = Comparator.nullsFirst(String::compareToIgnoreCase); // To compare strings with null values
+            Comparator<Person> comparator = Comparator.comparing(Person::getCountry, stringComparator)
+                    .thenComparing(Person::getCity, stringComparator)
+                    .thenComparing(Person::getName, stringComparator)
+                    .thenComparing(Person::getGender);
             return comparator.compare(o1, o2);
         }
     }
@@ -106,12 +120,8 @@ public class GroupingSampleWithMultipleFieldsBetter {
                     value1 = field.get(obj);
                     value2 = field.get(o);
 
-                    if (value1 == null || value2 == null) {
-                        if (value1 != value2)
-                            return true;
-
-                        return false;
-                    }
+                    if (value1 == null || value2 == null)
+                        return value1 != value2;
 
                     if (!value1.equals(value2))
                         return true;
@@ -156,7 +166,7 @@ public class GroupingSampleWithMultipleFieldsBetter {
         // Previous grouping method
         System.out.println("Previous grouping method\n");
         Map<String, Map<String, Map<String, List<Person>>>> grouped = personList.stream().collect(Collectors.groupingBy(
-                p -> p.country, Collectors.groupingBy(p -> p.city, Collectors.groupingBy(p -> p.gender()))));
+                p -> p.country, Collectors.groupingBy(p -> p.city, Collectors.groupingBy(Person::getGender))));
 
         grouped.keySet().forEach(p -> grouped.get(p).keySet().forEach(q -> grouped.get(p).get(q).keySet().forEach(
                 r -> System.out.printf("%s %s %s Count: %d\n", p, q, r, grouped.get(p).get(q).get(r).size()))));
@@ -175,10 +185,10 @@ public class GroupingSampleWithMultipleFieldsBetter {
         List<Person> keys = group.keySet().stream().sorted().collect(Collectors.toList());
 
         keys.forEach(key -> System.out
-                .println(key.country + " " + key.city + " " + key.gender() + " Count: " + group.get(key).size()));
+                .println(key.country + " " + key.city + " " + key.getGender() + " Count: " + group.get(key).size()));
         System.out.println("\nDetailed Info:\n");
         keys.forEach(key -> {
-            System.out.print(key.country + " " + key.city + " " + key.gender() + ": ");
+            System.out.print(key.country + " " + key.city + " " + key.getGender() + ": ");
             group.get(key).stream().sorted().forEach(person -> System.out.print(person + ", "));
             System.out.println();
         });
