@@ -12,36 +12,32 @@ public class SortingPerformance {
     public static void main(String... args) {
         // This code is to show giving lambda expressions for Comparator is faster.
         // Also it shows parallel sort might be faster for large arrays.
-
+        Comparator<Long> longComparator = Comparator.naturalOrder();
         long[][] originalArray = new long[SIZE][], array;
         for (int i = 0; i < SIZE; i++)
             originalArray[i] = new long[]{(long) (Integer.MAX_VALUE * Math.sin(i)), 0};
 
         array = Arrays.copyOf(originalArray, originalArray.length);
-        Comparator<long[]> comparing = Comparator.comparing((long[] a) -> a[0]);
+        Comparator<long[]> comparing = Comparator.comparing(a -> a[0]);
         LocalTime startTime = LocalTime.now();
         Arrays.sort(array, comparing);
         System.out.printf("Duration for comparing: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
 
         array = Arrays.copyOf(originalArray, originalArray.length);
         startTime = LocalTime.now();
-        Arrays.sort(array, (x, y) -> Comparator.<Long>naturalOrder().compare(x[0], y[0]));
+        Arrays.sort(array, (x, y) -> longComparator.compare(x[0], y[0]));
         System.out.printf("Duration for natural order: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
 
         array = Arrays.copyOf(originalArray, originalArray.length);
         startTime = LocalTime.now();
-        Arrays.parallelSort(array, (x, y) -> {
-            long a = x[0], b = y[0];
+        Arrays.sort(array, (x, y) -> Long.compare(x[0], y[0]));
+        System.out.printf("Duration for Long.compare: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
 
-            if (a < b)
-                return -1;
-
-            if (a > b)
-                return 1;
-
-            return 0;
-        });
-        System.out.printf("Duration for lambda with parallel sort: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
+        array = Arrays.copyOf(originalArray, originalArray.length);
+        Comparator<long[]> comparingLong = Comparator.comparingLong(x -> x[0]);
+        startTime = LocalTime.now();
+        Arrays.sort(array, comparingLong);
+        System.out.printf("Duration for comparingLong: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
 
         array = Arrays.copyOf(originalArray, originalArray.length);
         startTime = LocalTime.now();
@@ -62,13 +58,27 @@ public class SortingPerformance {
 
         array = Arrays.copyOf(originalArray, originalArray.length);
         startTime = LocalTime.now();
-        Arrays.sort(array, (x, y) -> Long.compare(x[0], y[0]));
-        System.out.printf("Duration for Long.compare: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
+        Arrays.parallelSort(array, (x, y) -> {
+            long a = x[0], b = y[0];
+
+            if (a < b)
+                return -1;
+
+            if (a > b)
+                return 1;
+
+            return 0;
+        });
+        System.out.printf("Duration for lambda with parallel sort: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
 
         array = Arrays.copyOf(originalArray, originalArray.length);
-        Comparator<long[]> comparingLong = Comparator.comparingLong(x -> x[0]);
         startTime = LocalTime.now();
-        Arrays.sort(array, comparingLong);
-        System.out.printf("Duration for comparingLong: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
+        Arrays.parallelSort(array, (x, y) -> Long.compare(x[0], y[0]));
+        System.out.printf("Duration for Long.compare with parallel sort: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
+
+        array = Arrays.copyOf(originalArray, originalArray.length);
+        startTime = LocalTime.now();
+        Arrays.parallelSort(array, Comparator.comparingLong(x -> x[0]));
+        System.out.printf("Duration for comparingLong with parallel sort: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
     }
 }
