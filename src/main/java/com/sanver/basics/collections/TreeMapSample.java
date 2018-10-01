@@ -1,76 +1,98 @@
 package com.sanver.basics.collections;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 public class TreeMapSample {
 
     static class Person implements Comparable<Person> {
-        int id;
         String name;
         Boolean isMale;
         String country;
         String city;
 
-        public String gender() {
+        public String getName() {
+            return name;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public Person(String name, String country, String city, Boolean isMale) {
+            this.name = name;
+            this.isMale = isMale;
+            this.country = country;
+            this.city = city;
+        }
+
+        public String getGender() {
             return isMale ? "Male" : "Female";
         }
 
         @Override
         public String toString() {
-            return name + " " + country + " " + city;
+            return String.format("%-15s %-15s %-15s %-15s", country, city, name, getGender());
         }
 
         @Override
         public int compareTo(Person o2) {
             Person o1 = this;
-            Comparator<Person> comparator = Comparator.comparing((Person p) -> p.country == null ? "" : p.country)
-                    .thenComparing(p -> p.city == null ? "" : p.city).thenComparing(p -> p.name == null ? "" : p.name)
-                    .thenComparing(p -> p.gender());// If we do not check for null and replace for a not null value we
-            // get an error in runtime.
+            Comparator<String> stringComparator = Comparator.nullsFirst(String::compareToIgnoreCase); // To compare strings with null values
+            Comparator<Person> comparator = Comparator.comparing(Person::getCountry, stringComparator)
+                    .thenComparing(Person::getCity, stringComparator)
+                    .thenComparing(Person::getName, stringComparator)
+                    .thenComparing(Person::getGender);
             return comparator.compare(o1, o2);
         }
     }
 
     public static void main(String[] args) {
         Map<Person, Integer> hashMap = new HashMap<>();
-        Person ahmet = new Person() {
-            {
-                name = "Ahmet";
-                country = "Turkiye";
-                city = "Konya";
-                isMale = true;
-            }
-        };
-        Person mustafa = new Person() {
-            {
-                name = "Mustafa";
-                country = "England";
-                city = "London";
-                isMale = true;
-            }
-        };
-        Person zeynep = new Person() {
-            {
-                name = "Zeynep";
-                country = "Turkiye";
-                city = "Istanbul";
-                isMale = false;
-            }
-        };
+        Person ahmet = new Person("Ahmet", "Turkiye", "Konya", true);
+        Person mustafa = new Person("Mustafa", "England", "London", true);
+        Person zeynep = new Person("Zeynep", "Turkiye", "Istanbul", false);
+        Person deniz = new Person("Deniz", "Turkiye", "Konya", true);
+        Person denizFemale = new Person("Deniz", "Turkiye", "Konya", false);
+        Person nullPerson = new Person(null, null, null, false);
         hashMap.put(ahmet, 1);
         hashMap.put(mustafa, 2);
         hashMap.put(zeynep, 3);
+        hashMap.put(deniz, 4);
+        hashMap.put(denizFemale, 5);
+        hashMap.put(nullPerson, 6);
+
 
         Map<Person, Integer> treeMap = new TreeMap<>(hashMap);
-        System.out.println("Hashmap sorts by its keys' hashcodes (not sure about the algorithm) while TreeMap sorts by its keys\n");
+        System.out.println("Hashmap puts its elements based on their hash(o)^hash(o>>>16)&(capacity-1) while TreeMap sorts by its keys\n");
         System.out.println("HashMap output:\n");
-        hashMap.forEach((k, v) -> System.out.printf("%s %s %,d\n", v, k, k.hashCode()));
+        hashMap.forEach((k, v) -> System.out.printf("%d %s %s\n", v, k, "Hash value: " + getHash(hashMap, k)));
         System.out.println();
-        System.out.println("Tree output:\n");
+        System.out.println("Tree output: (Key is Person instance and it is sorted by country, city, name and then gender\n");
         treeMap.forEach((k, v) -> System.out.println(v + " " + k));
+    }
+
+    private static int getHash(Map<?, ?> map, Object o) {
+        try {
+            Field tableField = HashMap.class.getDeclaredField("table");
+            tableField.setAccessible(true);
+            Map.Entry[] table = (Map.Entry[]) tableField.get(map);
+            Method hash = HashMap.class.getDeclaredMethod("hash", Object.class);
+            hash.setAccessible(true);
+            int n = table == null ? 0 : table.length;
+            return (n - 1) & (int) hash.invoke(map, o);
+        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
