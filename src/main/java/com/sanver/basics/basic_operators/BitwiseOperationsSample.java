@@ -12,7 +12,6 @@ public class BitwiseOperationsSample {
         writeBinaryOfInt(12, "%d       : %s", 12 );
         writeBinaryOfInt(12, "%d <<  2 : %s", 12 << 2);
         writeBinaryOfInt(12, "%d >>  2 : %s", 12 >> 2);
-        writeBinaryOfInt(12, "%d >>  2 : %s", 12 >> 2);
         writeBinaryOfInt(12, "%d >>> 2 : %s", 12 >>> 2);
         int number = (int) -Math.pow(2, 31) + 320;
         writeBinaryOfInt(number, "%d       : %s", number);
