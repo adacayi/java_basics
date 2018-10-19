@@ -7,13 +7,13 @@ public class AggressiveMatching {
 
     public static void main(String... args) {
         String message = "abdullah.sanver.sancode.co.uk~~~";
-        String patternString = "[\\w.]+\\.\\w{2,6}"; // . inside bracket means . literally.
-        // But outside [] it means any character.
+        String patternString = "([\\w.]+?)\\.(\\w{2,})";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(message);
-        System.out.println(message);
         while (matcher.find()) {
-            System.out.println(matcher.group());
+            int groupCount = matcher.groupCount();
+            for (int i = 1; i <= groupCount; i++)
+                System.out.printf("%d group: %s\n", i, matcher.group(i));
         }
         System.out.printf("Is it a complete match: %s\n", matcher.matches() ? "Yes" : "No");
         System.out.printf("Is it a complete match: %s\n", message.matches(patternString) ? "Yes" : "No");
