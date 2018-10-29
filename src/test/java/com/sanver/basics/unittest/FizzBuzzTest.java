@@ -22,7 +22,7 @@ class FizzBuzzTest {
 
     @Test
     void should_ReturnEmpty_When_NonDivisibleByAny() {
-        Assertions.assertTrue(buzzer.fizzBuzz(2) == "",
+        Assertions.assertTrue(buzzer.fizzBuzz(2).equals(""),
                 "Numbers non divisible by 3 and 5 should return empty string.");
     }
 
@@ -38,12 +38,17 @@ class FizzBuzzTest {
                 () -> Assertions.assertEquals("fizz", buzzer.fizzBuzz(3)),
                 () -> Assertions.assertEquals("buzz", buzzer.fizzBuzz(5)),
                 () -> Assertions.assertEquals("fizz buzz", buzzer.fizzBuzz(15)));
-        Assertions.assertTrue(buzzer.fizzBuzz(2) == "",
+        Assertions.assertTrue(buzzer.fizzBuzz(2).equals(""),
                 "Numbers non divisible by 3 and 5 should return empty string.");
     }
 
     @Test
     void should_ThrowException_When_Negative() {
+        // For JUnit 4
+        // @Test(expected = IllegalArgumentException.class)
+        // void should_ThrowException_When_Negative() {
+        // buzzer.fizzBuzz(-1);
+        // }
         Assertions.assertThrows(IllegalArgumentException.class, () -> buzzer.fizzBuzz(-1),
                 "Negative numbers should throw an exception");
     }
