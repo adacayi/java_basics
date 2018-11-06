@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 public class RegexTester {
     public static void main(String... args) {
+        // Sample source: Selamunaleykum. This is a pattern which is used to test, test for ^ regex ^ patterns.
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.println("Enter text for source for regex");
             String text = scanner.nextLine();
@@ -21,9 +22,14 @@ public class RegexTester {
                 if (patternString.trim().isEmpty())
                     return;
 
-                pattern = Pattern.compile(patternString);
-                matcher = pattern.matcher(text);
-                groupCount = matcher.groupCount();
+                try {
+                    pattern = Pattern.compile(patternString);
+                    matcher = pattern.matcher(text);
+                    groupCount = matcher.groupCount();
+                } catch (Exception e) {
+                    System.out.println("Pattern is erronous.");
+                    continue;
+                }
                 index = 0;
                 while (matcher.find()) {
                     if (index == 0) {
