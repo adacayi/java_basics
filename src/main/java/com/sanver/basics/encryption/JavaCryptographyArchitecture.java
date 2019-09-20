@@ -1,9 +1,11 @@
 package com.sanver.basics.encryption;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.util.Base64;
 
 // Documentation http://tutorials.jenkov.com/java-cryptography/index.html
@@ -16,6 +18,7 @@ public class JavaCryptographyArchitecture {
     private final SecretKey key;
 
     public JavaCryptographyArchitecture() throws NoSuchAlgorithmException {
+        Security.addProvider(new BouncyCastleProvider());
         key = KeyGenerator.getInstance(AES).generateKey();
     }
 
