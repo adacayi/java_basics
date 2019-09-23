@@ -19,7 +19,9 @@ public class JavaCryptographyArchitecture {
 
     public JavaCryptographyArchitecture() throws NoSuchAlgorithmException {
         Security.addProvider(new BouncyCastleProvider());
-        key = KeyGenerator.getInstance(AES).generateKey();
+        var keyGenerator = KeyGenerator.getInstance(AES);
+        keyGenerator.init(256);
+        key = keyGenerator.generateKey();
     }
 
     public static void main(String[] args) throws IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException {
