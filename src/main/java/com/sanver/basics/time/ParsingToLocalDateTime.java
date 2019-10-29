@@ -6,9 +6,16 @@ import java.time.format.DateTimeFormatter;
 public class ParsingToLocalDateTime {
     public static void main(String... args) {
         String dateTimeString = "14-07-2018 16:24:03.032";
+        System.out.println("Date time string to be parsed: " + dateTimeString);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSS"); // YYYY does not work
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
-        System.out.println(dateTime);
+        System.out.println("LocalDateTime object parsed based on pattern dd-MM-yyyy HH:mm:ss.SSS: " + dateTime);
+        String isoFormattedDateTimeString = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String isoFormattedDateTimeString2 = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
+        System.out.println("Iso formatted string of LocalDateTime object:   " + isoFormattedDateTimeString);
+        System.out.println("Iso formatted string of LocalDateTime object:   " + isoFormattedDateTimeString2);
+        LocalDateTime isoFormattedDateTime = LocalDateTime.parse(isoFormattedDateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        System.out.println("LocalDateTime object from the above Iso string: " + isoFormattedDateTime);
         /*
         Symbol  Meaning                     Presentation      Examples
         ------  -------                     ------------      -------
