@@ -1,4 +1,4 @@
-package com.sanver.basics.stream_api;
+package com.sanver.basics.stream_api.legacy;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

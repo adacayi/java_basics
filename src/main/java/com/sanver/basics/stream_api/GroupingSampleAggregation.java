@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class GroupingSampleWithMultipleFields {
+public class GroupingSampleAggregation {
     private static int lastId = 0;
 
     static class Person {
@@ -86,21 +86,18 @@ public class GroupingSampleWithMultipleFields {
 
     public static void main(String[] args) {
         int personCount = 16;
-
         var people = IntStream.rangeClosed(1, personCount).mapToObj(x ->
                 new Person(Math.random() > 0.5 ? "Abdullah" : "Hatice", (int) (Math.random() * 90 + 1), Math.random() > 0.5 ? "Istanbul" : "Urfa"))
-                .sorted(Comparator.comparing((Person x) -> x.name).thenComparing(x -> x.city).thenComparing(x -> x.age)).collect(Collectors.toList());
-        System.out.println("People:\n");
+                .sorted(Comparator.comparing((Person x) -> x.name).thenComparing(x -> x.city)).collect(Collectors.toList());
+        System.out.println("People:");
 
         for (Person person : people) {
             System.out.println(person);
         }
-
-        System.out.println();
-
-        var group = people.stream().collect(Collectors.groupingBy(p -> new GroupKey(p.getName(), p.getCity())));
+        var group = people.stream().collect(Collectors.groupingBy(p -> new GroupKey(p.getName(), p.getCity()), Collectors.averagingDouble(x -> x.age)));
 
         System.out.println("Name city group:\n");
-        group.forEach((key, value) -> System.out.println(String.format("%-18s: %s", key.name +" " +key.city, value.stream().map(Person::toString).collect(Collectors.joining(", ")))));
+        group.forEach((key, value) -> System.out.println(String.format("%-18s Average age = %.2f", key.name + " " + key.city, value)));
+
     }
 }
