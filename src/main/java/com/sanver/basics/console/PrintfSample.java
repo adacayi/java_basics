@@ -12,7 +12,7 @@ public class PrintfSample {
         System.out.printf("% ,.2f \n", money);
         System.out.printf("% ,.2f \n", negativeMoney);
         // Java printf( ) Method Quick Reference
-        // System.out.printf( “format-string” [, arg1, arg2, … ] );
+        // System.out.printf( "format-string" [, arg1, arg2, ... ] );
         // Format String:
         // Composed of literals and format specifiers. Arguments are required only if
         // there are format specifiers in the

@@ -41,7 +41,7 @@ public class CollectorAggregation {
         System.out.println("Minimum age is "
                 + supplier.get().collect(Collectors.minBy(Comparator.comparing(Person::getAge))).
                 orElse(new Person("", 0)).age);
-        // This is shorter and you don’t need to define a Comparator
+        // This is shorter and you don't need to define a Comparator
         System.out.println("Minimum age is " + supplier.get().mapToInt(p -> p.age).min().orElse(0));
         System.out.println("Maximum age is "
                 + supplier.get().collect(Collectors.maxBy(Comparator.comparing(Person::getAge))).

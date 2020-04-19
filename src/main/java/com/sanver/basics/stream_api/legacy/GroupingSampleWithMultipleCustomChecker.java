@@ -21,7 +21,7 @@ public class GroupingSampleWithMultipleCustomChecker {
         name.put("Fatima", false);
         name.put("Hatice", false);
         name.put("Abdullah", true);
-        location.put("Türkiye", new String[]{"Istanbul", "Urfa", "Konya"});
+        location.put("Turkiye", new String[]{"Istanbul", "Urfa", "Konya"});
         location.put("England", new String[]{"London", "Cambridge", "Kent"});
     }
 

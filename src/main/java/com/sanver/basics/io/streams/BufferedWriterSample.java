@@ -10,7 +10,7 @@ public class BufferedWriterSample {
 
 	public static void main(String[] args) {
 		String fileName = "src/main/java/com/sanver/basics/io/streams/TrialOut.txt";
-		String message = "Ve aleykümselam.\nYou're welcome...";
+		String message = "Ve aleykumselam.\nYou're welcome...";
 
 		try (FileOutputStream stream = new FileOutputStream(fileName);
 				OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stream, "Windows-1254");
