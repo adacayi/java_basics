@@ -1,4 +1,4 @@
-package com.sanver.basics.modelmapper;
+package com.sanver.basics.modelmapper.flattening;
 
 import org.modelmapper.ModelMapper;
 
@@ -7,7 +7,6 @@ public class ModelMapperConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
         modelMapper.getConfiguration().setFieldMatchingEnabled(true);
-
         return modelMapper;
     }
 }

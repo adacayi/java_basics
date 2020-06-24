@@ -1,9 +1,8 @@
 package com.sanver.basics.modelmapper.flattening;
 
-import com.sanver.basics.modelmapper.ModelMapperConfig;
 import org.modelmapper.ModelMapper;
 
-public class ModelMapperUsage {
+public class ModelMapperFlatteningUsage {
     public static void main(String[] args) {
         Customer customer = new Customer("Abdullah");
         Address address1 = new Address("First street", "First city");
