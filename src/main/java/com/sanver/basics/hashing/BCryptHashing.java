@@ -29,8 +29,8 @@ public class BCryptHashing {
             System.out.print("Enter message to be hashed: ");
             String message = scanner.nextLine();
             var hashed = hash(message);
-            System.out.printf("Hashed form: %s", hashed);
-            System.out.println("Enter text to compare: ");
+            System.out.printf("Hashed form: %s\n", hashed);
+            System.out.print("Enter text to compare: ");
             String other = scanner.nextLine();
 
             if (getEncoder().matches(other, hashed)) { // Comparing raw text to a previously hashed text
