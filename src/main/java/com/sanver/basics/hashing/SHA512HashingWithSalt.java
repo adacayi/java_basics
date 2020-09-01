@@ -29,8 +29,8 @@ public class SHA512HashingWithSalt {
     }
 
     public static void main(String... args) {
-        // BCrypt is recommended for hashing, since it is slower to implement, hence more prone to hacking. Spring
-        // uses it.
+        // BCrypt is recommended for hashing passwords, since it is slower to implement, hence more prone to hacking.
+        // Spring uses it. SHA512 is fast to implement, hence best to be used to check data integrity.
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.print("Enter message to be hashed: ");
             String message = scanner.nextLine();
