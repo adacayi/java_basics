@@ -33,6 +33,12 @@
         </plugins>
     </build>
     <dependencies>
+        <dependency> <!-- This dependency is added only for BCrypt encryption example -->
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.3.4.RELEASE</version>
+        </dependency>
+
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
