@@ -2,12 +2,15 @@ package com.sanver.basics.concurrent_collections;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-//https://www.baeldung.com/java-copy-on-write-arraylist
-//The design of the CopyOnWriteArrayList uses an interesting technique to make it thread-safe without a need for
-// synchronization. When we are using any of the modify methods – such as add() or remove() – the whole content of
-// the CopyOnWriteArrayList is copied into the new internal copy.
-//
-//Due to this simple fact, we can iterate over the list in a safe way, even when concurrent modification is happening.
+// https://www.baeldung.com/java-copy-on-write-arraylist
+// This is a thread safe list, which multiple threads can access in the same time,
+// which cannot be done with synchronized list, where only one thread can access it at a time.
+// This is achieved by putting locks on different segments.
+// Also, the design of the CopyOnWriteArrayList uses an interesting technique to make it thread-safe without a need
+// for synchronization. When we are using any of the modify methods – such as add() or remove() – the whole content
+// of the CopyOnWriteArrayList is copied into the new internal copy.
+// Due to this simple fact, we can iterate over the list in a safe way, even when concurrent modification is happening.
+// This makes this more performant on cases where we do less modifying and more reading.
 public class CopyOnWriteArrayListSample {
 
   public static void main(String[] args) {
