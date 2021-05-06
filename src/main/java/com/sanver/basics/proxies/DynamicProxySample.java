@@ -1,7 +1,6 @@
 package com.sanver.basics.proxies;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,38 +23,32 @@ public class DynamicProxySample {
     var target = new HashMap<String, String>();
     var proxyInstance = (Map<String, String>) Proxy.newProxyInstance(DynamicProxySample.class.getClassLoader(),
         new Class[]{Map.class},
-        new DynamicInvocationHandler(target));
+        invocationHandler(target));
     proxyInstance.put("key", "value");
     System.out.println(proxyInstance.get("key"));
   }
-}
 
-class DynamicInvocationHandler implements InvocationHandler {
+  private static InvocationHandler invocationHandler(Object target) {
+    return (proxy, method, args) -> {
+      var startTime = LocalDateTime.now();
+      System.out.printf("Execution of %s started: %s\n",
+          method.getName(),
+          startTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
 
-  private Object target;
-  private Map<String, Method> methods = new HashMap<>();
+      var result = method.invoke(target, args);
 
-  public DynamicInvocationHandler(Object target) {
-    this.target = target;
+      var endTime = LocalDateTime.now();
+      System.out.printf("Execution of %s ended: %s\n",
+          method.getName(),
+          endTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
 
-    for (var method : target.getClass().getDeclaredMethods()) {
-      methods.put(method.getName(), method);
-    }
-  }
+      var duration = Duration.between(startTime, endTime);
+      System.out.printf("Time elapsed is %02d:%03d\n", duration.getSeconds(), duration.getNano() / 1000000);
 
-  @Override
-  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-    var startTime = LocalDateTime.now();
-    System.out.printf("Execution of %s started: %s\n",
-        method.getName(),
-        startTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
-    var result = methods.get(method.getName()).invoke(target, args);
-    var endTime = LocalDateTime.now();
-    System.out.printf("Execution of %s ended: %s\n",
-        method.getName(),
-        endTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
-    var duration = Duration.between(startTime, endTime);
-    System.out.printf("Time elapsed is %02d:%03d\n", duration.getSeconds(), duration.getNano() / 1000000);
-    return result;
+      return result;
+    };
   }
 }
+
+
+
