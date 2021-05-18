@@ -1,0 +1,32 @@
+package com.sanver.basics.threads.completable_future.chaining;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class ThenAcceptBoth {
+
+  public static void main(String[] args) throws ExecutionException, InterruptedException {
+    var completableFuture1 = CompletableFuture.supplyAsync(() -> {
+      sleep(3000);
+      return List.of(3, 5, 7);
+    });
+    var completableFuture2 = CompletableFuture.supplyAsync(() -> new ArrayList<>(List.of(2, 4, 6)));
+    var future = completableFuture1.thenAcceptBoth(completableFuture2,
+        (r1, r2) -> {
+          r2.addAll(r1);
+          System.out.println(r2);
+        });
+    var result = future.get();
+    System.out.printf("The get method's return value: %s\n", result);
+  }
+
+  private static void sleep(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+}
