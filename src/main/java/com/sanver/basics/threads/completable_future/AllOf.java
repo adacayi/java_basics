@@ -1,5 +1,7 @@
 package com.sanver.basics.threads.completable_future;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -32,13 +34,5 @@ public class AllOf {
     var completableFuture3 = CompletableFuture.runAsync(getPrimeNumbers);
     var combined=CompletableFuture.allOf(completableFuture1, completableFuture2, completableFuture3);
     combined.get();
-  }
-
-  private static void sleep(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 }

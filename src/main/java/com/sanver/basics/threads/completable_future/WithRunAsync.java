@@ -1,5 +1,7 @@
 package com.sanver.basics.threads.completable_future;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -32,13 +34,5 @@ public class WithRunAsync {
     System.out.println("completableFuture's get method is called");
     var results = completableFuture.get();
     System.out.printf("The get method's return value: %s\n", results);
-  }
-
-  private static void sleep(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 }

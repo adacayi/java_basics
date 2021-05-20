@@ -1,15 +1,13 @@
 package com.sanver.basics.threads;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 public class DaemonSample {
     public static void main(String... args) {
         Thread counter = new Thread(() -> {
             for (int i = 0; i < 100; i++) {
                 System.out.printf("%d ", i);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                sleep(100);
             }
         });
         counter.setDaemon(true); // Marks this thread as either a daemon thread or a user thread.

@@ -1,5 +1,7 @@
 package com.sanver.basics.threads;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,8 +25,7 @@ public class ExecutorServiceWithCallableSample {
 
 			int[] result = (int[]) value;
 
-			Thread.sleep(3000);// This is put to show that Future.get() method waits for the call method to
-								// finish
+			sleep(3000);// This is put to show that Future.get() method waits for the call method to finish
 
 			for (int i = 0; i < 10000; i++, result[0]++)
 				;
@@ -37,14 +38,12 @@ public class ExecutorServiceWithCallableSample {
 		int[] value = new int[1];
 		ExecutorServiceWithCallableSample sample = new ExecutorServiceWithCallableSample();
 		ExecutorService service = Executors.newFixedThreadPool(10);
-		Future<int[]> future = service.submit(sample.new Increment<int[]>(value));
+		Future<int[]> future = service.submit(sample.new Increment<>(value));
 		
 		try {
 			System.out.println(future.get()[0]);
 			System.out.println(value[0]);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
 

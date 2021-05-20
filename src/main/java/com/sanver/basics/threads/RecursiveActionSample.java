@@ -1,5 +1,7 @@
 package com.sanver.basics.threads;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.concurrent.ForkJoinPool;
@@ -24,11 +26,7 @@ class ArrayReader<T> extends RecursiveAction {
 
 	protected void compute() {
 		if (high - low <= MAX) {// This if statement is the part where the divided job is executed.
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			sleep(1000);
 			synchronized (lock) {// If we did not include this synchronisation then the writings would be mixed.
 				System.out.printf("Writing %d-%d: ", low, high);
 				for (int i = low; i < high; i++)

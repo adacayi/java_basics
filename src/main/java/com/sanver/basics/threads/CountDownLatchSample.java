@@ -1,10 +1,12 @@
 package com.sanver.basics.threads;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.concurrent.CountDownLatch;
 
 public class CountDownLatchSample {
 
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) {
     var count = 3;
     var countDownLatch = new CountDownLatch(count);
     var thread1 = new Thread(() -> {
@@ -20,7 +22,7 @@ public class CountDownLatchSample {
     thread1.start();
 
     for (int i = 0; i < count; i++) {
-      Thread.sleep(3000);
+      sleep(3000);
       countDownLatch.countDown();
       System.out.println("Count down " + countDownLatch.getCount());
     }

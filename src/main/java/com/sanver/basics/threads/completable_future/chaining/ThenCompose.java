@@ -1,5 +1,7 @@
 package com.sanver.basics.threads.completable_future.chaining;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -19,13 +21,5 @@ public class ThenCompose {
         x.size())));
     var result = future.get();
     System.out.printf("The get method's return value: %s\n", result);
-  }
-
-  private static void sleep(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 }

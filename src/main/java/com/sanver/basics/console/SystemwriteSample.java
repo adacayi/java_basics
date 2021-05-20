@@ -1,5 +1,7 @@
 package com.sanver.basics.console;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.io.IOException;
 
 public class SystemwriteSample {
@@ -7,14 +9,12 @@ public class SystemwriteSample {
 	public static void main(String[] args) {
 		char c = 66;
 		int i = c;
+
 		System.out.write(i);
 		System.out.write(c);
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+		sleep(3000);
 		System.out.flush();// Without this it will not write to console
+
 		try {
 			System.out.write("\nSelamunaleykum".getBytes());
 		} catch (IOException e) {

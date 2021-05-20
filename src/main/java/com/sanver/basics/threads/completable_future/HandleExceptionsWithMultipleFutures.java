@@ -1,5 +1,7 @@
 package com.sanver.basics.threads.completable_future;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,13 +48,5 @@ public class HandleExceptionsWithMultipleFutures {
     // All futures are executed regardless of some of them throwing exceptions.
     // When get method is called, it throws ExecutionException only wrapping the first exception.
     combined.get();
-  }
-
-  private static void sleep(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 }

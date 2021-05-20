@@ -1,5 +1,7 @@
 package com.sanver.basics.threads.completable_future;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -46,13 +48,5 @@ public class HandleExceptionsWithMultipleFuturesAndExecutor {
     // Note that there is a difference in behavior to timeout for error handling with executors,
     // because for timeout new threads are not executed when timeout occurs, but it is not the case with exceptions
     combined.get();
-  }
-
-  private static void sleep(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 }

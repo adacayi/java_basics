@@ -1,5 +1,7 @@
 package com.sanver.basics.threads.completable_future;
 
+import static com.sanver.basics.utils.ThreadUtils.sleep;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -43,13 +45,5 @@ public class TimeoutSample {
     // We can see that even if we get a timeout, the runnables are executed completely if the main thread is still
     // alive.
     sleep(10000);
-  }
-
-  private static void sleep(long millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
   }
 }
