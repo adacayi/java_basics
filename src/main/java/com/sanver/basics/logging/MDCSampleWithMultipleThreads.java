@@ -14,6 +14,7 @@ public class MDCSampleWithMultipleThreads {
 
   public static void main(String[] args) throws ExecutionException, InterruptedException {
     // To output the value in MDC we put %X{userName} in the pattern in the logback.xml
+    // https://www.baeldung.com/mdc-in-log4j-2-logback
     var logger = LoggerFactory.getLogger(MDCSampleWithMultipleThreads.class);
     MDC.put("userName", "main thread user");
     Function<Integer, Runnable> userLogger = x -> () -> {

@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 public class AllOf {
 
   public static void main(String[] args) throws ExecutionException, InterruptedException {
+    // https://www.baeldung.com/java-completablefuture
     Runnable getPrimeNumbers = () -> {
       var results = new ArrayList<>(List.of(2));
       int i, j;
