@@ -16,10 +16,16 @@ public class AtomicReferenceSample {
   private static final AtomicReference<IntValue> ATOMIC_REFERENCE = new AtomicReference<>(new IntValue(0));
   private static final CountDownLatch COUNT_DOWN_LATCH = new CountDownLatch(THREAD_COUNT);
 
-  @Value
   static class IntValue {
+    private int value;
 
-    int value;
+    public IntValue(int value) {
+      this.value = value;
+    }
+
+    public int getValue() {
+      return value;
+    }
   }
 
   public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -44,6 +50,8 @@ public class AtomicReferenceSample {
       while (!incremented) {
         var existingValue = value.get();
         var newValue = new IntValue(existingValue.getValue() + 1);
+        // This will try to set the AtomicReference value to the new value, if the current value is the same object
+        // (not equals) i.e. existingValue object. If that is the case it will return true else false.
         incremented = value.compareAndSet(existingValue, newValue);
       }
     }
