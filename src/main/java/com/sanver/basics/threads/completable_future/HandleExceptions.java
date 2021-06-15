@@ -1,6 +1,6 @@
 package com.sanver.basics.threads.completable_future;
 
-import static com.sanver.basics.utils.ThreadUtils.sleep;
+import static com.sanver.basics.utils.Utils.sleep;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

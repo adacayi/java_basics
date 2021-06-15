@@ -1,6 +1,6 @@
 package com.sanver.basics.threads;
 
-import static com.sanver.basics.utils.ThreadUtils.sleep;
+import static com.sanver.basics.utils.Utils.sleep;
 
 public class ThreadWithLambda {
 

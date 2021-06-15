@@ -1,13 +1,12 @@
 package com.sanver.basics.threads.completable_future;
 
-import static com.sanver.basics.utils.ThreadUtils.sleep;
+import static com.sanver.basics.utils.Utils.sleep;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 public class WithRunAsyncWithExecutorService {
 

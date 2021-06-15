@@ -1,6 +1,6 @@
 package com.sanver.basics.concurrent_collections;
 
-import static com.sanver.basics.utils.ThreadUtils.sleep;
+import static com.sanver.basics.utils.Utils.sleep;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

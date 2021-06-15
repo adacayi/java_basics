@@ -1,6 +1,6 @@
 package com.sanver.basics.console;
 
-import static com.sanver.basics.utils.ThreadUtils.sleep;
+import static com.sanver.basics.utils.Utils.sleep;
 
 import java.io.IOException;
 

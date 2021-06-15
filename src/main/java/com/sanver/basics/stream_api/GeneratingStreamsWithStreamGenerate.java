@@ -1,6 +1,6 @@
 package com.sanver.basics.stream_api;
 
-import static com.sanver.basics.utils.ThreadUtils.sleep;
+import static com.sanver.basics.utils.Utils.sleep;
 
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
