@@ -12,7 +12,7 @@ public class HandleExceptions {
   public static void main(String[] args) throws ExecutionException, InterruptedException {
     Supplier<String> supplierWithException = () -> {
       sleep(3000);
-      throw new RuntimeException("Some error occurred");
+      throw new RuntimeException("Some exception message");
     };
 
     Supplier<List<Integer>> supplier = () -> {
@@ -22,10 +22,10 @@ public class HandleExceptions {
 
     var completableFutureWithException = CompletableFuture
         .supplyAsync(supplierWithException)
-        .handle((s, t) -> t == null ? s : "Some error occurred");
+        .handle((s, t) -> t == null ? s : "Some error occurred 1");
     var completableFutureWithoutException = CompletableFuture
         .supplyAsync(supplier)
-        .handle((s, t) -> t == null ? s : "Some error occurred");
+        .handle((s, t) -> t == null ? s : "Some error occurred 2");
     var exceptionResult = completableFutureWithException.get();
     var result = completableFutureWithoutException.get();
     System.out.println(exceptionResult);

@@ -15,11 +15,11 @@ public class HandleExceptionsWithMultipleFutures {
   public static void main(String[] args) throws ExecutionException, InterruptedException {
     Supplier<String> supplier = () -> {
       var id = idCount.addAndGet(1);
-      System.out.printf("%d: started. Thread: %d\n", id, Thread.currentThread().getId());
+      System.out.printf("%d: started. Thread: %d%n", id, Thread.currentThread().getId());
       if (id == 2 || id == 3) {
         throw new RuntimeException(String.format("Some error occurred in thread %d", Thread.currentThread().getId()));
       }
-      System.out.printf("%d: completed. Thread: %d\n", id, Thread.currentThread().getId());
+      System.out.printf("%d: completed. Thread: %d%n", id, Thread.currentThread().getId());
       return "completed";
     };
 
@@ -30,10 +30,16 @@ public class HandleExceptionsWithMultipleFutures {
     var future4 = CompletableFuture.supplyAsync(supplier);
     var future5 = CompletableFuture.supplyAsync(supplier);
 
-    var combined = CompletableFuture.allOf(future1, future2, future3, future4,future5);
+    var combined = CompletableFuture.allOf(future1, future2, future3, future4, future5);
 
-    combined.handle(
+    // Note that handle is executed only once and s parameter will be null and t parameter will be either null
+    // (if there is no exception in any of the futures) or will be the first exception thrown from one of the futures.
+    // All futures are executed regardless of some of them throwing exceptions.
+    // handle and thenAccept are executed after all completable futures are executed (regardless of them throwing exceptions).
+
+    var finalCompletable = combined.handle(
         (s, t) -> {
+          sleep(5000);
           if (t == null) {
             System.out.println("No error occurred. Return value is " + s);
             count.addAndGet(1);
@@ -41,12 +47,18 @@ public class HandleExceptionsWithMultipleFutures {
           }
           System.out.println("Error occurred: " + t);
           return count.addAndGet(1);
-        }).thenAccept(x -> System.out.println("The return value is " + x)).get();
+        }).thenAccept(x -> {
+      sleep(5000);
+      System.out.println("The return value is " + x);
+    });
 
-    // Note that handle is executed only once and s parameter will be null and t parameter will be either null
-    // (if there is no exception in any of the futures) or will be the first exception thrown from one of the futures.
-    // All futures are executed regardless of some of them throwing exceptions.
     // When get method is called, it throws ExecutionException only wrapping the first exception.
+    // Note that even get is called from the combined object (not from finalCompletable object),
+    // it will wait for handle and thenAccept methods to finish.
+
     combined.get();
+
+    // If finalCompletable.get() was called here instead of combined.get(), then no exception would be thrown
+//    finalCompletable.get();
   }
 }
