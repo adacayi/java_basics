@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 public class PathSample {
 
     public static void main(String[] args) {
+        //combining strings to a path
+        var basePath = Paths.get("src", "main", "java", "com", "sanver", "basics", "nio");
         String baseDirectory = "src/main/java/com/sanver/basics/nio/";
         // These also work
         // "./src/main/java/com/sanver/basics/nio/"
