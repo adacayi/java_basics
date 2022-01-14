@@ -1,4 +1,4 @@
-package com.sanver.basics.threads;
+package com.sanver.basics.threads.executors;
 
 import static com.sanver.basics.utils.Utils.sleep;
 
