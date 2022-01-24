@@ -2,8 +2,10 @@ package com.sanver.basics.threads.executors;
 
 import static com.sanver.basics.utils.Utils.sleep;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+@Slf4j
 public class ThreadPoolTaskExecutorSample {
 
   public static void main(String[] args) {
@@ -11,8 +13,10 @@ public class ThreadPoolTaskExecutorSample {
     // by setting up the values for the instance variables like
     // corePoolSize, maxPoolSize, keepAliveSeconds, queueCapacity and exposing it as a Spring TaskExecutor.
     var executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(2);
-    executor.setMaxPoolSize(2);
+    // This will set thread name prefix, which can be seen in the logs
+    executor.setThreadNamePrefix("Thread pool sample threads - ");
+    executor.setCorePoolSize(2); // For detailed examples look into ThreadPoolTaskExecutorPropertiesSample class
+    executor.setMaxPoolSize(2); // For detailed examples look into ThreadPoolTaskExecutorPropertiesSample class
     executor.initialize();
 
     for (int i = 0; i < 5; i++) {
@@ -22,9 +26,9 @@ public class ThreadPoolTaskExecutorSample {
 
   public static Runnable getRunnable(int i) {
     return () -> {
-      System.out.println("Running process " + i);
+      log.info("Running process {}", i);
       sleep(3000);
-      System.out.printf("Process %s finished\n", i);
+      log.info("Process %s finished {}", i);
     };
   }
 }
