@@ -11,12 +11,13 @@ public class ThreadPoolTaskExecutorSample {
     // by setting up the values for the instance variables like
     // corePoolSize, maxPoolSize, keepAliveSeconds, queueCapacity and exposing it as a Spring TaskExecutor.
     var executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(1);
-    executor.setMaxPoolSize(1);
+    executor.setCorePoolSize(2);
+    executor.setMaxPoolSize(2);
     executor.initialize();
 
-    executor.execute(getRunnable(1));
-    executor.execute(getRunnable(2));
+    for (int i = 0; i < 5; i++) {
+      executor.execute(getRunnable(i));
+    }
   }
 
   public static Runnable getRunnable(int i) {
