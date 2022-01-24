@@ -33,6 +33,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
 
     corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity();
     corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity();
+    corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity();
     corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity();
     corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity();
     noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity();
@@ -70,6 +71,25 @@ public class ThreadPoolTaskExecutorPropertiesSample {
       Assert.isTrue(executor.getPoolSize() == QUEUE_CAPACITY);
     }
     System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
+  }
+
+  private static void corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity() {
+    System.out.println(
+        "Running corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
+    var executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(CORE_POOL_SIZE);
+    executor.setQueueCapacity(QUEUE_CAPACITY);
+    // This will set maxPoolSize as unbound
+    executor.initialize();
+
+    var countDownLatch = new CountDownLatch(QUEUE_CAPACITY);
+
+    executeThreads(executor, countDownLatch, QUEUE_CAPACITY);
+    while (countDownLatch.getCount() > 0) {
+      Assert.isTrue(executor.getPoolSize() == CORE_POOL_SIZE);
+    }
+    System.out.println(
+        "Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
   }
 
   private static void corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity() {
@@ -141,6 +161,14 @@ public class ThreadPoolTaskExecutorPropertiesSample {
 
   public static void executeThreads(ThreadPoolTaskExecutor executor, CountDownLatch countDownLatch) {
     for (int i = 0; i < NUMBER_OF_OPERATIONS; i++) {
+      executor.execute(getRunnable(i + 1, countDownLatch));
+    }
+  }
+
+  public static void executeThreads(ThreadPoolTaskExecutor executor,
+      CountDownLatch countDownLatch,
+      int numberOfOperations) {
+    for (int i = 0; i < numberOfOperations; i++) {
       executor.execute(getRunnable(i + 1, countDownLatch));
     }
   }
