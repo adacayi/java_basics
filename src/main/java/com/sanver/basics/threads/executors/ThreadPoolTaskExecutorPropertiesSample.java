@@ -3,9 +3,11 @@ package com.sanver.basics.threads.executors;
 import static com.sanver.basics.utils.Utils.sleep;
 
 import java.util.concurrent.CountDownLatch;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+@Slf4j
 public class ThreadPoolTaskExecutorPropertiesSample {
 
   private static final int NUMBER_OF_OPERATIONS = 10;
@@ -41,7 +43,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
   }
 
   private static void corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity() {
-    System.out.println("Running corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
+    log.info("Running corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
     var executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(CORE_POOL_SIZE);
     // This will set maxPoolSize and queueCapacity to unbound
@@ -53,11 +55,11 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     while (countDownLatch.getCount() > 0) {
       Assert.isTrue(executor.getPoolSize() == CORE_POOL_SIZE);
     }
-    System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
+    log.info("Finished corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
   }
 
   private static void corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity() {
-    System.out.println("Running corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
+    log.info("Running corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
     var executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(CORE_POOL_SIZE);
     executor.setQueueCapacity(QUEUE_CAPACITY);
@@ -70,11 +72,11 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     while (countDownLatch.getCount() > 0) {
       Assert.isTrue(executor.getPoolSize() == QUEUE_CAPACITY);
     }
-    System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
+    log.info("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
   }
 
   private static void corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity() {
-    System.out.println(
+    log.info(
         "Running corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
     var executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(CORE_POOL_SIZE);
@@ -88,12 +90,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     while (countDownLatch.getCount() > 0) {
       Assert.isTrue(executor.getPoolSize() == CORE_POOL_SIZE);
     }
-    System.out.println(
+    log.info(
         "Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
   }
 
   private static void corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity() {
-    System.out.println("Running corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
+    log.info("Running corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
     var executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(CORE_POOL_SIZE);
     executor.setQueueCapacity(QUEUE_CAPACITY);
@@ -106,11 +108,11 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     while (countDownLatch.getCount() > 0) {
       Assert.isTrue(executor.getPoolSize() == QUEUE_CAPACITY);
     }
-    System.out.println("Finished corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
+    log.info("Finished corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
   }
 
   private static void corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
-    System.out.println("Running corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+    log.info("Running corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
     var executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(CORE_POOL_SIZE);
     executor.setMaxPoolSize(MAX_POOL_SIZE);
@@ -123,11 +125,11 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     while (countDownLatch.getCount() > 0) {
       Assert.isTrue(executor.getPoolSize() == CORE_POOL_SIZE);
     }
-    System.out.println("Finished corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+    log.info("Finished corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
   }
 
   private static void noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
-    System.out.println("Running noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+    log.info("Running noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
     var executor = new ThreadPoolTaskExecutor();
     executor.setMaxPoolSize(MAX_POOL_SIZE);
     // This will set queueCapacity as unbound and core pool size to 1
@@ -139,11 +141,11 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     while (countDownLatch.getCount() > 0) {
       Assert.isTrue(executor.getPoolSize() == 1);
     }
-    System.out.println("Finished noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+    log.info("Finished noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
   }
 
   private static void fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize() {
-    System.out.println("Running fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
+    log.info("Running fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
     var executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(CORE_POOL_SIZE);
     executor.setMaxPoolSize(CORE_POOL_SIZE);
@@ -156,7 +158,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     while (countDownLatch.getCount() > 0) {
       Assert.isTrue(executor.getPoolSize() == CORE_POOL_SIZE);
     }
-    System.out.println("Finished fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
+    log.info("Finished fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
   }
 
   public static void executeThreads(ThreadPoolTaskExecutor executor, CountDownLatch countDownLatch) {
@@ -175,9 +177,9 @@ public class ThreadPoolTaskExecutorPropertiesSample {
 
   public static Runnable getRunnable(int i, CountDownLatch countDownLatch) {
     return () -> {
-      System.out.println("Running process " + i);
+      log.info("Running process {}" , i);
       sleep(1000);
-      System.out.printf("Process %s finished\n", i);
+      log.info("Process {} finished", i);
       countDownLatch.countDown();
     };
   }

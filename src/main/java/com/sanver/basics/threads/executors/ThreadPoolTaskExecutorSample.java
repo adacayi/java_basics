@@ -28,7 +28,7 @@ public class ThreadPoolTaskExecutorSample {
     return () -> {
       log.info("Running process {}", i);
       sleep(3000);
-      log.info("Process %s finished {}", i);
+      log.info("Process {} finished", i);
     };
   }
 }
