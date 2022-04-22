@@ -1,6 +1,6 @@
 package com.sanver.basics.generics;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
 import lombok.ToString;
 
@@ -33,41 +33,31 @@ public class GenericsWithLowerBound {
   }
 
   public static void main(String[] args) {
-    var list1 = addValue(new ArrayList<>(List.of(new Object())), new B());
-    var list2 = addValue(new ArrayList<>(List.of(new A())), new B());
-//    var list3 = addValue(new ArrayList<>(List.of(new Object())), new Object()); These won't compile
-//    var list4 = addValue(new ArrayList<>(List.of(new A())), new A());
-//    var list5 = addValue(new ArrayList<>(List.of(new B())), new A());
-    var list6 = addValue(new ArrayList<>(List.of(new B())), new B());
-    var list7 = addValue(new ArrayList<>(List.of(new C())), new B());
-    var list8 = addValue(new ArrayList<>(List.of(new Object())), new C());
-    var list9 = addValue(new ArrayList<>(List.of(new A())), new C());
-    var list10 = addValue(new ArrayList<>(List.of(new B())), new C());
-    var list11 = addValue(new ArrayList<>(List.of(new C())), new C());
-    var list12 = addValue(new ArrayList<>(List.of(new String("Some String"))), new C());
-    System.out.println(list1);
-    System.out.println(list2);
-    System.out.println(list6);
-    System.out.println(list7);
-    System.out.println(list8);
-    System.out.println(list9);
-    System.out.println(list10);
-    System.out.println(list11);
-    System.out.println(list12);
-    List<? super B> list13 = List.of("Another string", new Object());
-    //list13.add(new Object()); Although list13 has object element we can't call add with an object instance since the method can only take B or its subclasses
-    // to be able to compile for all List<? super B> i.e. List<B>, List<A> and List<Object>
+    List<? super B> list1 = List.of("Another string", new A(), new File(""), new Object()); // We can put anything here
+    list1.add(new B());
+    list1.add(new C());
+    //list1.add(new Object());
+    //list1.add(new A());
+    // Although list1 has A and Object elements we can't call add with an A instance or Object instance
+    // since what we add should be able to be added to all lists with super types of B, i.e. they need to be able to
+    // be added to List<B>, List<A> and List<Object>. This is satisfied only by B or subclasses of B.
+
+    addValue(list1, new C());
   }
 
-  public static <T extends B> List<? super B> addValue(List<? super B> list, T value) {
-    list.add(value);
-    list.add(new C());
+  public static <T extends B> void addValue(List<? super B> list, T value) {
+    var element = list.get(0); // The element will be inferred as an instance of an Object.
+    list.add(value);// Instead of List<? super B> list in the parameters, if we declared it as List<? extends B>
+    // this line won't compile, because the list sent might be List<C> but the value can be an instance of B
+    list.add(new C());// Instead of List<? super B> list in the parameters, if we declared it as List<? extends B>
+    // this line won't compile, because the list sent might be List<D> where D also extends B,
+    // but C might not necessarily be an instance of D
+
 //    list.add(new A()); This won't compile, assume the list is of type List<B>, the add method won't accept A, but
 //    it will accept B or C instances
 //    list.add(new Object()); This won't compile, assume the list is of type List<B>, the add method won't accept
 //    object, but it will accept B or C instance
     // In short list methods should work for all super types of B List<B> List<A> and List<Object>.
     // So value cannot be an instance of A or Object, since these can't be added to List<B>.
-    return list;
   }
 }
