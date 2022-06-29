@@ -9,16 +9,17 @@ import java.util.concurrent.ExecutionException;
 public class ThenCompose {
 
   public static void main(String[] args) throws ExecutionException, InterruptedException {
-    //    The thenCompose() method is similar to thenApply().
-    //    However, thenCompose() will flatten and return a Future rather than a nested future in thenApply().
-    //    So if the idea is to chain CompletableFuture methods then it’s better to use thenCompose().
+    //    The thenCompose() method is used for combining completable futures.
+    //    If thenApply is used instead, we end up
+    //    with nested CompletableFuture<CompletableFuture<>> instances
     var completableFuture = CompletableFuture.supplyAsync(() -> {
       sleep(3000);
       return List.of(3, 5, 6);
     });
     var future = completableFuture.thenCompose(x -> CompletableFuture.supplyAsync(() -> String.format(
         "Size of the result is %d\n",
-        x.size())));
+        x.size()))); // If we used thenApply here instead of thenCompose, the returned value will be
+    // CompletableFuture<CompletableFuture<String>>
     var result = future.get();
     System.out.printf("The get method's return value: %s\n", result);
   }
