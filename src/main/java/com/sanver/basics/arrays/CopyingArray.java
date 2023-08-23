@@ -1,17 +1,13 @@
 package com.sanver.basics.arrays;
 
-import lombok.Value;
+import com.google.gson.Gson;
+import lombok.Data;
+import lombok.NonNull;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class CopyingArray {
-    @Value
-    static class Person{
-        String name;
-        int age;
-    }
-
     public static void main(String[] args) {
         int[] a, b = {3, 2, 1};
         int[][] b1 = {{0, 1, 3}, {2, 4}, {5, 2}};
@@ -36,18 +32,23 @@ public class CopyingArray {
         var people = new Person[][][]{{{new Person("John", 22), new Person("Ashley", 25)}}};
         var copyPeople = arrayDeepCopyOf(people, people.length);
         printArrays(people, copyPeople);
+        people[0][0][0].setAge(40);
+        printArrays(people, copyPeople);
+        var copyPeople2 = deepCopy(people); // As can be seen this deepCopy method can be used instead of arrayDeepCopy and it is not specific to arrays
+        // One advantage of this over using ObjectMapper is, it doesn't require objects to have default constructors.
+        // https://www.baeldung.com/java-deep-copy
+        people[0][0][0].setAge(80);
+        printArrays(people, copyPeople2);
     }
 
-    private static <T,S> void printArrays(T[] first, S[] second) {
+    private static <T, S> void printArrays(T[] first, S[] second) {
         System.out.println(Arrays.deepToString(first));
         System.out.println(Arrays.deepToString(second));
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T[] arrayDeepCopyOf(T[] original, int newLength) {
-        T[] copy = (original.getClass()== Object[].class)
-                ? (T[]) new Object[newLength]
-                : (T[]) Array.newInstance(original.getClass().getComponentType(), newLength);
+        T[] copy = (original.getClass() == Object[].class) ? (T[]) new Object[newLength] : (T[]) Array.newInstance(original.getClass().getComponentType(), newLength);
 
         Class<?> eClass;
         int min = Math.min(original.length, newLength);
@@ -80,5 +81,17 @@ public class CopyingArray {
         }
 
         return copy;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T deepCopy(T object) {
+        var gson = new Gson();
+        return (T) gson.fromJson(gson.toJson(object), object.getClass());
+    }
+
+    @Data
+    static class Person {
+        @NonNull String name;
+        @NonNull int age;
     }
 }
