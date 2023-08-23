@@ -1,8 +1,16 @@
 package com.sanver.basics.arrays;
 
+import lombok.Value;
+
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class CopyingArray {
+    @Value
+    static class Person{
+        String name;
+        int age;
+    }
 
     public static void main(String[] args) {
         int[] a, b = {3, 2, 1};
@@ -16,24 +24,31 @@ public class CopyingArray {
         b1[0][0] = 7;// Note that a1 changes as well when changing an element of an inner array of b1.
         printArrays(a1, b1);
         a1 = b1.clone();
-        System.out.println(a1==b1);
+        System.out.println(a1 == b1);
         b1[0][0] = 8;// Note that a1 changes as well when changing an element of an inner array of b1.
         printArrays(a1, b1);
         System.arraycopy(b1, 0, a1, 0, b1.length);
         b1[0][0] = 9;// Note that a1 changes as well when changing an element of an inner array of b1.
         printArrays(a1, b1);
-//        a1 = arrayDeepCopyOf(b1, 4);  // This gives runtime error. [Ljava.lang.Object; cannot be cast to [[I
-        // Search it further to develop a deep copy method that copies the inner arrays as well.
+        a1 = arrayDeepCopyOf(b1, b1.length);
+        b1[0][0] = 2;
+        printArrays(a1, b1);
+        var people = new Person[][][]{{{new Person("John", 22), new Person("Ashley", 25)}}};
+        var copyPeople = arrayDeepCopyOf(people, people.length);
+        printArrays(people, copyPeople);
     }
 
-    private static void printArrays(int[][] b1, int[][] a1) {
-        System.out.println(Arrays.deepToString(a1));
-        System.out.println(Arrays.deepToString(b1));
+    private static <T,S> void printArrays(T[] first, S[] second) {
+        System.out.println(Arrays.deepToString(first));
+        System.out.println(Arrays.deepToString(second));
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T[] arrayDeepCopyOf(T[] original, int newLength) {
-        T[] copy = (T[]) new Object[newLength];
+        T[] copy = (original.getClass()== Object[].class)
+                ? (T[]) new Object[newLength]
+                : (T[]) Array.newInstance(original.getClass().getComponentType(), newLength);
+
         Class<?> eClass;
         int min = Math.min(original.length, newLength);
 
@@ -61,7 +76,7 @@ public class CopyingArray {
                     copy[i] = (T) arrayDeepCopyOf((Object[]) original[i], ((Object[]) original[i]).length);
                 }
             } else
-                copy[i] = original[i];
+                copy[i] = original[i]; // This actually needs to be a deep copy of an object if we want the array objects to be different if they are not primitive types
         }
 
         return copy;
