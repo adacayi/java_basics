@@ -1,5 +1,7 @@
 package com.sanver.basics.arrays;
 
+import com.sanver.basics.utils.PerformanceComparer;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -16,5 +18,19 @@ public class Sorting {
         array = Arrays.stream(array).boxed().sorted(Comparator.<Double>naturalOrder().reversed())
                 .mapToDouble(p -> p).toArray();
         System.out.println(Arrays.toString(array));
+
+        // Parallel sorting and its performance advantage in large arrays
+        var data1 = new double[1_000_000];
+        Arrays.parallelSetAll(data1, x -> Math.random());
+        var data2 = Arrays.copyOf(data1, data1.length);
+        var data3 = Arrays.copyOf(data1, data1.length);
+        var data4 = Arrays.copyOf(data1, data1.length);
+        var performanceComparer = new PerformanceComparer(() -> Arrays.sort(data1), () -> Arrays.parallelSort(data2));
+        System.out.println(Arrays.equals(data1, data3));
+        performanceComparer.compare();
+        System.out.println(Arrays.equals(data1, data3));
+        // With same data you can see that after the first run sorting works much faster and the performance advantage of parallelSort is much obvious
+        new PerformanceComparer(() -> Arrays.sort(data3), () -> Arrays.parallelSort(data4)).compare();
+        System.out.println(Arrays.equals(data1, data3));
     }
 }
