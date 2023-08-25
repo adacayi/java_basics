@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.sanver.basics.utils.ArrayPrinter.printArray;
+
 public class ToArrayAndToListSample {
 
     public static void main(String[] args) {
@@ -31,9 +33,9 @@ public class ToArrayAndToListSample {
         // toArray with no parameter returns object array which needs
         // casting.
         System.out.println(values == resultArray);
-        System.out.println(Arrays.toString(resultArray));
+        printArray(resultArray);
         resultArray = numberList.toArray(largerResult);
         System.out.println(largerResult == resultArray);
-        System.out.println(Arrays.toString(resultArray));
+        printArray(resultArray);
     }
 }

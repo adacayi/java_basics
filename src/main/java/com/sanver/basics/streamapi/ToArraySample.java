@@ -1,13 +1,14 @@
 package com.sanver.basics.streamapi;
 
-import java.util.Arrays;
 import java.util.stream.Stream;
+
+import static com.sanver.basics.utils.ArrayPrinter.printArray;
 
 public class ToArraySample {
 
     static class Person {
-        private String name;
-        private int age;
+        final private String name;
+        final private int age;
 
         public Person(String name, int age) {
             this.name = name;
@@ -29,7 +30,7 @@ public class ToArraySample {
         // toArray is an IntFunction<A[]>, where the int value is the count of the stream.
         //toArray(Person[]::new) is the same as
         //toArray(x->new Person[x])
-        System.out.println(Arrays.toString(people));
+        printArray(people);
     }
 
 }

@@ -7,6 +7,8 @@ import lombok.NonNull;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
+import static com.sanver.basics.utils.ArrayPrinter.printArrays;
+
 public class CopyingArray {
     public static void main(String[] args) {
         int[] a, b = {3, 2, 1};
@@ -14,8 +16,7 @@ public class CopyingArray {
         int[][] a1;
         a = Arrays.copyOf(b, 5);
         b[1] = 4;
-        System.out.println(Arrays.toString(a));
-        System.out.println(Arrays.toString(b));
+        printArrays(a, b);
         a1 = Arrays.copyOf(b1, 4);
         b1[0][0] = 7;// Note that a1 changes as well when changing an element of an inner array of b1.
         printArrays(a1, b1);
@@ -39,11 +40,6 @@ public class CopyingArray {
         // https://www.baeldung.com/java-deep-copy
         people[0][0][0].setAge(80);
         printArrays(people, copyPeople2);
-    }
-
-    private static <T, S> void printArrays(T[] first, S[] second) {
-        System.out.println(Arrays.deepToString(first));
-        System.out.println(Arrays.deepToString(second));
     }
 
     @SuppressWarnings("unchecked")
