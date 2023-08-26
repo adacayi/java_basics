@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 
 public class PerformanceComparer {
     private final Runnable[] tasks;
+
     public PerformanceComparer(Runnable... tasks) {
         this.tasks = tasks;
     }
@@ -25,7 +26,7 @@ public class PerformanceComparer {
                     stopWatch.start();
                     tasks[i].run();
                     stopWatch.stop();
-                    System.out.printf("Operation %d completed in: %s\n", i, stopWatch);
+                    System.out.printf("Operation %d completed in: %s%06d\n", i, stopWatch, stopWatch.getNanoTime() % 1_000_000);
                 }
         ).map(CompletableFuture::runAsync).toArray(CompletableFuture[]::new);
         countDownLatch.countDown();
