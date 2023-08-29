@@ -32,7 +32,7 @@ public class BinaryHelpers {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < numberOfBits; i++) {
-            result.append(number << (31 - ((numberOfBits - 1) - i)) >>> 31); // This is to first clear out the bits before the ith digit by moving it to the far left and then move it to the far right, so only the ith digit remains as the far most digit and all others are 0.
+            result.append(number << (32 - (numberOfBits - i)) >>> 31); // This is to first clear out the bits before the ith digit by moving it to the far left and then move it to the far right, so only the ith digit remains as the far most digit and all others are 0.
             // Remember, even when doing bitwise operations on types like bytes with 8 bit representation, the result will be calculated in 32 bit, hence when moving the digits to far left we need to move it not by 7-i but 31-(7-i).
         }
 
