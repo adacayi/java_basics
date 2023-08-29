@@ -18,7 +18,7 @@ public class SortingPerformance {
             originalArray[i] = new long[]{(long) (Integer.MAX_VALUE * Math.sin(i)), 0};
 
         array = Arrays.copyOf(originalArray, originalArray.length);
-        Comparator<long[]> comparing = Comparator.comparing(a -> a[0]);
+        Comparator<long[]> comparing = Comparator.comparing(a -> a[0]); // This generates a comparator that uses the lambda expression as the key extractor for long[] objects (in our case long[2] where the first element is generated with math.sin() and the second element is 0), and sorts the array of those long[] by sorting the keys in natural order (i.e. with the compare method of the key object as ascending)
         LocalTime startTime = LocalTime.now();
         Arrays.sort(array, comparing);
         System.out.printf("Duration for comparing: %s\n", Duration.between(startTime, LocalTime.now()).toMillis());
