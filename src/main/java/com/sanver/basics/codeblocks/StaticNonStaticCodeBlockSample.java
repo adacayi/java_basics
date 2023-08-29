@@ -2,29 +2,29 @@ package com.sanver.basics.codeblocks;
 
 class A {
     {
-        System.out.printf("Selamunaleykum\n");
+        System.out.println("Selamunaleykum");
     }
 
     static {
-        System.out.printf("This is static block in A\n");
+        System.out.println("This is static block in A");
     }
 
     public A() {
-        System.out.printf("A is generated\n\n");
+        System.out.print("A is generated\n\n");
     }
 }
 
 class B extends A {
     static {
-        System.out.printf("This is static block in B\n");
+        System.out.println("This is static block in B");
     }
 
     {
-        System.out.printf("Ve aleykumselam\n");
+        System.out.println("Ve aleykumselam");
     }
 
     public B() {
-        System.out.printf("B is generated\n\n");
+        System.out.print("B is generated\n\n");
     }
 }
 
