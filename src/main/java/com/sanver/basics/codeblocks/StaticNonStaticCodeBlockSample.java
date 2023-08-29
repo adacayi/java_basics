@@ -6,7 +6,7 @@ class A {
     }
 
     static {
-        System.out.println("This is static block in A");
+        System.out.println("This is static block in A"); // Static blocks are only run once
     }
 
     public A() {
@@ -30,8 +30,8 @@ class B extends A {
 
 public class StaticNonStaticCodeBlockSample {
     public static void main(String... args) {
-        new A();
         new B();
+        new A(); // Note that static block for A will not run, since when we generate an instance of B above, it ran, and static blocks only run once.
         new A();
         new B();
     }
