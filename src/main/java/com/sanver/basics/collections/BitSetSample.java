@@ -22,21 +22,23 @@ public class BitSetSample {
         divisibleBy2And3 = (BitSet) divisibleBy2.clone();
         divisibleBy2Or3.or(divisibleBy3);
         divisibleBy2And3.and(divisibleBy3);
-        System.out.println(divisibleBy2);
-        System.out.println(divisibleBy3);
-        System.out.println(divisibleBy2Or3);
-        System.out.println(divisibleBy2And3);
+        System.out.printf("Divisible by 2: %s\n", divisibleBy2);
+        System.out.printf("Divisible by 3: %s\n", divisibleBy3);
+        System.out.printf("Divisible by 2 or 3: %s\n", divisibleBy2Or3);
+        System.out.printf("Divisible by 2 and 3: %s\n", divisibleBy2And3);
 
+        System.out.print("Divisible by 2 and 3 content: ");
         for (i = 0; i < divisibleBy2And3.length(); i++) // length returns the index of the last true bit plus 1.
             // In this case it is 7.
-            System.out.println(divisibleBy2And3.get(i));
+            System.out.printf("%s, ",divisibleBy2And3.get(i));
 
+        System.out.println();
         int size = divisibleBy2And3.size(); // Size is larger than the last bit with number 1
         System.out.println("Size of divisible by 2 and 3 BitSet is " + size);
 
         for (i = 0; i < size; i++) {
             if (divisibleBy2And3.get(i))
-                System.out.println(i);
+                System.out.printf("%d, ",i);
         }
     }
 }
