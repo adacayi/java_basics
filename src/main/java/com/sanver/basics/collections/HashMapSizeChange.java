@@ -6,6 +6,10 @@ import java.util.Map;
 
 public class HashMapSizeChange {
     public static void main(String... args) {
+        // When running this code, you might encounter the following error:
+        // java.lang.reflect.InaccessibleObjectException: Unable to make field transient java.util.HashMap$Node[] java.util.HashMap.table accessible: module java.base does not "opens java.util" to unnamed module
+        // To overcome it, run this with the following jvm options --add-opens java.base/java.util=ALL-UNNAMED
+        // https://stackoverflow.com/questions/70756414/java-lang-reflect-inaccessibleobjectexception-unable-to-make-field-private-fina
         Map<Integer, String> map = new HashMap<>();
         System.out.println("Initial capacity");
         System.out.printf("Size : %-3d Capacity: %-3d\n", map.size(), getCapacity(map));
