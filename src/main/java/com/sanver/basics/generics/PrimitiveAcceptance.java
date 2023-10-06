@@ -1,6 +1,6 @@
 package com.sanver.basics.generics;
 
-public class PrimativeAcceptance {
+public class PrimitiveAcceptance {
     private static <T> void calculate(T[] array) {
         System.out.println(array.length);
     }
@@ -41,7 +41,7 @@ public class PrimativeAcceptance {
         int[] array = {3, 5};
         calculate(array);
         // If there were only calculate(T[] array) method,
-        // calculate(array); call would give a compile time error.
+        // calculate(array); call would give a compile-time error.
         // We need overloads of the method for primitive types.
     }
 }
