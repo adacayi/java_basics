@@ -1,6 +1,5 @@
-package algorithms;
+package com.sanver.basics.algorithms;
 
-import com.sanver.basics.algorithms.BinarySearchGuessingGame;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
