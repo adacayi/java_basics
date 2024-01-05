@@ -1,13 +1,11 @@
 package com.sanver.basics.threads.completable_future;
 
+import java.util.concurrent.CompletableFuture;
+
 import static com.sanver.basics.utils.Utils.sleep;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
 public class AllOf {
-
-  public static void main(String[] args) throws ExecutionException, InterruptedException {
+  public static void main(String[] args) {
     // https://www.baeldung.com/java-completablefuture
 
     var completableFuture1 = CompletableFuture.runAsync(getRunnable(1));
@@ -17,7 +15,7 @@ public class AllOf {
     // Note that runAsync immediately starts execution
 
     var combined = CompletableFuture.allOf(completableFuture1, completableFuture2, completableFuture3);
-    combined.get();
+    combined.join();
   }
 
   public static Runnable getRunnable(int i) {
