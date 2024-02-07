@@ -19,8 +19,12 @@ public class BinaryDecimalConversions {
         System.out.println();
         writeBinaryOfInt(0, "%-5d: %s (32 bit representation)", 0);
         writeBinaryOfInt(0, "%-5d: %s (8 bit representation)", 0, 8);
-        writeBinaryOfInt(-1, "%-5d: %s (32 bit representation)", -1);
+        writeBinaryOfInt(1, "%-5d: %s (8 bit representation)", 1, 8);
         writeBinaryOfInt(-1, "%-5d: %s (8 bit representation)", -1, 8);
+        writeBinaryOfInt(-1, "%-5d: %s (32 bit representation)", -1);
+        writeBinaryOfInt(127, "%-5d: %s (8 bit representation)", 127, 8);
+        writeBinaryOfInt(-127, "%-5d: %s (8 bit representation)", -127, 8);
+        writeBinaryOfInt(-127, "%-5d: %s (32 bit representation)", -127);
         writeBinaryOfInt(128, "%-5d: %s (32 bit representation)", 128);
         writeBinaryOfInt(-128, "%-5d: %s (32 bit representation)", -128);
         writeBinaryOfInt(-128, "%-5d: %s (8 bit representation)", -128, 8);
