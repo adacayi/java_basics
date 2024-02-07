@@ -17,7 +17,7 @@ public class Sorting {
         // We had to box double to Double because DoubleStream does not have a sorted
         // method that takes a Comparator.
         // To map DoubleStream to Stream<Double> we can use boxed method of DoubleStream
-        array = Arrays.stream(array).boxed().sorted(Comparator.<Double>naturalOrder().reversed())
+        array = Arrays.stream(array).boxed().sorted(Comparator.reverseOrder())
                 .mapToDouble(p -> p).toArray();
         printArray(array);
 
