@@ -20,7 +20,7 @@ public class BinarySearch {
                 return mid;
         }
 
-        return -(low + 1);
+        return ~low;
     }
 
     public int searchFirst(int[] array, int key) {
@@ -47,7 +47,7 @@ public class BinarySearch {
         if (result != -1)
             return result;
 
-        return -(low + 1);
+        return ~low;
     }
 
     public int searchLast(int[] array, int key) {
@@ -74,6 +74,6 @@ public class BinarySearch {
         if (result != -1)
             return result;
 
-        return -(low + 1);
+        return ~low;
     }
 }
