@@ -1,107 +1,243 @@
 package com.sanver.basics.algorithms;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BinarySearchTest {
-    private BinarySearch binarySearch = new BinarySearch();
+class BinarySearchTest {
+    private final BinarySearch binarySearch = new BinarySearch();
 
-    @Test
-    public void should_ReturnMinus1_When_Empty() {
-        int[] array = {};
-        int expected = -1;
-        int actual = binarySearch.search(array, 4);
-        assertEquals(expected, actual);
+    @Nested
+    class Search {
+
+        @Test
+        void shouldReturnMinusOne_whenEmpty() {
+            // Given
+            int[] array = {};
+            int key = 4;
+            int expected = -1;
+
+            // When
+            int actual = binarySearch.search(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnMinusOne_whenNotExistsAndSmallerThanAllTheElements() {
+            // Given
+            int[] array = {0, 3, 5};
+            int key = -4;
+            int expected = -1;
+
+            // When
+            int actual = binarySearch.search(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnMinusLengthMinusOne_whenNotExistsAndGreaterThanAllTheElements() {
+            // Given
+            int[] array = {0, 3, 5};
+            int key = 7;
+            int expected = -4;
+
+            // When
+            int actual = binarySearch.search(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnMinusTwo_whenNotExistsAndShouldBePlacedSecond() {
+            // Given
+            int[] array = {0, 3, 5};
+            int key = 1;
+            int expected = -2;
+
+            // When
+            int actual = binarySearch.search(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnOne_whenExistsAndPlacedSecond() {
+            // Given
+            int[] array = {0, 3, 5};
+            int key = 3;
+            int expected = 1;
+
+            // When
+            int actual = binarySearch.search(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
     }
 
-    @Test
-    public void should_ReturnMinus1_When_NotExistsAndFirst() {
-        int[] array = {0, 3, 5};
-        int expected = -1;
-        int actual = binarySearch.search(array, -4);
-        assertEquals(expected, actual);
+    @Nested
+    class SearchInSubArray {
+        @Test
+        void shouldReturnMinusThree_whenNotExistsInTheSubArrayStartingFromTheThirdElementAndIsSmallerThanAllTheElementsInTheSubArray() {
+            // Given
+            int[] array = {0, 3, 4, 5};
+            int key = 3;
+            int expected = -3;
+
+            // When
+            int actual = binarySearch.search(array, 2, 4, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnMinusFour_whenNotExistsInTheSubArrayEndingAtTheThirdElementAndIsLargerThanAllTheElementsInTheSubArray() {
+            // Given
+            int[] array = {0, 3, 4, 5};
+            int key = 5;
+            int expected = -4;
+
+            // When
+            int actual = binarySearch.search(array, 1, 3, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
     }
 
-    @Test
-    public void should_ReturnMinus4_When_NotExistsAndLast() {
-        int[] array = {0, 3, 5};
-        int expected = -4;
-        int actual = binarySearch.search(array, 7);
-        assertEquals(expected, actual);
+    @Nested
+    class SearchFirst {
+        @Test
+        void shouldReturnTwo_whenMultipleInstancesExistAndTheFirstInstanceIsInIndexTwo() {
+            // Given
+            int[] array = {2, 3, 4, 4, 4, 6};
+            int key = 4;
+            int expected = 2;
+
+            // When
+            int actual = binarySearch.searchFirst(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnMinusLength_whenNotExistsAndIsGreaterThanAllButTheLastElement() {
+            // Given
+            int[] array = {2, 3, 4, 4, 4, 6};
+            int key = 5;
+            int expected = -6;
+
+            // When
+            int actual = binarySearch.searchFirst(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
     }
 
-    @Test
-    public void should_ReturnMinus2_When_NotExistsAndSecond() {
-        int[] array = {0, 3, 5};
-        int expected = -2;
-        int actual = binarySearch.search(array, 1);
-        assertEquals(expected, actual);
+    @Nested
+    class SearchFirstInSubArray {
+
+        @Test
+        void shouldReturnMinusThree_whenNotExistsInTheSubArrayStartingFromTheThirdElementAndIsSmallerThanAllTheElementsInTheSubArray() {
+            // Given
+            int[] array = {2, 3, 4, 4, 4, 5};
+            int key = 1;
+            int expected = -3;
+
+            // When
+            int actual = binarySearch.searchFirst(array, 2, 6, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnMinusFour_whenNotExistsInTheSubArrayEndingAtTheThirdElementAndIsLargerThanAllTheElementsInTheSubArray() {
+            // Given
+            int[] array = {0, 3, 3, 4, 4, 5};
+            int key = 5;
+            int expected = -4;
+
+            // When
+            int actual = binarySearch.searchFirst(array, 1, 3, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
     }
 
-    @Test
-    public void should_Return1_When_ExistsAndSecond() {
-        int[] array = {0, 3, 5};
-        int expected = 1;
-        int actual = binarySearch.search(array, 3);
-        assertEquals(expected, actual);
+    @Nested
+    class SearchLast {
+        @Test
+        void shouldReturnFour_whenMultipleInstancesExistAndTheLastInstanceIsInIndexFour() {
+            // Given
+            int[] array = {2, 3, 4, 4, 4, 6};
+            int key = 4;
+            int expected = 4;
+
+            // When
+            int actual = binarySearch.searchLast(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void shouldReturnMinusLength_whenNotExistsAndIsGreaterThanAllButTheLastElement() {
+            // Given
+            int[] array = {2, 3, 4, 4, 4, 6};
+            int key = 5;
+            int expected = -6;
+
+            // When
+            int actual = binarySearch.searchLast(array, key);
+
+            // Then
+            assertEquals(expected, actual);
+        }
     }
 
-    @Test
-    public void should_Return1_When_SearchInSubArrayAndNotExistsAndSecond() {
-        int[] array = {0, 3, 4, 5};
-        int expected = -3;
-        int actual = binarySearch.search(array, 2, 4, 1);
-        assertEquals(expected, actual);
-    }
+    @Nested
+    class SearchLastInSubArray {
 
-    @Test
-    public void should_Return4_When_234446_Last_4() {
-        int[] array = {2, 3, 4, 4, 4, 6};
-        int expected = 4;
-        int actual = binarySearch.searchLast(array, 4);
-        assertEquals(expected, actual);
-    }
+        @Test
+        void shouldReturnMinusThree_whenNotExistsInTheSubArrayStartingFromTheThirdElementAndIsSmallerThanAllTheElementsInTheSubArray() {
+            // Given
+            int[] array = {2, 3, 4, 4, 4, 5};
+            int key = 1;
+            int expected = -3;
 
-    @Test
-    public void should_ReturnMinus6_When_234446_Last_5() {
-        int[] array = {2, 3, 4, 4, 4, 6};
-        int expected = -6;
-        int actual = binarySearch.searchLast(array, 5);
-        assertEquals(expected, actual);
-    }
+            // When
+            int actual = binarySearch.searchLast(array, 2, 6, key);
 
-    @Test
-    public void should_Return3_When_234445_InSubArray1_Last_4() {
-        int[] array = {2, 3, 4, 4, 4, 5};
-        int expected = 3;
-        int actual = binarySearch.searchLast(array, 1, 4, 4);
-        assertEquals(expected, actual);
-    }
+            // Then
+            assertEquals(expected, actual);
+        }
 
-    @Test
-    public void should_Return2_When_234446_First_4() {
-        int[] array = {2, 3, 4, 4, 4, 6};
-        int expected = 2;
-        int actual = binarySearch.searchFirst(array, 4);
-        assertEquals(expected, actual);
-    }
+        @Test
+        void shouldReturnMinusFour_whenNotExistsInTheSubArrayEndingAtTheThirdElementAndIsLargerThanAllTheElementsInTheSubArray() {
+            // Given
+            int[] array = {0, 3, 3, 4, 4, 5};
+            int key = 5;
+            int expected = -4;
 
-    @Test
-    public void should_ReturnMinus6_When_234446_First_5() {
-        int[] array = {2, 3, 4, 4, 4, 6};
-        int expected = -6;
-        int actual = binarySearch.searchFirst(array, 5);
-        assertEquals(expected, actual);
-    }
+            // When
+            int actual = binarySearch.searchLast(array, 1, 3, key);
 
-    @Test
-    public void should_Return3_When_234445_InSubArray3_6_First_4() {
-        int[] array = {2, 3, 4, 4, 4, 5};
-        int expected = 3;
-        int actual = binarySearch.searchFirst(array, 3, 6, 4);
-        assertEquals(expected, actual);
+            // Then
+            assertEquals(expected, actual);
+        }
     }
 }
