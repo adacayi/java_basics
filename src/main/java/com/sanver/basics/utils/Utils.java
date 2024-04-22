@@ -1,5 +1,6 @@
 package com.sanver.basics.utils;
 
+import java.util.Random;
 import java.util.concurrent.Callable;
 
 public class Utils {
@@ -7,6 +8,7 @@ public class Utils {
     void run() throws Exception;
   }
 
+  private static final Random random = new Random();
 
   public static void sleep(long millis) {
     try {
@@ -32,5 +34,8 @@ public class Utils {
     }
   }
 
+  public static int getRandomInt(int a, int b) {
+      return random.nextInt(a, b + 1);
+  }
 
 }

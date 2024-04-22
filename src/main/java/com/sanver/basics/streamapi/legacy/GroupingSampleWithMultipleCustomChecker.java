@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.sanver.basics.utils.Utils.getRandomInt;
+
 public class GroupingSampleWithMultipleCustomChecker {
 
     static Map<String, Boolean> name = new HashMap<>();
@@ -27,10 +29,6 @@ public class GroupingSampleWithMultipleCustomChecker {
 
     static String[] nameArray = name.keySet().toArray(new String[0]);
     static String[] countryArray = location.keySet().toArray(new String[0]);
-
-    static int getRandomInt(int a, int b) {
-        return (int) (Math.random() * (b - a + 1) + a);
-    }
 
     static class Tuple<T1, T2> {
         T1 value1;
