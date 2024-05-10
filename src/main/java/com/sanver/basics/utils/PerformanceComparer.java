@@ -13,22 +13,30 @@ public class PerformanceComparer {
         this.tasks = tasks;
     }
 
-    synchronized public void compare() {
+    public synchronized void compare() {
         var countDownLatch = new CountDownLatch(1);
-        var completableFutures = IntStream.range(0, tasks.length).mapToObj(
-                i -> (Runnable) () -> {
-                    try {
-                        countDownLatch.await();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    var stopWatch = new StopWatch();
-                    stopWatch.start();
-                    tasks[i].run();
-                    stopWatch.stop();
-                    System.out.printf("Operation %d completed in: %s%06d\n", i, stopWatch, stopWatch.getNanoTime() % 1_000_000);
-                }
-        ).map(CompletableFuture::runAsync).toArray(CompletableFuture[]::new);
+        var completableFutures = IntStream.range(0, tasks.length)
+                .mapToObj(
+                        taskId -> {
+                            var stopWatch = new StopWatch();
+                            return CompletableFuture.runAsync(() -> {
+                                try {
+                                    countDownLatch.await();
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                stopWatch.start();
+                                tasks[taskId].run();
+                                stopWatch.stop();
+                            }).whenComplete((result, ex) -> {
+                                if (ex != null) {
+                                    System.out.printf("An error occurred for task %s. Error: %s%n", taskId, ex);
+                                    return;
+                                }
+                                System.out.printf("Task %d completed in: %s%06d%n", taskId, stopWatch, stopWatch.getNanoTime() % 1_000_000);
+                            });
+                        })
+                .toArray(CompletableFuture[]::new);
         countDownLatch.countDown();
         CompletableFuture.allOf(completableFutures).join();
     }
