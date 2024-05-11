@@ -3,6 +3,7 @@ package com.sanver.basics.generics;
 import lombok.ToString;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -34,11 +35,15 @@ public class GenericsWithLowerBound {
     }
 
     public static void main(String[] args) {
-        // Assume we have a function that maps objects to strings, and we want to write a method that uses it to print values of elements of a List<Integer>
+        // Assume we have a function that maps objects to strings, and another function that maps integers to string,
+        // and we want to write a method that uses those functions to print values of elements of a List<Integer>.
         Function<Object, String> toString = "Object: %s"::formatted;
-        printInts(List.of(1, 2, 3), toString);
+        Function<Integer, String> integerToString = "Number: %d"::formatted;
+        var list = List.of(1, 2, 3);
+        printInts(list, toString);
+        printInts(list, integerToString);
 
-        List<? super B> list1 = List.of("Another string", new A(), new File(""), new Object()); // We can put any object here, since it accepts super types of B, where Object is also a super type of B and everything is an object.
+        List<? super B> list1 = new ArrayList<>(List.of("Another string", new A(), new File("file.txt"), new Object())); // We can put any object here, since it accepts super types of B, where Object is also a super type of B and everything is an object.
         list1.add(new B());
         list1.add(new C());
         //list1.add(new Object());
@@ -48,6 +53,7 @@ public class GenericsWithLowerBound {
         // be added to List<B>, List<A> and List<Object>. This is satisfied only by B or subclasses of B.
 
         addValue(list1, new C());
+        System.out.println(list1);
     }
 
     /*

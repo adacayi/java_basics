@@ -19,8 +19,8 @@ public class ExecutorServiceWithCallableSample {
 
     var future = service.submit(increment);
 
-    System.out.println(future.get()[0]);
     System.out.println(value[0]);
+    System.out.println(future.get()[0]);
 
     service.shutdown();
   }

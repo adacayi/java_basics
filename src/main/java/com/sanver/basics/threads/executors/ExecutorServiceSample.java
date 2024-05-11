@@ -35,6 +35,6 @@ public class ExecutorServiceSample {
     }
 
     System.out.println("Finished.");
-    service.shutdown();
+    service.shutdown(); // If the executor is not shutdown, the main thread won't end.
   }
 }
