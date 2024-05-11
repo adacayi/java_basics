@@ -4,6 +4,7 @@ import com.sanver.basics.utils.PerformanceComparer;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Map;
 
 import static com.sanver.basics.utils.ArrayPrinter.printArray;
 
@@ -27,12 +28,18 @@ public class Sorting {
         var data2 = Arrays.copyOf(data1, data1.length);
         var data3 = Arrays.copyOf(data1, data1.length);
         var data4 = Arrays.copyOf(data1, data1.length);
-        var performanceComparer = new PerformanceComparer(() -> Arrays.sort(data1), () -> Arrays.parallelSort(data2));
+        var performanceComparer = new PerformanceComparer(Map.of(
+                () -> Arrays.sort(data1), "Arrays.sort",
+                () -> Arrays.parallelSort(data2), "Arrays.parallelSort"
+        ));
         System.out.println(Arrays.equals(data1, data3));
         performanceComparer.compare();
         System.out.println(Arrays.equals(data1, data3));
         // With same data you can see that after the first run sorting works much faster and the performance advantage of parallelSort is much obvious
-        new PerformanceComparer(() -> Arrays.sort(data3), () -> Arrays.parallelSort(data4)).compare();
+        new PerformanceComparer(Map.of(
+                () -> Arrays.sort(data3), "Arrays.sort",
+                () -> Arrays.parallelSort(data4), "Arrays.parallelSort"
+        )).compare();
         System.out.println(Arrays.equals(data1, data3));
     }
 }
