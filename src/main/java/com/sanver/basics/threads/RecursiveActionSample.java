@@ -15,7 +15,8 @@ class ArrayReader<T> extends RecursiveAction {
 	private static final long serialVersionUID = 6824918032836548869L;
 	private static final Object lock = new Object();
 	private T[] array;
-	private int low, high;
+	private int low;
+	private int high;
 	private static final int MAX = 5;
 
 	public ArrayReader(T[] array, int low, int high) {
@@ -31,7 +32,7 @@ class ArrayReader<T> extends RecursiveAction {
 				System.out.printf("Writing %d-%d: ", low, high);
 				for (int i = low; i < high; i++)
 					System.out.print(array[i] + " ");
-				System.out.printf("\n%d-%d finished\n\n", low, high);
+				System.out.printf("%n%d-%d finished%n%n", low, high);
 			}
 			return;
 		}
@@ -41,15 +42,16 @@ class ArrayReader<T> extends RecursiveAction {
 		ArrayReader<T> reader1 = new ArrayReader<>(array, low, mid);
 		ArrayReader<T> reader2 = new ArrayReader<>(array, mid, high);
 		reader1.fork();
-		reader2.compute();
+		reader2.fork();
 		reader1.join();
+		reader2.join();
 	}
 }
 
 public class RecursiveActionSample {
 
 	public static void main(String[] args) {
-		ForkJoinPool pool = new ForkJoinPool();
+		ForkJoinPool pool = new ForkJoinPool(4); // Set the thread count to 4. So the execution should take around 1 second.
 		LocalTime start = LocalTime.now();
 		Integer[] array = IntStream.range(0, 20).boxed().toArray(x -> new Integer[20]);
 		pool.invoke(new ArrayReader<>(array, 0, array.length));

@@ -28,9 +28,10 @@ class Fibonacci extends RecursiveTask<Integer> {
     // This part is responsible for job division
     System.out.println(n + " started");
     Fibonacci f1 = new Fibonacci(n - 1);
-    f1.fork();
     Fibonacci f2 = new Fibonacci(n - 2);
-    int result = f2.compute() + f1.join();
+    f1.fork();
+    f2.fork();
+    int result = f1.join() + f2.join(); // Join waits for the RecursiveTask to finish and also returns the task result.
     System.out.println(n + " finished with result " + result);
     return result;
   }
