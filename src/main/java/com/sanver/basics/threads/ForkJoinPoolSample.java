@@ -7,6 +7,7 @@ import java.util.concurrent.RecursiveTask;
 
 import static com.sanver.basics.utils.Utils.sleep;
 
+// Look also to RecursiveTaskSample and RecursiveActionSample
 public class ForkJoinPoolSample {
     // Check https://www.baeldung.com/java-fork-join
     public static void main(String[] args) {
