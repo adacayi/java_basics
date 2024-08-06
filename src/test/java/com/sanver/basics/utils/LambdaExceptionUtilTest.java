@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;
 
+import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowBiConsumer;
 import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowConsumer;
 import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowFunction;
+import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowRunnable;
 import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowSupplier;
 import static com.sanver.basics.utils.LambdaExceptionUtil.uncheck;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,18 +36,38 @@ class LambdaExceptionUtilTest {
     }
 
     @Nested
+    class RethrowBiConsumer {
+        @Test
+        void shouldExecute_whenConsumerHasCheckedExceptionSignature() {
+            var biConsumer = rethrowBiConsumer((String className, Integer index) -> System.out.printf("%d %s%n", index, Class.forName(className)));
+            assertDoesNotThrow(() ->
+                    Stream.of("java.lang.Object", "java.lang.Integer", "java.lang.String")
+                            .forEach(className -> biConsumer.accept(className, 1)));
+        }
+
+        @Test
+        void shouldThrowUncheckedException_whenConsumerThrowsCheckedException() {
+            var biConsumer = rethrowBiConsumer((String className, Integer index) -> System.out.printf("%d %s%n", index, Class.forName(className)));
+            assertThatThrownBy(() ->
+                    Stream.of("Object", "Integer", "String")
+                            .forEach(className -> biConsumer.accept(className, 1))
+            ).isInstanceOf(ClassNotFoundException.class);
+        }
+    }
+
+    @Nested
     class RethrowFunction {
         @Test
         void shouldExecute_whenFunctionHasCheckedExceptionSignature() {
             assertDoesNotThrow(() ->
                     Stream.of("java.lang.Object", "java.lang.Integer", "java.lang.String")
-                            .map(rethrowFunction(Class::forName)));
+                            .map(rethrowFunction(Class::forName))).toList();
         }
 
         @Test
         void shouldThrowUncheckedException_whenFunctionThrowsCheckedException() {
             assertThatThrownBy(() ->
-                    Stream.of("Object", "Integer", "String").map(rethrowFunction(Class::forName))
+                    Stream.of("Invalid").map(rethrowFunction(Class::forName)).toList()
             ).isInstanceOf(ClassNotFoundException.class);
         }
     }
@@ -67,19 +89,40 @@ class LambdaExceptionUtilTest {
     }
 
     @Nested
+    class RethrowRunnable {
+
+        @Test
+        void shouldExecute_whenRunnableHasCheckedExceptionSignature() {
+            assertDoesNotThrow(() -> {
+                Runnable runnable = rethrowRunnable(() -> System.out.println(Class.forName("java.lang.String")));
+                runnable.run();
+            });
+        }
+
+        @Test
+        void shouldThrowUncheckedException_whenRunnableThrowsCheckedException() {
+            assertThatThrownBy(() -> {
+                        Runnable runnable = rethrowRunnable(() -> System.out.println(Class.forName("Invalid")));
+                        runnable.run();
+                    }
+            ).isInstanceOf(ClassNotFoundException.class);
+        }
+    }
+
+    @Nested
     class Uncheck {
 
         @Test
         void shouldNotNeedThrowsExceptionInTheTestMethod_whenSupplierThrowsCheckedException() {
             assertDoesNotThrow(() -> {
                 uncheck(() -> Class.forName("java.lang.String"));
-                uncheck(Class::forName, "java.lang.String");
+                uncheck((String x) -> Class.forName(x), "java.lang.String");
             });
         }
 
         @Test
         void shouldThrowUncheckedExceptionWithSameClass() {
-            assertThrows(ClassNotFoundException.class, () -> uncheck(Class::forName, "INVALID"));
+            assertThrows(ClassNotFoundException.class, () -> uncheck((String x) -> Class.forName(x), "INVALID"));
         }
     }
 }

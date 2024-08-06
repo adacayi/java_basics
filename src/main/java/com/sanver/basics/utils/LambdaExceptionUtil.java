@@ -12,85 +12,37 @@ import java.util.function.Supplier;
  */
 public class LambdaExceptionUtil {
 
-    @FunctionalInterface
-    public interface ConsumerWithExceptions<T, E extends Exception> {
-
-        void accept(T t) throws E;
-    }
-
-    @FunctionalInterface
-    public interface BiConsumerWithExceptions<T, U, E extends Exception> {
-
-        void accept(T t, U u) throws E;
-    }
-
-    @FunctionalInterface
-    public interface FunctionWithExceptions<T, R, E extends Exception> {
-
-        R apply(T t) throws E;
-    }
-
-    @FunctionalInterface
-    public interface SupplierWithExceptions<T, E extends Exception> {
-
-        T get() throws E;
-    }
-
-    @FunctionalInterface
-    public interface RunnableWithExceptions<E extends Exception> {
-
-        void run() throws E;
-    }
     /**
      * .forEach(rethrowConsumer(name -> System.out.println(Class.forName(name)))); or
      * .forEach(rethrowConsumer(ClassNameUtil::println));
      */
     public static <T, E extends Exception> Consumer<T> rethrowConsumer(ConsumerWithExceptions<T, E> consumer) {
-        return t -> {
-            try {
-                consumer.accept(t);
-            } catch (Exception exception) {
-                throwAsUnchecked(exception);
-            }
-        };
+        return t -> uncheck(consumer, t);
     }
 
     public static <T, U, E extends Exception> BiConsumer<T, U> rethrowBiConsumer(BiConsumerWithExceptions<T, U, E> biConsumer) {
-        return (t, u) -> {
-            try {
-                biConsumer.accept(t, u);
-            } catch (Exception exception) {
-                throwAsUnchecked(exception);
-            }
-        };
+        return (t, u) -> uncheck(biConsumer, t, u);
     }
 
     /**
      * .map(rethrowFunction(name -> Class.forName(name))) or .map(rethrowFunction(Class::forName))
      */
     public static <T, R, E extends Exception> Function<T, R> rethrowFunction(FunctionWithExceptions<T, R, E> function) {
-        return t -> {
-            try {
-                return function.apply(t);
-            } catch (Exception exception) {
-                throwAsUnchecked(exception);
-                return null;
-            }
-        };
+        return t -> uncheck(function, t);
     }
 
     /**
-     * rethrowSupplier(() -> new StringJoiner(new String(new byte[]{77, 97, 114, 107}, "UTF-8"))),
+     * rethrowSupplier(() -> Class.forName("java.lang.String")),
      */
-    public static <T, E extends Exception> Supplier<T> rethrowSupplier(SupplierWithExceptions<T, E> function) {
-        return () -> {
-            try {
-                return function.get();
-            } catch (Exception exception) {
-                throwAsUnchecked(exception);
-                return null;
-            }
-        };
+    public static <T, E extends Exception> Supplier<T> rethrowSupplier(SupplierWithExceptions<T, E> supplier) {
+        return () -> uncheck(supplier);
+    }
+
+    /**
+     * rethrowRunnable(() -> System.out.println(Class.forName("java.lang.String")))
+     */
+    public static <E extends Exception> Runnable rethrowRunnable(RunnableWithExceptions<E> runnable) {
+        return () -> uncheck(runnable);
     }
 
     /**
@@ -99,6 +51,28 @@ public class LambdaExceptionUtil {
     public static <E extends Exception> void uncheck(RunnableWithExceptions<E> t) {
         try {
             t.run();
+        } catch (Exception exception) {
+            throwAsUnchecked(exception);
+        }
+    }
+
+    /**
+     * uncheck(x -> System.out.println(Class.forName(x)), "java.lang.String);
+     */
+    public static <T, E extends Exception> void uncheck(ConsumerWithExceptions<T, E> consumer, T t) {
+        try {
+            consumer.accept(t);
+        } catch (Exception exception) {
+            throwAsUnchecked(exception);
+        }
+    }
+
+    /**
+     * uncheck(Class::forName, "xxx");
+     */
+    public static <T, U, E extends Exception> void uncheck(BiConsumerWithExceptions<T, U, E> biconsumer, T t, U u) {
+        try {
+            biconsumer.accept(t, u);
         } catch (Exception exception) {
             throwAsUnchecked(exception);
         }
@@ -131,5 +105,35 @@ public class LambdaExceptionUtil {
     @SuppressWarnings("unchecked")
     private static <E extends Throwable> void throwAsUnchecked(Exception exception) throws E {
         throw (E) exception;
+    }
+
+    @FunctionalInterface
+    public interface ConsumerWithExceptions<T, E extends Exception> {
+
+        void accept(T t) throws E;
+    }
+
+    @FunctionalInterface
+    public interface BiConsumerWithExceptions<T, U, E extends Exception> {
+
+        void accept(T t, U u) throws E;
+    }
+
+    @FunctionalInterface
+    public interface FunctionWithExceptions<T, R, E extends Exception> {
+
+        R apply(T t) throws E;
+    }
+
+    @FunctionalInterface
+    public interface SupplierWithExceptions<T, E extends Exception> {
+
+        T get() throws E;
+    }
+
+    @FunctionalInterface
+    public interface RunnableWithExceptions<E extends Exception> {
+
+        void run() throws E;
     }
 }
