@@ -4,10 +4,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Arrays;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowConsumer;
+import static com.sanver.basics.utils.Utils.printThreadPool;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class ThreadPoolTaskExecutorSample {
@@ -30,7 +29,7 @@ public class ThreadPoolTaskExecutorSample {
         executor.setKeepAliveSeconds(keepAliveSeconds);
         executor.initialize();
 
-        print(executor, "Initial state");
+        printThreadPool(executor, "Initial state");
         var taskCount = 5;
         var futures = new Future<?>[taskCount];
 
@@ -44,14 +43,14 @@ public class ThreadPoolTaskExecutorSample {
             }
             futures[i - 1] = executor.submit(getRunnable(i));
             sleep(20); // This is to make sure execution is started and "Running process x" is printed before printing the executor state.
-            print(executor, String.format("State after task %d was submitted", i));
+            printThreadPool(executor, String.format("State after task %d was submitted", i));
         }
 
-        print(executor, "After all tasks submitted");
+        printThreadPool(executor, "After all tasks submitted");
         Arrays.asList(futures).forEach(rethrowConsumer(Future::get));
-        print(executor, "After all tasks finished");
+        printThreadPool(executor, "After all tasks finished");
         sleep(keepAliveSeconds * 1000L);
-        print(executor, String.format("After keep alive seconds (%ds)", keepAliveSeconds));
+        printThreadPool(executor, String.format("After keep alive seconds (%ds)", keepAliveSeconds));
         System.out.println("Notice that the pool size does drop to zero but to the core pool size after keep alive seconds.");
         executor.shutdown();
     }
@@ -64,15 +63,4 @@ public class ThreadPoolTaskExecutorSample {
         };
     }
 
-    private static void print(ThreadPoolTaskExecutor threadPool, String... info) {
-        System.out.println();
-        for (var infoItem : info) {
-            System.out.println(infoItem);
-        }
-        var max = Arrays.stream(info).map(x -> x.length()).mapToInt(x -> x).max().getAsInt();
-        System.out.println(IntStream.range(0, max).mapToObj(x -> "-").collect(Collectors.joining()));
-
-        System.out.printf("Active threads in the pool: %d%n", threadPool.getActiveCount());
-        System.out.printf("The number of threads in the pool: %d%n%n", threadPool.getPoolSize());
-    }
 }
