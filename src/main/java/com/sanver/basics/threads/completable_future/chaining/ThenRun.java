@@ -11,6 +11,7 @@ public class ThenRun {
   public static void main(String[] args) throws ExecutionException, InterruptedException {
     var completableFuture = CompletableFuture.supplyAsync(() -> {
       sleep(3000);
+      System.out.println("Supply async finished");
       return List.of(3, 5, 6);
     });
     var future = completableFuture.thenRun(() -> System.out.println("Action run"));
