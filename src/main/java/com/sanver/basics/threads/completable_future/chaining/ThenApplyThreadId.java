@@ -12,7 +12,7 @@ public class ThenApplyThreadId {
             sleep(1000);
             return "Hello";
         }).thenApply(s -> {
-            System.out.println("ThenApply started. Thread id: " + Thread.currentThread().getId()); // The following comment from previous commit is not correct for Java 17. thenApply uses the same thread as supplyAsync. This is same for Java 11. Previous comment: "Even though supplyAsync is in a new thread, thenApply is run in the main thread and will block the execution of the main thread"
+            System.out.println("ThenApply started. Thread id: " + Thread.currentThread().getId()); // thenApply runs the supplied function in the same thread where the previous stage (the CompletableFuture) was completed. This means that if the previous stage was completed in the main thread, the function will run on the main thread; if it was completed in a thread from a ForkJoinPool, the function will run on that thread.
             sleep(2000);
             System.out.println("ThenApply finished. Thread id: " + Thread.currentThread().getId());
             return s + " World";
