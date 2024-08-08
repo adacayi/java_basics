@@ -42,27 +42,15 @@ public class ReentrantLockSample {
     Condition condition = lock.newCondition();
 
     List<Integer> list = new ArrayList<>();
-    Thread read = new Thread(() -> {
-      while (true) {
-        lock.lock();
+    var read = getReadThread(lock, list, condition);
+    var write = getWriteThread(lock, list, condition);
 
-        try { // use a try and finally block in which the lock is released, so if there is an
-          // exception meanwhile the lock will be released.
-          if (list.size() == 0) {
-            try {
-              condition.await();
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
-          }
-          System.out.println(list.remove(0) + " removed");
-          condition.signalAll();
-        } finally {
-          lock.unlock();
-        }
-      }
-    });
-    Thread write = new Thread(() -> {
+    read.start();
+    write.start();
+  }
+
+  private static Thread getWriteThread(Lock lock, List<Integer> list, Condition condition) {
+    return new Thread(() -> {
       while (true) {
         lock.lock();
 
@@ -71,7 +59,7 @@ public class ReentrantLockSample {
             try {
               condition.await();
             } catch (InterruptedException e) {
-              e.printStackTrace();
+              Thread.currentThread().interrupt();
             }
           }
 
@@ -87,8 +75,31 @@ public class ReentrantLockSample {
         }
       }
     });
+  }
 
-    read.start();
-    write.start();
+  private static Thread getReadThread(Lock lock, List<Integer> list, Condition condition) {
+    return new Thread(() -> {
+      while (true) {
+        lock.lock();
+
+        try { // use a try and finally block in which the lock is released, so if there is an
+          // exception meanwhile the lock will be released.
+          if (list.isEmpty()) {
+            try {
+              condition.await();
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+            }
+          }
+          System.out.println(list.remove(0) + " removed");
+          condition.signalAll();
+          // The other thread does not regain the lock until this lock is released by the current thread.
+
+          sleep(2000);
+        } finally {
+          lock.unlock();
+        }
+      }
+    });
   }
 }
