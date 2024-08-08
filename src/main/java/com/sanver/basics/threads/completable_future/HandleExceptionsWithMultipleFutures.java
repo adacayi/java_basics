@@ -30,22 +30,22 @@ public class HandleExceptionsWithMultipleFutures {
     var future4 = CompletableFuture.supplyAsync(supplier);
     var future5 = CompletableFuture.supplyAsync(supplier);
 
-    var combined = CompletableFuture.allOf(future1, future2, future3, future4, future5);
+    CompletableFuture<Void> combined = CompletableFuture.allOf(future1, future2, future3, future4, future5); // This combined completable future would return null when combined.get() is called, if all the threads were executed without an exception.
 
-    // Note that handle is executed only once and s parameter will be null and t parameter will be either null
+    // Note that handle is executed only once and r parameter will be null and e parameter will be either null
     // (if there is no exception in any of the futures) or will be the first exception thrown from one of the futures.
     // All futures are executed regardless of some of them throwing exceptions.
     // handle and thenAccept are executed after all completable futures are executed (regardless of them throwing exceptions).
 
-    var finalCompletable = combined.handle(
-        (s, t) -> {
+    CompletableFuture<Void> finalCompletable = combined.handle(
+        (r, e) -> {
           sleep(5000);
-          if (t == null) {
-            System.out.println("No error occurred. Return value is " + s);
+          if (e == null) {
+            System.out.println("No error occurred. Return value is " + r);
             count.addAndGet(1);
             return -1;
           }
-          System.out.println("Error occurred: " + t);
+          System.out.println("Error occurred: " + e);
           return count.addAndGet(1);
         }).thenAccept(x -> {
       sleep(5000);
