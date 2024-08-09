@@ -20,6 +20,11 @@ public class Utils {
         uncheck(() -> Thread.sleep(millis));
     }
 
+    public static void sleepNano(long nanos) {
+        var start = System.nanoTime();
+        while (System.nanoTime() - start < nanos);
+    }
+
     public static void printCurrentThread(String... info) {
         displayInfo(info);
 

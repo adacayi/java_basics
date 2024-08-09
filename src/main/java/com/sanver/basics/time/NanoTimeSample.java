@@ -5,6 +5,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.locks.LockSupport;
 
+import static com.sanver.basics.utils.Utils.sleepNano;
+
 /*
 System.nanoTime() directly is generally more precise than using Instant.now() for measuring short durations of code execution within the same JVM instance. Here's why:
 1.	Higher Resolution: System.nanoTime() provides nanosecond resolution, while Instant.now() usually has a resolution of microseconds or even milliseconds, depending on the platform and JVM.
@@ -21,7 +23,7 @@ public class NanoTimeSample {
         var thread1 = new Thread(() -> {
             LockSupport.park();
             var start = System.nanoTime();
-            sleep();
+            sleepNano(10);
             var end = System.nanoTime();
             var duration = formatter.format(end - start);
             System.out.printf("Duration calculated with System.nanoTime: %s ns%n", duration);
@@ -29,7 +31,7 @@ public class NanoTimeSample {
         var thread2 = new Thread(() -> {
             LockSupport.park();
             var startInstant = Instant.now();
-            sleep();
+            sleepNano(10);
             var endInstant = Instant.now(); // Since Instant.now() is not in nanosecond precision, startInstant end endInstant get the same value,
             // hence the duration becomes zero.
             // However, this is does not mean Insant.now is running faster, actually the opposite is true, System.nano is faster,
@@ -43,10 +45,5 @@ public class NanoTimeSample {
         LockSupport.unpark(thread1);
         thread1.join();
         thread2.join();
-    }
-
-    public static void sleep() {
-        var start = System.nanoTime();
-        while (System.nanoTime() - start < 10);
     }
 }

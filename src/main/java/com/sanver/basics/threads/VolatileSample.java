@@ -1,5 +1,6 @@
 package com.sanver.basics.threads;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -19,71 +20,59 @@ import java.util.concurrent.CompletableFuture;
 // In such cases, the values that were visible to A before writing the volatile variable x will be visible to B after reading the volatile variable x in B.
 // i.e. assume a normal variable y is set to 5 before changing x in thread A, and we read x in thread B and then read y in thread B, then y will be read as 5 in B as well.
 public class VolatileSample {
-    private static final List<Counter> MAIN_THREAD_COUNTER = new ArrayList<>();
-    private static final List<Counter> READER_COUNTER = new ArrayList<>();
-    private static final int NUM_ITERATIONS = 10000000;
-    private static volatile int sharedCounter = 0; // This is the counter read by the reader thread and incremented by the main thread.
+    private static final int LIMIT = 10_000_000;
+    private static final List<InstantValue> mainThreadData = new ArrayList<>();
+    private static final List<InstantValue> readerThreadData = new ArrayList<>();
+    private static volatile int value = 0; // This is the value read by the reader thread and incremented by the main thread.
     // Removing volatile here will cause stale data for the reader thread.
 
     public static void main(String[] args) {
-        MAIN_THREAD_COUNTER.add(new Counter(System.nanoTime(), sharedCounter));
-        long mainInstant;
         var reader = CompletableFuture.runAsync(() -> {
-            long readerInstant;
-            while (sharedCounter < NUM_ITERATIONS) {
-                readerInstant = System.nanoTime(); // Since readerInstant and readerCounter are volatile, first the readerInstant will be assigned to System.nanoTime and then the readerCounter will be set to sharedCounter.
-                READER_COUNTER.add(new Counter(readerInstant, sharedCounter));
+            while (value < LIMIT) {
+                readerThreadData.add(new InstantValue(System.nanoTime(), value));
             }
         });
 
-        while (sharedCounter < NUM_ITERATIONS) {
-            sharedCounter++;
-            mainInstant = System.nanoTime();
-            MAIN_THREAD_COUNTER.add(new Counter(mainInstant, sharedCounter));
+        for (int i = 0; i < LIMIT; i++) {
+            value++;
+            mainThreadData.add(new InstantValue(System.nanoTime(), value));
         }
 
         reader.join();
 
-        checkIfStaleDataExistsForReaderThread();
+        checkIfStaleDataExists(mainThreadData,  readerThreadData);
     }
 
-    private static void checkIfStaleDataExistsForReaderThread() {
-        int i = 0;
-        long readInstant;
-        int readValue;
-        long mainInstant;
-        int mainValue;
-        boolean staleDataExists = false;
+    static void checkIfStaleDataExists(List<InstantValue> mainThreadData, List<InstantValue> readerThreadData) {
+        var staleDataExists = false;
 
-        for (var readerCounter : READER_COUNTER) {
-            readInstant = readerCounter.instant();
-            readValue = readerCounter.value();
+        int j = 0;
+        var numberFormat = NumberFormat.getInstance();
 
-            if (MAIN_THREAD_COUNTER.get(i).instant() <= readInstant) {
-                do {
-                    i++;
-                }
-                while (i < MAIN_THREAD_COUNTER.size() && MAIN_THREAD_COUNTER.get(i).instant() <= readInstant);
-                i--;
-            }
+        for (var readerData : readerThreadData) {
+            var readerThreadTime = readerData.instant;
+            var readerThreadValue = readerData.value;
 
-            mainInstant = MAIN_THREAD_COUNTER.get(i).instant();
-            mainValue = MAIN_THREAD_COUNTER.get(i).value();
+            while (++j < mainThreadData.size() && mainThreadData.get(j).instant <= readerThreadTime); // We start checking from j = 1, because if the first element added to readerThreadData is before the first element of mainThreadData, j-- will result in j = -1 otherwise.
 
-            if (readInstant > mainInstant && readValue < mainValue) { // Only checking for stale data.
-                // There are cases when main thread value is written to the list later than the read thread because of the implementation,
-                // but we only care no stale data ever happens. If you remove volatile in sharedCounter, stale data will appear.
-                System.out.printf("Stale data %d in reader thread at instant %d, while main thread value is %d at instant %d%n", readValue, readInstant, mainValue, mainInstant);
+            j--;
+
+            var mainThreadTime = mainThreadData.get(j).instant;
+            var mainThreadValue = mainThreadData.get(j).value;
+
+            if (mainThreadTime < readerThreadTime && mainThreadValue > readerThreadValue) {
+                System.out.println("mainThreadTime   = " + numberFormat.format(mainThreadTime) + " mainThreadValue   = " + numberFormat.format(mainThreadValue));
+                System.out.println("readerThreadTime = " + numberFormat.format(readerThreadTime) + " readerThreadValue = " + numberFormat.format(readerThreadValue));
+                System.out.println();
                 staleDataExists = true;
             }
-
         }
 
-        if (!staleDataExists) {
-            System.out.println("No stale data found.");
-        }
+        var staleDataState = (staleDataExists ? "exists" : "does not exist") + ".";
+        System.out.println("Stale data " + staleDataState);
     }
 
-    record Counter(long instant, int value){}
+    record InstantValue(long instant, int value) {
+    }
 }
 
