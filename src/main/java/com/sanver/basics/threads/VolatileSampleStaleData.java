@@ -8,7 +8,6 @@ class SharedFlag {
 
     public void stop() {
         isRunning = false; // Signal to stop
-        System.out.println("Main thread: Set isRunning to false.");
     }
 
     public boolean isRunning() { // We can remove volatile and make this method synchronized as well,
@@ -32,12 +31,13 @@ public class VolatileSampleStaleData {
             }
 
             // Format iteration count
-            System.out.printf("Worker thread: Stopped after %s iterations.%n", numberFormat.format(iterations));
+            System.out.printf("Worker thread ended after %s iterations.%n", numberFormat.format(iterations));
         });
 
         workerThread.start();
         Thread.sleep(2000);
         sharedFlag.stop();
+        System.out.println("isRunning is set to false in main thread");
         workerThread.join();
 
         long endTime = System.nanoTime(); // End time
