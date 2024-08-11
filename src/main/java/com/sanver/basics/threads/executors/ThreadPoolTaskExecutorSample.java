@@ -51,7 +51,7 @@ public class ThreadPoolTaskExecutorSample {
         printThreadPool(executor, "After all tasks finished");
         sleep(keepAliveSeconds * 1000L);
         printThreadPool(executor, String.format("After keep alive seconds (%ds)", keepAliveSeconds));
-        System.out.println("Notice that the pool size does drop to zero but to the core pool size after keep alive seconds.");
+        System.out.println("Notice that the pool size does not drop to zero, but to the core pool size after keep alive seconds.");
         executor.shutdown();
     }
 
