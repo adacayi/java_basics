@@ -2,73 +2,89 @@ package com.sanver.basics.concurrentcollections;
 
 import com.sanver.basics.utils.PerformanceComparer;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiFunction;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
+
+import static com.sanver.basics.utils.Utils.sleep;
 
 public class SyncPerformance {
     // The performance order is
-    // 1- Adding to ArrayList inside a synchronized block
-    // 2- Collections.synchronizedList
-    // 3- Vector
-    // 4- CopyOnWriteArrayList
+    // 1- Adding to ArrayList without any synchronization
+    // 2- Adding to ArrayList inside a synchronized block
+    // 3- Collections.synchronizedList
+    // 4- Vector
+    // 5- CopyOnWriteArrayList
+
+    public static final String FORMAT = "%-34s";
+    private static final int TASK_SIZE = 3;
+    private static final int INCREMENT = 10_000_000; // This will take hours for CopyOnWriteArrayList, so the code for this is commented out. You can uncomment to test it.
+    private static final ExecutorService POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); // This pool is used to assure all futures are completed before the program exits.
+
     public static void main(String[] args) {
-        var taskSize = 3;
-        var increment = 10_000_000; // This will take hours for CopyOnWriteArrayList.
-        BiFunction<List<Integer>, String, Runnable> getRunnable = (list, name) -> () -> {
-            var threads = IntStream.range(0, taskSize).mapToObj(x -> (Runnable) () -> {
-                for (int i = 0; i < increment; i++) {
-                    list.add(i + x * increment);
-                }
-            }).map(Thread::new).toList();
-            threads.forEach(Thread::start);
-            threads.forEach(thread -> {
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            System.out.printf("%s list size: %d%n", name, list.size());
-        };
-        var unsynchronized = getRunnable.apply(new ArrayList<>(), "Unsynchronized");
-        var sync = getSync(taskSize, increment, "Sync");
-        var collectionsSync = getRunnable.apply(Collections.synchronizedList(new ArrayList<>()), "Collections sync");
-        var vector = getRunnable.apply(new Vector<>(), "Vector");
-        var copyOnWriteArrayList = getRunnable.apply(Collections.synchronizedList(new CopyOnWriteArrayList<>()), "CopyOnWriteArrayList");
+        var unsynchronized = getRunnable(new ArrayList<>(), "Unsynchronized ArrayList");
+        var sync = getSync();
+        var collectionsSync = getRunnable(Collections.synchronizedList(new ArrayList<>()), "Collections.synchronizedList");
+        var vector = getRunnable(new Vector<>(), "Vector");
+//        var copyOnWriteArrayList = getRunnable(new CopyOnWriteArrayList<>(), "CopyOnWriteArrayList");
+
         var comparer = new PerformanceComparer(Map.of(
-                unsynchronized, "Unsynchronized",
-                sync, "Sync",
-                vector, "Vector",
-                collectionsSync, "CollectionsSync",
-                copyOnWriteArrayList, "CopyOnWriteArrayList"));
+                unsynchronized, String.format(FORMAT, "Unsynchronized ArrayList"),
+                sync, String.format(FORMAT, "Synchronized block with ArrayList"),
+                vector, String.format(FORMAT, "Vector"),
+                collectionsSync, String.format(FORMAT, "Collections.synchronizedList")
+//                ,copyOnWriteArrayList, "CopyOnWriteArrayList"
+        ));
+
         comparer.compare();
+        System.out.printf("%n%n");
+        POOL.shutdown(); // WriteListSizeAsync will be executed before the main thread finishes.
     }
 
-    private static Runnable getSync(int taskSize, int increment, String name) {
+    private static Runnable getRunnable(List<Integer> list, String name) {
+        return () -> {
+            var futures = IntStream.range(0, TASK_SIZE)
+                    .mapToObj(x -> CompletableFuture.runAsync(() -> {
+                        for (int i = 0; i < INCREMENT; i++) {
+                            list.add(i + x * INCREMENT);
+                        }
+                    }, POOL))
+                    .toArray(CompletableFuture[]::new);
+
+            CompletableFuture.allOf(futures).join();
+            writeListSizeAsync(list, name);
+        };
+    }
+
+    private static Runnable getSync() {
         return () -> {
             var list = new ArrayList<Integer>();
-            var threads = IntStream.range(0, taskSize).mapToObj(x -> (Runnable) () -> {
-                for (int i = 0; i < increment; i++) {
-                    synchronized (list) {
-                        list.add(i + x * increment);
-                    }
-                }
-            }).map(Thread::new).toList();
-            threads.forEach(Thread::start);
-            threads.forEach(thread -> {
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            System.out.printf("%s list size: %d%n", name, list.size());
+            var futures = IntStream.range(0, TASK_SIZE)
+                    .mapToObj(x -> CompletableFuture.runAsync(() -> {
+                        for (int i = 0; i < INCREMENT; i++) {
+                            synchronized (list) {
+                                list.add(i + x * INCREMENT);
+                            }
+                        }
+                    }, POOL))
+                    .toArray(CompletableFuture[]::new);
+
+            CompletableFuture.allOf(futures).join();
+            writeListSizeAsync(list, "Synchronized block with ArrayList");
         };
+    }
+
+    public static void writeListSizeAsync(List<?> list, String name) {
+        CompletableFuture.runAsync(() -> {
+            sleep(5000); // This is to make sure that task finish times for all different lists are written first.
+            System.out.printf(FORMAT + " list size: %s%n", name, NumberFormat.getInstance().format(list.size()));
+        }, POOL);
     }
 }
