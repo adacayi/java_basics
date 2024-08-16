@@ -1,41 +1,47 @@
 package com.sanver.basics.concurrentcollections;
 
-import java.util.*;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+/**
+ * Even though Hashtable is thread safe, it is not very efficient.
+ * Another fully synchronized Map, Collections.synchronizedMap, does not exhibit great efficiency either.
+ * If we want thread-safety with high throughput under high concurrency, these implementations aren’t the way to go.
+ * <p>
+ * To solve the problem, the Java Collections Framework introduced ConcurrentMap in Java 1.5.
+ * ConcurrentMap is an interface. ConcurrentHashMap is the out-of-box ready ConcurrentMap implementation.
+ * <a href="https://www.baeldung.com/java-concurrent-map">Source</a>
+ */
 public class ConcurrentMapSample {
 
     public static void main(String[] args) {
-        List<Integer> list = new ArrayList<>(Arrays.asList(3, 6, 2, 1));
+        var list = List.of(3, 6, 2, 1);
         ConcurrentMap<String, List<Integer>> result = list.parallelStream()
                 .collect(Collectors.groupingByConcurrent(i -> i % 2 == 0 ? "Even" : "Odd"));
         result.forEach((k, v) -> System.out
-                .println(k + " " + v.stream().map(x -> x.toString()).collect(Collectors.joining(", "))));
+                .println(k + " " + v.stream().map(Object::toString).collect(Collectors.joining(", "))));
 
-        Map map = new ConcurrentHashMap<String,Integer>(); // Change this to HashMap to see varying sizes.
+        var map = new ConcurrentHashMap<Integer, String>(); // Change this to HashMap to see varying sizes.
         int count = 10_000;
-        Runnable first = () -> {
+
+        var first = CompletableFuture.runAsync(() -> {
             for (int i = 0; i < count; i++) {
                 map.put(i, Integer.toString(i));
             }
-        };
-        Runnable second = () -> {
-            for (int i = count; i < 2*count; i++) {
+        });
+
+        var second = CompletableFuture.runAsync(() -> {
+            for (int i = count; i < 2 * count; i++) {
                 map.put(i, Integer.toString(i));
             }
-        };
-        Thread t1 = new Thread(first);
-        Thread t2 = new Thread(second);
-        t1.start();
-        t2.start();
-        try {
-            t1.join();
-            t2.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.printf("The element count in the map is %s\n", map.size());
+        });
+
+        first.join();
+        second.join();
+        System.out.printf("The element count in the map is %s%n", NumberFormat.getInstance().format(map.size()));
     }
 }
