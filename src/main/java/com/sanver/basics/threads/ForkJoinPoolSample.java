@@ -8,6 +8,34 @@ import java.util.concurrent.RecursiveTask;
 import static com.sanver.basics.utils.Utils.sleep;
 
 // Look also to RecursiveTaskSample and RecursiveActionSample
+
+/**
+ * Java 7 introduced the fork/join framework. It provides tools to help speed up parallel processing by attempting to use all available processor cores. It accomplishes this through a divide and conquer approach.
+ * In practice, this means that the framework first “forks,” recursively breaking the task into smaller independent subtasks until they are simple enough to run asynchronously.
+ * After that, the “join” part begins. The results of all subtasks are recursively joined into a single result. In the case of a task that returns void, the program simply waits until every subtask runs.
+ * To provide effective parallel execution, the fork/join framework uses a pool of threads called the ForkJoinPool. This pool manages worker threads of type ForkJoinWorkerThread.
+ * <br><br>
+ * The ForkJoinPool is the heart of the framework. It is an implementation of the ExecutorService that manages worker threads and provides us with tools to get information about the thread pool state and performance.
+ * Worker threads can execute only one task at a time, but the ForkJoinPool doesn’t create a separate thread for every single subtask. Instead, each thread in the pool has its own double-ended queue (or deque, pronounced “deck”) that stores tasks.
+ * This architecture is vital for balancing the thread’s workload with the help of the work-stealing algorithm.
+ * <br><br>
+ *
+ * <b>Work Stealing Algorithm</b>
+ * <br>
+ * Simply put, free threads try to “steal” work from deques of busy threads.
+ * By default, a worker thread gets tasks from the head of its own deque. When it is empty, the thread takes a task from the tail of the deque of another busy thread or from the global entry queue since this is where the biggest pieces of work are likely to be located.
+ * This approach minimizes the possibility that threads will compete for tasks. It also reduces the number of times the thread will have to go looking for work, as it works on the biggest available chunks of work first.
+ * <br><br>
+ * <b>How It Works</b>
+ * <ol>
+ * <li>	<b>Task Submission:</b> Tasks are submitted to the ForkJoinPool using methods like execute, submit, or invoke.</li>
+ * <li>	<b>Work Queue:</b> Submitted tasks are placed into a work queue.</li>
+ * <li>	<b>Worker Threads:</b> A set of worker threads actively monitor the work queue and pick up tasks to execute.</li>
+ * <li>	<b>Forking and Joining:</b> Tasks can be split into smaller subtasks (forking) and executed independently. Once subtasks are completed, their results are combined (joining).</li>
+ * <li>	<b>Work Stealing:</b> If a worker thread runs out of tasks, it can "steal" tasks from the queues of other busy threads, ensuring efficient utilization of resources.</li>
+ * </ol>
+ * <a href="https://www.baeldung.com/java-fork-join">Source</a>
+ */
 public class ForkJoinPoolSample {
     // Check https://www.baeldung.com/java-fork-join
     public static void main(String[] args) {
