@@ -14,8 +14,10 @@ public class StreamSupplierSample {
             return x % 2 == 0;
         });
         System.out.println("Note that stream is not executed yet, since there is no terminal operation in it.");
+        supplier.get();
+        System.out.println("Supplier.get() is called, but this does not execute the stream as well, since no terminal operation is called.");
         supplier.get().forEach(x -> System.out.println("Foreach " + x));
-        System.out.println("Now the stream is executed since there is a forEach, a terminal operation.");
+        System.out.println("supplier.get().forEach is called. Now the stream is executed since there is a forEach, a terminal operation.");
         System.out.println(
                 "Be aware that when filtering is done for an element, it is immediately passed to forEach, not waiting to finish all filtering first.");
         supplier.get().anyMatch(x -> {

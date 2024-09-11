@@ -13,12 +13,11 @@ public class DeepCopySample {
         System.out.println(person2);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T deepCopy(T object) {
         // The advantage of using Gson instead of ObjectMapper is, it doesn't require a default constructor for the class to be deserialized
         // https://www.baeldung.com/java-deep-copy
         var gson = new Gson();
-        return (T) gson.fromJson(gson.toJson(object), object.getClass());
+        return gson.<T>fromJson(gson.toJson(object), object.getClass());
     }
 
     @Data
