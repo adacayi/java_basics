@@ -1,28 +1,27 @@
 package com.sanver.basics.override;
 
-class A2 {
-    static void writeStatic() {
-        System.out.println("A static method");
-    }
-}
-
-class B2 extends A2 {
-}
-class C2 extends A2 {
-    static void writeStatic() {
-        System.out.println("C static method");
-    }
-}
-
 public class NoStaticOverride {
+    static class A {
+        static void writeStatic() {
+            System.out.println("A static method");
+        }
+    }
+
+    static class B extends A {
+    }
+
+    static class C extends A {
+        static void writeStatic() {
+            System.out.println("C static method");
+        }
+    }
 
     public static void main(String[] args) {
-        A2.writeStatic();
-        B2.writeStatic();
-        C2.writeStatic();
-        C2 c=new C2();
+        A.writeStatic();
+        B.writeStatic();
+        C.writeStatic();
+        C c = new C();
         c.writeStatic();
-        ((A2)c).writeStatic();
+        ((A)c).writeStatic();
     }
-
 }

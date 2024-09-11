@@ -3,37 +3,38 @@
  */
 package com.sanver.basics.override;
 
-class A {
-	void getName() {
-		System.out.println("A");
-		System.out.println();
-	}
-}
-
-class B extends A {
-	void getName() {
-		System.out.println("B");
-		super.getName();
-	}
-}
-
-class C extends B {
-	void getName() {
-		System.out.println("C");
-		super.getName();
-	}
-}
 
 /**
  * @author Abdullah
  *
  */
 public class SimpleOverrideSample {
+	static class A {
+		void getName() {
+			System.out.println("A");
+			System.out.println();
+		}
+	}
+
+	static class B extends A {
+		@Override
+		void getName() {
+			System.out.println("B");
+			super.getName();
+		}
+	}
+
+	static class C extends B {
+		@Override
+		void getName() {
+			System.out.println("C");
+			super.getName();
+		}
+	}
 
 	/**
 	 * @param args
 	 */
-	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 		A a = new A();
 		B b = new B();
