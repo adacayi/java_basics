@@ -20,7 +20,7 @@ public class SimpleConstructorSample {
 	}
 
 	private class B {
-		private void Evaluate() {
+		private void evaluate() {
 			A a = new A();
 			a.name = "Mustafa";
 			System.out.println(a.name);
@@ -35,6 +35,6 @@ public class SimpleConstructorSample {
 		A a = sample.new A();
 		System.out.println(a.name);
 		B b = sample.new B();
-		b.Evaluate();
+		b.evaluate();
 	}
 }
