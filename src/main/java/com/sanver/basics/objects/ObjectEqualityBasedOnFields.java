@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class ObjectEqualityBasedOnFields {
+    // Instead of overriding hashcode and equals methods as shown below so that if fields are equal, equals return true and hashcode is the same,
+    // we can use lombok @EqualsAndHashCode annotation. Note the hashcode with lombok value will be different from the below implementation.
+    // Check the .class file for the lombok generated code.
     public static class Student {
         private String name;
         private int age;
