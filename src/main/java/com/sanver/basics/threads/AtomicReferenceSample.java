@@ -1,13 +1,13 @@
 package com.sanver.basics.threads;
 
+import java.text.NumberFormat;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
-import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowConsumer;
-import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowRunnable;
+import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 
 /**
  * The AtomicReference class in Java is part of the java.util.concurrent.atomic package and provides a way to work with object references atomically.
@@ -24,15 +24,15 @@ public class AtomicReferenceSample {
     private static final AtomicReference<IntValue> ATOMIC_REFERENCE = new AtomicReference<>(new IntValue(0));
     private static final CountDownLatch COUNT_DOWN_LATCH = new CountDownLatch(THREAD_COUNT);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         var executorService = Executors.newFixedThreadPool(THREAD_COUNT);
-        Runnable increment = rethrowRunnable(() -> increment(ATOMIC_REFERENCE));
-        var futures = IntStream
-                .range(0, THREAD_COUNT)
-                .mapToObj(x -> executorService.submit(increment))
-                .toList();
-        futures.forEach(rethrowConsumer(Future::get));
-        System.out.println(ATOMIC_REFERENCE.get().getValue());
+        Callable<Void> increment = () -> {
+            uncheck(() -> increment(ATOMIC_REFERENCE));
+            return null;
+        };
+        var list = IntStream.range(0, 10).mapToObj(x -> increment).toList();
+        executorService.invokeAll(list);
+        System.out.println(NumberFormat.getInstance().format(ATOMIC_REFERENCE.get().getValue()));
         executorService.shutdown();
     }
 
