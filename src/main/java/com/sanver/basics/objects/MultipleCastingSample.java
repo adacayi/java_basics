@@ -6,25 +6,32 @@ import lombok.experimental.NonFinal;
 public class MultipleCastingSample {
     public static void main(String[] args) {
         var person = (Person & Walk & Talk) getPerson("Jane", 12);
+        System.out.println(person.getName());
         person.walk();
         person.talk();
-        System.out.println(person.getName());
+        System.out.println();
+        walkAndTalkAPerson(person);
+        var adult = new Adult("George", 26);
+        walkAndTalkAPerson(adult);
     }
 
     private static Person getPerson(String name, int age) {
         return (age < 20 ? new Child(name, age) : new Adult(name, age));
     }
 
+    private static <T extends Person & Walk & Talk> void walkAndTalkAPerson(T person) {
+        System.out.println(person);
+        person.walk();
+        person.talk();
+        System.out.println();
+    }
+
     interface Walk {
-        default void walk() {
-            System.out.println("Walking started");
-        }
+        void walk();
     }
 
     interface Talk {
-        default void talk() {
-            System.out.println("Talking started");
-        }
+        void talk();
     }
 
     @Value
@@ -39,12 +46,28 @@ public class MultipleCastingSample {
         public Child(String name, int age) {
             super(name, age);
         }
+
+        public void walk() {
+            System.out.printf("Child %s at age %d started walking%n", getName(), getAge());
+        }
+
+        public void talk() {
+            System.out.printf("Child %s at age %d started talking%n", getName(), getAge());
+        }
     }
 
     static class Adult extends Person implements Walk, Talk {
 
         public Adult(String name, int age) {
             super(name, age);
+        }
+
+        public void walk() {
+            System.out.printf("Adult %s at age %d started walking%n", getName(), getAge());
+        }
+
+        public void talk() {
+            System.out.printf("Adult %s at age %d started talking%n", getName(), getAge());
         }
     }
 }
