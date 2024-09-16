@@ -5,7 +5,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.Arrays;
 import java.util.concurrent.Future;
 
-import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowConsumer;
+import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 import static com.sanver.basics.utils.Utils.printThreadPool;
 import static com.sanver.basics.utils.Utils.sleep;
 
@@ -47,12 +47,12 @@ public class ThreadPoolTaskExecutorSample {
         }
 
         printThreadPool(executor, "After all tasks submitted");
-        Arrays.asList(futures).forEach(rethrowConsumer(Future::get));
+        Arrays.asList(futures).forEach(future -> uncheck(() -> future.get()));
         printThreadPool(executor, "After all tasks finished");
         sleep(keepAliveSeconds * 1000L);
         printThreadPool(executor, String.format("After keep alive seconds (%ds)", keepAliveSeconds));
         System.out.println("Notice that the pool size does not drop to zero, but to the core pool size after keep alive seconds.");
-        executor.shutdown();
+        executor.shutdown(); // For ThreadPoolTaskExecutor, shutdown interrupts the active tasks, while this is not true for the ThreadPoolExecutor.
     }
 
     public static Runnable getRunnable(int i) {

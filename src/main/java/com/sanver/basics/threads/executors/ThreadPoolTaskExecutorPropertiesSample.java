@@ -3,8 +3,10 @@ package com.sanver.basics.threads.executors;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 
+import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class ThreadPoolTaskExecutorPropertiesSample {
@@ -42,7 +44,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     }
 
     private static void corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity() {
-        System.out.println("Running corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
+        System.out.println("Running  corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = Integer.MAX_VALUE;
         var queueCapacity = Integer.MAX_VALUE;
@@ -64,7 +66,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     }
 
     private static void corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity() {
-        System.out.println("Running corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
+        System.out.println("Running  corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = Integer.MAX_VALUE;
         var queueCapacity = QUEUE_CAPACITY;
@@ -88,8 +90,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     }
 
     private static void corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity() {
-        System.out.println(
-                "Running corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
+        System.out.println("Running  corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = Integer.MAX_VALUE;
         var queueCapacity = QUEUE_CAPACITY;
@@ -108,12 +109,11 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         while (countDownLatch.getCount() > 0) {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
-        System.out.println(
-                "Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
+        System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
     }
 
     private static void corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity() {
-        System.out.println("Running corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
+        System.out.println("Running  corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = MAX_POOL_SIZE;
         var queueCapacity = QUEUE_CAPACITY;
@@ -135,7 +135,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     }
 
     private static void corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
-        System.out.println("Running corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+        System.out.println("Running  corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = MAX_POOL_SIZE;
         var queueCapacity = Integer.MAX_VALUE;
@@ -158,7 +158,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     }
 
     private static void noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
-        System.out.println("Running noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+        System.out.println("Running  noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
         var corePoolSize = 1;
         var maxPoolSize = MAX_POOL_SIZE;
         var queueCapacity = Integer.MAX_VALUE;
@@ -180,7 +180,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     }
 
     private static void fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize() {
-        System.out.println("Running fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
+        System.out.println("Running  fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = CORE_POOL_SIZE;
         var queueCapacity = Integer.MAX_VALUE;
@@ -213,6 +213,15 @@ public class ThreadPoolTaskExecutorPropertiesSample {
                 System.out.println(e.getMessage());
             }
         }
+
+        shutdownExecutor(executor, countDownLatch);
+    }
+
+    public static void shutdownExecutor(ThreadPoolTaskExecutor executor, CountDownLatch countDownLatch) {
+        CompletableFuture.runAsync(() -> {
+            uncheck(() -> countDownLatch.await());
+            executor.shutdown();
+        });
     }
 
     public static Runnable getRunnable(int i, CountDownLatch countDownLatch) {
