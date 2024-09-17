@@ -61,7 +61,7 @@ public class ForkJoinPoolSample {
 
         protected Integer compute() {
             var thread = Thread.currentThread();
-            System.out.printf("Calculating Fibonacci(%d) in ForkJoinWorkedThread: %s - %s%n", n, thread.getId(), thread.getName());
+            System.out.printf("Calculating Fibonacci(%d) in ForkJoinWorkedThread: %s - %s Is Daemon: %s%n", n, thread.getId(), thread.getName(), thread.isDaemon());
             if (n <= 1) {//This if statement is the part where the divided job is executed.
                 sleep(2000);
                 return n;

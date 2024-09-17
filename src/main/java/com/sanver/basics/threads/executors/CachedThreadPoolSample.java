@@ -41,8 +41,11 @@ public class CachedThreadPoolSample {
         printThreadPool(threadPool, String.format("Thread pool after %d tasks have been executed", taskCount));
         sleep(keepAliveTime * 1000L);
         printThreadPool(threadPool, String.format("Thread pool after %d seconds idle time", keepAliveTime));
-        // The thread pool will not let the main thread exit until pool size becomes zero.
-        // But until then, the main thread will be blocked.
+        // The main thread won't exit until pool size becomes zero
+        // (since pool size being greater than 0 means there are threads in the pool, even though they may not be active,
+        // and if they are not daemon threads, main thread won't exit.
+        // For ThreadPoolExecutor classes like the cached thread pool, threads are not daemon,
+        // since they use Executors.defaultThreadFactory() as the ThreadFactory which sets daemon as false).
         // In this example, since we waited for the keepAliveTime after all threads finished, the pool size will become zero and the code will exit.
         // Thus, there is no need to call shutdown() for threadPool. (Note: We need to cast threadPool to ExecutorService to access the shutdown() method)
     }

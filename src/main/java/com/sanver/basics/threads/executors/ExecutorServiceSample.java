@@ -38,7 +38,11 @@ public class ExecutorServiceSample {
         System.out.println("Finished.");
         service.shutdown(); // For ThreadPoolExecutor, shutdown does not interrupt the active tasks, while this is not true for the ThreadPoolTaskExecutor.
         // If the thread pool is not shutdown, the main thread won't end, because the thread pool doesn't let the main thread exit
-        // until all active threads are finished and pool size becomes zero.
+        // until all active threads are finished and pool size becomes zero
+        // (meaning there should be no threads left in the pool.
+        // This is because the threads are not daemon threads for ThreadPoolExecutor,
+        // which uses Executors.defaultThreadFactory() as the ThreadFactory.
+        // On the other hand, ForkJoinPool.commonPool threads are daemon threads).
         // Since this thread pool is a thread pool with core pool size 1 and there are tasks submitted to the pool increasing the initial pool size of 0 to 1, the pool size will never go back to zero, hence will never exit if shutdown is not called explicitly.
     }
 }

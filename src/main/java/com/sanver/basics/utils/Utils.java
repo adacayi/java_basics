@@ -30,7 +30,7 @@ public class Utils {
         displayInfo(info);
 
         var thread = Thread.currentThread();
-        System.out.printf("Thread id: %-3d Thread name: %s%n%n", thread.getId(), thread.getName());
+        System.out.printf("Thread id: %-3d Thread name: %s Is Daemon: %s%n%n", thread.getId(), thread.getName(), thread.isDaemon());
     }
 
     public static void printForkJoinPool(ForkJoinPool pool, String... info) {
