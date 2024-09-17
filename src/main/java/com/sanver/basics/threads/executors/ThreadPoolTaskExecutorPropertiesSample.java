@@ -3,10 +3,8 @@ package com.sanver.basics.threads.executors;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 
-import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class ThreadPoolTaskExecutorPropertiesSample {
@@ -59,9 +57,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
+
         while (countDownLatch.getCount() > 0) {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
+
+        executor.shutdown();
         System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
     }
 
@@ -83,9 +84,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
+
         while (countDownLatch.getCount() > 0) {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
+
+        executor.shutdown();
         System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
     }
 
@@ -106,9 +110,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
+
         while (countDownLatch.getCount() > 0) {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
+
+        executor.shutdown();
         System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
     }
 
@@ -128,9 +135,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
 
         var countDownLatch = new CountDownLatch(operationCount);
         executeThreads(executor, countDownLatch, operationCount);
+
         while (countDownLatch.getCount() > 1) { // Since one task won't be executed, because the queue capacity and max pool size don't allow it
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
+
+        executor.shutdown();
         System.out.println("Finished corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
     }
 
@@ -151,9 +161,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
+
         while (countDownLatch.getCount() > 0) {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
+
+        executor.shutdown();
         System.out.println("Finished corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
     }
 
@@ -173,9 +186,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
+
         while (countDownLatch.getCount() > 0) {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
+
+        executor.shutdown();
         System.out.println("Finished noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
     }
 
@@ -197,9 +213,12 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
+
         while (countDownLatch.getCount() > 0) {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
+
+        executor.shutdown();
         System.out.println("Finished fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
     }
 
@@ -213,15 +232,6 @@ public class ThreadPoolTaskExecutorPropertiesSample {
                 System.out.println(e.getMessage());
             }
         }
-
-        shutdownExecutor(executor, countDownLatch);
-    }
-
-    public static void shutdownExecutor(ThreadPoolTaskExecutor executor, CountDownLatch countDownLatch) {
-        CompletableFuture.runAsync(() -> {
-            uncheck(() -> countDownLatch.await());
-            executor.shutdown();
-        });
     }
 
     public static Runnable getRunnable(int i, CountDownLatch countDownLatch) {
