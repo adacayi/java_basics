@@ -26,11 +26,14 @@ public class Utils {
         while (System.nanoTime() - start < nanos);
     }
 
+    public static String getThreadInfo() {
+        var thread = Thread.currentThread();
+        return String.format("Thread id: %-3d Thread name: %s Is Daemon: %s", thread.getId(), thread.getName(), thread.isDaemon());
+    }
+
     public static void printCurrentThread(String... info) {
         displayInfo(info);
-
-        var thread = Thread.currentThread();
-        System.out.printf("Thread id: %-3d Thread name: %s Is Daemon: %s%n%n", thread.getId(), thread.getName(), thread.isDaemon());
+        System.out.println(getThreadInfo());
     }
 
     public static void printForkJoinPool(ForkJoinPool pool, String... info) {
