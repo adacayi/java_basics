@@ -1,13 +1,12 @@
 package com.sanver.basics.utils;
 
-import java.util.concurrent.Callable;
 
 public class RethrowAsUnchecked {
     @SuppressWarnings("unchecked")
-    public static <T, E extends Throwable> T uncheck(Callable<T> callable) throws E {
+    public static <T, E extends Throwable> T uncheck(ThrowingCallable<T> callable) throws E {
         try {
             return callable.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw (E) e;
         }
     }
@@ -16,14 +15,20 @@ public class RethrowAsUnchecked {
     public static <E extends Throwable> void uncheck(ThrowingRunnable runnable) throws E {
         try {
             runnable.run();
-        } catch (Exception e) {
-            throw (E)e;
+        } catch (Throwable e) {
+            throw (E) e;
         }
     }
 
     @FunctionalInterface
     @SuppressWarnings("java:S112")
     public interface ThrowingRunnable {
-        void run() throws Exception;
+        void run() throws Throwable;
+    }
+
+    @FunctionalInterface
+    @SuppressWarnings("java:S112")
+    public interface ThrowingCallable<T> {
+        T call() throws Throwable;
     }
 }
