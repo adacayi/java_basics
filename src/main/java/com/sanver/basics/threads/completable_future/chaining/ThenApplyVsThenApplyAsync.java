@@ -6,15 +6,15 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntUnaryOperator;
-import java.util.function.UnaryOperator;
 
 import static com.sanver.basics.utils.Utils.printThreadPool;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class ThenApplyVsThenApplyAsync {
     public static void main(String[] args) {
-        // thenApply uses the same executor as the previous CompletableFuture, whereas thenApplyAsync uses the ForkJoinPool.commonPool.
-        var executor = (ThreadPoolExecutor)Executors.newFixedThreadPool(2, new CustomThreadFactory("Custom-pool-worker"));
+        // thenApply uses the same executor as the previous CompletableFuture, or if the previous CompletableFuture is completed, then it will use the thread from which it is called.
+        // thenApplyAsync uses the ForkJoinPool.commonPool.
+        var executor = (ThreadPoolExecutor)Executors.newFixedThreadPool(3, new CustomThreadFactory("Custom-pool-worker"));
 
         IntUnaryOperator square = x -> {
             var thread = Thread.currentThread();
@@ -27,8 +27,13 @@ public class ThenApplyVsThenApplyAsync {
         var first = CompletableFuture.supplyAsync(() -> square.applyAsInt(3), executor).thenApply(square::applyAsInt);
         first.join();
 
-        var second = CompletableFuture.supplyAsync(() -> square.applyAsInt(7), executor).thenApplyAsync(square::applyAsInt);
+        var second = CompletableFuture.supplyAsync(() -> square.applyAsInt(5), executor);
         second.join();
+        var secondThenApply = second.thenApply(square::applyAsInt); // Notice this runs in the main thread, the thread calling the thenApply, since the completable future is already completed.
+        secondThenApply.join();
+
+        var third = CompletableFuture.supplyAsync(() -> square.applyAsInt(7), executor).thenApplyAsync(square::applyAsInt);
+        third.join();
 
         printThreadPool(executor, "State of the Custom pool after all operations finished");
         // Even though the pool size is not zero (there are still threads (not active though)), since the threads are set as daemon, the main thread will exit without calling the executor.shutdown()
