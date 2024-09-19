@@ -42,6 +42,7 @@ public class HandleExceptions {
         // Notice handle changes the result of the future, while whenComplete does not.
         // Because of this, in cases of exception, whenComplete will propagate the exception to the caller,
         // while handle can just log the exception, but still return a result.
+        // In handle method, we can also throw an exception, which can later be handled when join or get methods of the CompletableFuture are called.
         var exceptionResult = completableFutureWithException.get();
         var result = completableFutureWithoutException.get();
         System.out.println(exceptionResult);
