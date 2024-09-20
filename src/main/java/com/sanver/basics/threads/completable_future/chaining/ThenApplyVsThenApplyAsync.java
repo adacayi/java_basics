@@ -12,9 +12,10 @@ import static com.sanver.basics.utils.Utils.sleep;
 
 public class ThenApplyVsThenApplyAsync {
     public static void main(String[] args) {
-        // thenApply uses the same executor as the previous CompletableFuture, or if the previous CompletableFuture is completed, then it will use the thread from which it is called.
-        // thenApplyAsync uses the ForkJoinPool.commonPool.
-        var executor = (ThreadPoolExecutor)Executors.newFixedThreadPool(3, new CustomThreadFactory("Custom-pool-worker"));
+        // thenApply uses the same executor of the CompletableFuture, or if the CompletableFuture is already completed, then it will use the thread from which it was called.
+        // An executor can be specified for thenApplyAsync.
+        // If no executor was specified, thenApplyAsync uses the ForkJoinPool.commonPool regardless of the previous CompletableFuture completion status.
+        var executor = (ThreadPoolExecutor)Executors.newFixedThreadPool(10, new CustomThreadFactory("Custom-pool-worker"));
 
         IntUnaryOperator square = x -> {
             var thread = Thread.currentThread();
@@ -29,11 +30,20 @@ public class ThenApplyVsThenApplyAsync {
 
         var second = CompletableFuture.supplyAsync(() -> square.applyAsInt(5), executor);
         second.join();
-        var secondThenApply = second.thenApply(square::applyAsInt); // Notice this runs in the main thread, the thread calling the thenApply, since the completable future is already completed.
+        System.out.println("Second is completed: " + second.isDone());
+        var secondThenApply = second.thenApply(square::applyAsInt); // Notice this runs in the main thread, the thread calling the thenApply, since the previous completable future was already completed.
         secondThenApply.join();
 
         var third = CompletableFuture.supplyAsync(() -> square.applyAsInt(7), executor).thenApplyAsync(square::applyAsInt);
         third.join();
+
+        var fourth = CompletableFuture.supplyAsync(() -> square.applyAsInt(11), executor);
+        fourth.join();
+        fourth.thenApplyAsync(square::applyAsInt).join(); // ThenApplyAsync will be executed in the ForkJoinPool.commonPool() even though the CompletableFuture is completed.
+
+        var fifth = CompletableFuture.supplyAsync(() -> square.applyAsInt(13), executor);
+        fifth.join(); // ThenApplyAsync will be executed in the executor even though the CompletableFuture is completed.
+        fifth.thenApplyAsync(square::applyAsInt, executor).join();
 
         printThreadPool(executor, "State of the Custom pool after all operations finished");
         // Even though the pool size is not zero (there are still threads (not active though)), since the threads are set as daemon, the main thread will exit without calling the executor.shutdown()
