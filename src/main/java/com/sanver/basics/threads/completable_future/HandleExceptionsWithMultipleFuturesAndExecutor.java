@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import static com.sanver.basics.utils.Utils.getThreadInfo;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class HandleExceptionsWithMultipleFuturesAndExecutor {
@@ -15,20 +16,27 @@ public class HandleExceptionsWithMultipleFuturesAndExecutor {
     public static void main(String[] args) {
         Supplier<String> supplier = () -> {
             var id = idCount.addAndGet(1);
-            System.out.printf("%d: started. Thread: %d%n", id, Thread.currentThread().getId());
-            sleep(2000);
+            System.out.printf("%d: started. %s%n", id, getThreadInfo());
+            sleep(13000);
+
             if (id == 2 || id == 3) {
-                throw new RuntimeException(String.format("Some error occurred in thread %d", Thread.currentThread().getId()));
+                System.out.printf("%d: will throw an exception. %s%n", id, getThreadInfo());
+                throw new RuntimeException(String.format("Some error occurred in process %d %s", id, getThreadInfo()));
             }
-            System.out.printf("%d: completed. Thread: %d%n", id, Thread.currentThread().getId());
+
+            System.out.printf("%d: completed. %s%n", id, getThreadInfo());
             return "completed";
         };
 
-        var executor = Executors.newFixedThreadPool(2);
+        var executor = Executors.newFixedThreadPool(5);
         var future1 = CompletableFuture.supplyAsync(supplier, executor);
+        sleep(3000);
         var future2 = CompletableFuture.supplyAsync(supplier, executor);
+        sleep(3000);
         var future3 = CompletableFuture.supplyAsync(supplier, executor);
+        sleep(3000);
         var future4 = CompletableFuture.supplyAsync(supplier, executor);
+        sleep(3000);
         var future5 = CompletableFuture.supplyAsync(supplier, executor);
 
         var combined = CompletableFuture.allOf(future1, future2, future3, future4, future5);
@@ -36,14 +44,16 @@ public class HandleExceptionsWithMultipleFuturesAndExecutor {
         var handled = combined.handle(
                 (r, e) -> {
                     if (e == null) {
-                        System.out.println("No error occurred. Return value is " + r);
+                        System.out.printf("No error occurred. Return value is: %s %s%n", r, getThreadInfo());
                         count.addAndGet(1);
                         return -1;
                     }
-                    System.out.println("Error occurred: " + e);
+                    System.out.printf("Handle executed. %s. Error details in handle: %s %n", getThreadInfo(), e);
                     return count.addAndGet(1);
-                }).thenAccept(x -> System.out.println("The return value is " + x));
+                })
+                .thenAccept(x -> System.out.printf("Then accept executed. %s. The return value is: %s%n", getThreadInfo(), x));
 
         handled.join();
+        executor.shutdown();
     }
 }
