@@ -10,8 +10,8 @@ import static com.sanver.basics.utils.Utils.sleep;
 
 public class HandleExceptionsWithMultipleFuturesAndExecutor {
 
-    private static AtomicInteger count = new AtomicInteger(0);
-    private static AtomicInteger idCount = new AtomicInteger(0);
+    private static final AtomicInteger count = new AtomicInteger(0);
+    private static final AtomicInteger idCount = new AtomicInteger(0);
 
     public static void main(String[] args) {
         Supplier<String> supplier = () -> {
