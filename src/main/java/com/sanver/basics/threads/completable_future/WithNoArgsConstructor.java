@@ -9,10 +9,10 @@ public class WithNoArgsConstructor {
     var completableFuture = new CompletableFuture<String>();
     //If not already completed, sets the value returned by get() and related methods to the given value.
     //Returns true if this invocation caused this CompletableFuture to transition to a completed state, else false
-    var state = completableFuture.complete("return value");
+    var causedCompletion = completableFuture.complete("complete value");
 
     var result = completableFuture.get();
-    System.out.println(state);
-    System.out.println(result);
+    System.out.println("Caused completion: " + causedCompletion);
+    System.out.println("Result: " + result);
   }
 }
