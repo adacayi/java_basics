@@ -3,8 +3,10 @@ package com.sanver.basics.threads.executors;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.text.NumberFormat;
 import java.util.concurrent.CountDownLatch;
 
+import static com.sanver.basics.utils.Utils.printThreadPool;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class ThreadPoolTaskExecutorPropertiesSample {
@@ -13,6 +15,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     private static final int CORE_POOL_SIZE = 3;
     private static final int QUEUE_CAPACITY = 4;
     private static final int MAX_POOL_SIZE = 5;
+    private static final NumberFormat numberFormat = NumberFormat.getInstance();
 
     public static void main(String[] args) {
         // ThreadPoolTaskExecutor is a java bean that allows for configuring a ThreadPoolExecutor in a bean style
@@ -32,22 +35,23 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         // Note, queueCapacity must be greater than corePoolSize.
         // Also, maxPoolSize must be greater than or equal to corePoolSize
 
-        corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity();
-        corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity();
-        corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity();
-        corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity();
-        corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity();
-        noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity();
+        corePoolSizeSetLargerThanOperationCountWithUnboundMaxPoolSizeAndUnboundQueueCapacity();
+        corePoolSizeSetWithUnboundMaxPoolSizeAndUnboundQueueCapacity();
+        corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacity();
+        corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity();
+        corePoolSizeSetWithBoundMaxPoolSizeAndBoundQueueCapacity();
+        corePoolSizeSetWithBoundMaxPoolSizeAndUnboundQueueCapacity();
+        corePoolSizeNotSetWithBoundMaxPoolSizeAndUnboundQueueCapacity();
         fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize();
     }
 
-    private static void corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity() {
-        System.out.println("Running  corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
+    private static void corePoolSizeSetLargerThanOperationCountWithUnboundMaxPoolSizeAndUnboundQueueCapacity() {
+        System.out.printf("%nRunning  corePoolSizeSetLargerThanOperationCountWithUnboundMaxPoolSizeAndUnboundQueueCapacity%n");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = Integer.MAX_VALUE;
         var queueCapacity = Integer.MAX_VALUE;
-        var operationCount = NUMBER_OF_OPERATIONS;
-        var expectedPoolSize = Math.min(Math.max(operationCount - queueCapacity, corePoolSize), maxPoolSize); // This is equal to corePoolSize
+        var operationCount = CORE_POOL_SIZE - 1;
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount); // This is equal to corePoolSize
         printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
         var executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
@@ -57,22 +61,37 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
-
-        while (countDownLatch.getCount() > 0) {
-            Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
-        }
-
-        executor.shutdown();
-        System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
+        assertPoolSizeAndShutDownWhenFinished(countDownLatch, executor, expectedPoolSize);
+        System.out.printf("%nFinished corePoolSizeSetLargerThanOperationCountWithUnboundMaxPoolSizeAndUnboundQueueCapacity%n");
     }
 
-    private static void corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity() {
-        System.out.println("Running  corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
+    private static void corePoolSizeSetWithUnboundMaxPoolSizeAndUnboundQueueCapacity() {
+        System.out.printf("%nRunning  corePoolSizeSetWithUnboundMaxPoolSizeAndUnboundQueueCapacity%n");
+        var corePoolSize = CORE_POOL_SIZE;
+        var maxPoolSize = Integer.MAX_VALUE;
+        var queueCapacity = Integer.MAX_VALUE;
+        var operationCount = NUMBER_OF_OPERATIONS;
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount); // This is equal to corePoolSize
+        printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
+        var executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(corePoolSize);
+        // This will set maxPoolSize and queueCapacity to unbound
+        executor.initialize();
+
+        var countDownLatch = new CountDownLatch(operationCount);
+
+        executeThreads(executor, countDownLatch, operationCount);
+        assertPoolSizeAndShutDownWhenFinished(countDownLatch, executor, expectedPoolSize);
+        System.out.println("Finished corePoolSizeSetWithUnboundMaxPoolSizeAndUnboundQueueCapacity");
+    }
+
+    private static void corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacity() {
+        System.out.printf("%nRunning  corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacity%n");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = Integer.MAX_VALUE;
         var queueCapacity = QUEUE_CAPACITY;
         var operationCount = NUMBER_OF_OPERATIONS;
-        var expectedPoolSize = Math.min(Math.max(operationCount - queueCapacity, corePoolSize), maxPoolSize);
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount);
         printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
 
         var executor = new ThreadPoolTaskExecutor();
@@ -84,22 +103,17 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
-
-        while (countDownLatch.getCount() > 0) {
-            Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
-        }
-
-        executor.shutdown();
-        System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacity");
+        assertPoolSizeAndShutDownWhenFinished(countDownLatch, executor, expectedPoolSize);
+        System.out.printf("%nFinished corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacity%n");
     }
 
-    private static void corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity() {
-        System.out.println("Running  corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
+    private static void corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity() {
+        System.out.printf("%nRunning  corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity%n");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = Integer.MAX_VALUE;
         var queueCapacity = QUEUE_CAPACITY;
         var operationCount = QUEUE_CAPACITY;
-        var expectedPoolSize = Math.min(Math.max(operationCount - queueCapacity, corePoolSize), maxPoolSize); // This is equal to corePoolSize
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount); // This is equal to corePoolSize
         printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
         var executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
@@ -110,22 +124,17 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
-
-        while (countDownLatch.getCount() > 0) {
-            Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
-        }
-
-        executor.shutdown();
-        System.out.println("Finished corePoolSizeWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
+        assertPoolSizeAndShutDownWhenFinished(countDownLatch, executor, expectedPoolSize);
+        System.out.println("Finished corePoolSizeSetWithUnboundMaxPoolSizeAndBoundQueueCapacityAndOperationCountSameAsQueueCapacity");
     }
 
-    private static void corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity() {
-        System.out.println("Running  corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
+    private static void corePoolSizeSetWithBoundMaxPoolSizeAndBoundQueueCapacity() {
+        System.out.printf("%nRunning  corePoolSizeSetWithBoundMaxPoolSizeAndBoundQueueCapacity%n");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = MAX_POOL_SIZE;
         var queueCapacity = QUEUE_CAPACITY;
         var operationCount = NUMBER_OF_OPERATIONS;
-        var expectedPoolSize = Math.min(Math.max(operationCount - queueCapacity, corePoolSize), maxPoolSize); // Since Math.max(operationCount - queueCapacity, corePoolSize) is larger than maxPoolSize, it will result in a runtime error "did not accept task", because the queue cannot hold all the operations that are not in the pool. One task won't be executed, but others will.
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount); // Since operationCount - queueCapacity is larger than maxPoolSize, it will result in a runtime error "did not accept task", because the queue cannot hold all the operations that are not in the pool. One task won't be executed, but others will.
         printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
         var executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
@@ -140,17 +149,18 @@ public class ThreadPoolTaskExecutorPropertiesSample {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
 
+        printThreadPool(executor, "Final thread pool information");
         executor.shutdown();
-        System.out.println("Finished corePoolSizeWithBoundMaxPoolSizeAndBoundQueueCapacity");
+        System.out.printf("%nFinished corePoolSizeSetWithBoundMaxPoolSizeAndBoundQueueCapacity%n");
     }
 
-    private static void corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
-        System.out.println("Running  corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+    private static void corePoolSizeSetWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
+        System.out.printf("%nRunning  corePoolSizeSetWithBoundMaxPoolSizeAndUnboundQueueCapacity%n");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = MAX_POOL_SIZE;
         var queueCapacity = Integer.MAX_VALUE;
         var operationCount = NUMBER_OF_OPERATIONS;
-        var expectedPoolSize = Math.min(Math.max(operationCount - queueCapacity, corePoolSize), maxPoolSize); // This is equal to corePoolSize
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount); // This is equal to corePoolSize
         printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
         var executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(corePoolSize);
@@ -161,22 +171,17 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
-
-        while (countDownLatch.getCount() > 0) {
-            Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
-        }
-
-        executor.shutdown();
-        System.out.println("Finished corePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+        assertPoolSizeAndShutDownWhenFinished(countDownLatch, executor, expectedPoolSize);
+        System.out.printf("%nFinished corePoolSizeSetWithBoundMaxPoolSizeAndUnboundQueueCapacity%n");
     }
 
-    private static void noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
-        System.out.println("Running  noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+    private static void corePoolSizeNotSetWithBoundMaxPoolSizeAndUnboundQueueCapacity() {
+        System.out.printf("%nRunning  corePoolSizeNotSetWithBoundMaxPoolSizeAndUnboundQueueCapacity%n");
         var corePoolSize = 1;
         var maxPoolSize = MAX_POOL_SIZE;
         var queueCapacity = Integer.MAX_VALUE;
         var operationCount = NUMBER_OF_OPERATIONS;
-        var expectedPoolSize = Math.min(Math.max(operationCount - queueCapacity, corePoolSize), maxPoolSize);
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount);
         printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
         var executor = new ThreadPoolTaskExecutor();
         executor.setMaxPoolSize(maxPoolSize);
@@ -186,22 +191,17 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
-
-        while (countDownLatch.getCount() > 0) {
-            Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
-        }
-
-        executor.shutdown();
-        System.out.println("Finished noCorePoolSizeWithBoundMaxPoolSizeAndUnboundQueueCapacity");
+        assertPoolSizeAndShutDownWhenFinished(countDownLatch, executor, expectedPoolSize);
+        System.out.printf("%nFinished corePoolSizeNotSetWithBoundMaxPoolSizeAndUnboundQueueCapacity%n");
     }
 
     private static void fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize() {
-        System.out.println("Running  fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
+        System.out.printf("%nRunning  fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize%n");
         var corePoolSize = CORE_POOL_SIZE;
         var maxPoolSize = CORE_POOL_SIZE;
         var queueCapacity = Integer.MAX_VALUE;
         var operationCount = NUMBER_OF_OPERATIONS;
-        var expectedPoolSize = Math.min(Math.max(operationCount - queueCapacity, corePoolSize), maxPoolSize);
+        var expectedPoolSize = getExpectedPoolSize(corePoolSize, maxPoolSize, queueCapacity, operationCount);
         printQueue(corePoolSize, maxPoolSize, queueCapacity, operationCount, expectedPoolSize);
 
         var executor = new ThreadPoolTaskExecutor();
@@ -213,18 +213,15 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         var countDownLatch = new CountDownLatch(operationCount);
 
         executeThreads(executor, countDownLatch, operationCount);
-
-        while (countDownLatch.getCount() > 0) {
-            Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
-        }
-
-        executor.shutdown();
-        System.out.println("Finished fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize");
+        assertPoolSizeAndShutDownWhenFinished(countDownLatch, executor, expectedPoolSize);
+        System.out.printf("%nFinished fixedPoolSizeWithCorePoolSizeEqualsMaxPoolSize%n");
     }
 
     public static void executeThreads(ThreadPoolTaskExecutor executor,
                                       CountDownLatch countDownLatch,
                                       int numberOfOperations) {
+        printThreadPool(executor, "Initial thread pool information");
+
         for (int i = 0; i < numberOfOperations; i++) {
             try {
                 executor.execute(getRunnable(i + 1, countDownLatch));
@@ -243,11 +240,24 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         };
     }
 
-    private static void printQueue(int corePoolSize, int maxPoolSize, int queueCapacity, int operationCount, int expectedPoolSize) {
-        System.out.println("Core pool size is " + corePoolSize);
-        System.out.println("Max pool size is " + maxPoolSize);
-        System.out.println("Queue capacity is " + queueCapacity);
-        System.out.println("Operation count is " + operationCount);
-        System.out.println("Pool size is " + expectedPoolSize);
+    private static void printQueue(long corePoolSize, long maxPoolSize, long queueCapacity, long operationCount, long expectedPoolSize) {
+        System.out.printf("Core pool size  is      : %s%n", numberFormat.format(corePoolSize));
+        System.out.printf("Max  pool size  is      : %s%n", numberFormat.format(maxPoolSize));
+        System.out.printf("Queue capacity  is      : %s%n", numberFormat.format(queueCapacity));
+        System.out.printf("Operation count is      : %s%n", numberFormat.format(operationCount));
+        System.out.printf("Pool size will reach to : %s%n", numberFormat.format(expectedPoolSize));
+    }
+
+    private static long getExpectedPoolSize(long corePoolSize, long maxPoolSize, long queueCapacity, long operationCount) {
+        return Math.min(maxPoolSize, Math.min(operationCount, corePoolSize + Math.max(0, operationCount - corePoolSize - queueCapacity)) );
+    }
+
+    private static void assertPoolSizeAndShutDownWhenFinished(CountDownLatch countDownLatch, ThreadPoolTaskExecutor executor, long expectedPoolSize) {
+        while (countDownLatch.getCount() > 0) {
+            Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
+        }
+
+        printThreadPool(executor, "Final thread pool information");
+        executor.shutdown();
     }
 }
