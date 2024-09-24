@@ -25,6 +25,10 @@ public class HandleExceptions {
             return List.of(1, 3, 5);
         };
 
+        CompletableFuture.supplyAsync(supplierWithException);
+        sleep(5000); // This is to show that no exception is thrown or written to the stdout if no CompletableFuture.get() or join() methods are called, or the exception is not handled with handle or whenComplete.
+        System.out.printf("%nSupplierWithException finished without calling get or join. No exception is propagated to the main thread or written to the stdout in the raised thread. To not lose track of exceptions, use get() or join() methods or handle the exceptions with handle or whenComplete.%n%n");
+
         var completableFutureWithException = CompletableFuture
                 .supplyAsync(supplierWithException)
                 .handle((r, e) -> {
@@ -45,8 +49,9 @@ public class HandleExceptions {
         // In handle method, we can also throw an exception, which can later be handled when join or get methods of the CompletableFuture are called.
         var exceptionResult = completableFutureWithException.get();
         var result = completableFutureWithoutException.get();
-        System.out.println(exceptionResult);
-        System.out.println(result);
+        System.out.printf("%nBoth supplier futures finished. Results: %n");
+        System.out.println("SupplierWithExceptionResult: " + exceptionResult);
+        System.out.println("Supplier result: " + result);
 
         var completableFutureWhenCompleteWithException = CompletableFuture
                 .supplyAsync(supplierWithException)
@@ -67,8 +72,8 @@ public class HandleExceptions {
                 });
 
         result = completableFutureWhenCompleteWithoutException.get();
-        System.out.println(result);
-        exceptionResult = completableFutureWhenCompleteWithException.get(); // This will throw an exception and the program will not continue.
+        System.out.printf("%n%nSupplier completed. Result: %s%n%n", result);
+        exceptionResult = completableFutureWhenCompleteWithException.get(); // This will throw an exception and the program will not continue. If this line is even just after the completableFuture start, whenComplete will be executed before the exception is thrown.
         System.out.println(exceptionResult);
     }
 }
