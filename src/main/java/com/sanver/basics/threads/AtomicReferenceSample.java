@@ -20,7 +20,20 @@ public class AtomicReferenceSample {
         var atomicReference = new AtomicReference<>(new IntValue(0));
         var futures = IntStream.range(0, 10).mapToObj(x -> CompletableFuture.runAsync(() -> increment(atomicReference))).toArray(CompletableFuture[]::new);
         CompletableFuture.allOf(futures).join();
-        System.out.println(NumberFormat.getInstance().format(atomicReference.get().getValue()));
+        System.out.println("Result after compare and set: " + NumberFormat.getInstance().format(atomicReference.get().getValue()));
+
+        Runnable accumulate = () -> {
+            for (int i = 0; i < 100_000; i++) {
+                atomicReference.accumulateAndGet(new IntValue(4), (prev, x) -> new IntValue(prev.getValue() + x.getValue()));
+                // This tries to execute the binary operator and sets the value to the atomic reference if the previous value at the start of the operation remained the same. If not, it will retry with the current value until it is successful. So no need for a loop here, contrary to the case in compareAndSet.
+                // Important: Make sure that the binary operator does not change the prev object; otherwise, it will affect the check whether the previous value remained the same or not when assigning the final value calculated by the binary operator, hence might not be thread safe in the end.
+                // For example, this might not result in the desired sum: atomicReference.accumulateAndGet(new IntValue(4), (prev, x) -> prev.increment(x)) because increment method in IntValue changes the existing object. If it was return new IntValue(value + increment.getValue()), that would work correctly.
+            }
+        };
+
+        futures = IntStream.range(0, 10).mapToObj(x -> CompletableFuture.runAsync(accumulate)).toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(futures).join();
+        System.out.println("Result after accumulating to compare and set value: " + NumberFormat.getInstance().format(atomicReference.get().getValue()));
     }
 
     public static void increment(AtomicReference<IntValue> value) {
@@ -38,7 +51,7 @@ public class AtomicReferenceSample {
     }
 
     private static class IntValue {
-        private final int value;
+        private int value;
 
         public IntValue(int value) {
             this.value = value;
@@ -46,6 +59,11 @@ public class AtomicReferenceSample {
 
         public int getValue() {
             return value;
+        }
+
+        public IntValue increment(IntValue increment) {
+            value += increment.getValue();
+            return this;
         }
     }
 }
