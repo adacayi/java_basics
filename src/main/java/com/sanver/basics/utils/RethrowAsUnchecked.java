@@ -31,4 +31,16 @@ public class RethrowAsUnchecked {
     public interface ThrowingCallable<T> {
         T call() throws Throwable;
     }
+
+    @FunctionalInterface
+    @SuppressWarnings("java:S112")
+    public interface ThrowingConsumer<T> {
+        void accept(T t) throws Throwable;
+    }
+
+    @FunctionalInterface
+    @SuppressWarnings("java:S112")
+    public interface ThrowingFunction<T, R> {
+        R apply(T t) throws Throwable;
+    }
 }

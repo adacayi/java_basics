@@ -34,7 +34,7 @@ public class NanoTimeSample {
             sleepNano(10);
             var endInstant = Instant.now(); // Since Instant.now() is not in nanosecond precision, startInstant end endInstant get the same value,
             // hence the duration becomes zero.
-            // However, this is does not mean Insant.now is running faster, actually the opposite is true, System.nano is faster,
+            // However, this is does not mean Instant.now is running faster, actually the opposite is true, System.nano is faster,
             // since thread2 is unlocked first but thread1 output comes first to the console suggesting it finishes first, although started later.
             var duration = formatter.format(Duration.between(startInstant, endInstant).toNanos());
             System.out.printf("Duration calculated with Instant.now    : %s ns%n", duration);
