@@ -5,6 +5,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
+import static com.sanver.basics.utils.Utils.getThreadInfo;
 import static com.sanver.basics.utils.Utils.sleep;
 
 // Look also to RecursiveTaskSample and RecursiveActionSample
@@ -43,11 +44,12 @@ public class ForkJoinPoolSample {
         Integer result = pool.invoke(new Fibonacci(4));
         System.out.printf("%nResult is %d%n%n", result);
         // new ForkJoinPool with a specific number of threads
-        pool = new ForkJoinPool(3); // 3 threads
+        pool = new ForkJoinPool(3); // 3 threads. The threads in this pool are daemon threads similar to ForkJoinPool.commonPool.
         var fibonacci5 = new Fibonacci(5);
         pool.submit(fibonacci5); // Another usage, which does not block the main thread. We can also use execute method.
         result = fibonacci5.join(); // The join here also returns the result without throwing UninterruptedException or ExecutionException like the get method does.
         System.out.printf("%nResult is %d%n", result);
+        // Since ForkJoinPool threads are daemon threads, main thread will exit, even when we don't call the pool.shutdown().
     }
 
     static class Fibonacci extends RecursiveTask<Integer> { // This class needs to extend ForkJoinTask.
@@ -59,11 +61,12 @@ public class ForkJoinPoolSample {
             this.n = n;
         }
 
+        @Override
         protected Integer compute() {
-            var thread = Thread.currentThread();
-            System.out.printf("Calculating Fibonacci(%d) in ForkJoinWorkedThread: %s - %s Is Daemon: %s%n", n, thread.getId(), thread.getName(), thread.isDaemon());
+            System.out.printf("Calculating Fibonacci(%d). %s%n", n, getThreadInfo());
+            sleep(5000);
+
             if (n <= 1) {//This if statement is the part where the divided job is executed.
-                sleep(2000);
                 return n;
             }
 
