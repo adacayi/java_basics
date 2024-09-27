@@ -1,5 +1,6 @@
 package com.sanver.basics.threads;
 
+import static com.sanver.basics.utils.Utils.getThreadInfo;
 import static com.sanver.basics.utils.Utils.sleep;
 
 import java.io.Serializable;
@@ -28,13 +29,16 @@ class ArrayReader<T extends Serializable> extends RecursiveAction {
 
 	protected void compute() {
 		if (high - low < MAX) {// This if statement is the part where the divided job is executed.
-			sleep(1000);
 			synchronized (lock) {// If we did not include this synchronisation then the writings would be mixed.
-				System.out.printf("Writing %d-%d: ", low, high);
-				for (int i = low; i <= high; i++)
+				System.out.printf("Writing %d-%d %s: ", low, high, getThreadInfo());
+				for (int i = low; i <= high; i++) {
 					System.out.print(array[i] + " ");
-				System.out.printf("%n%d-%d finished%n%n", low, high);
+					sleep(500);
+				}
+				System.out.printf("%n%d-%d finished. %s%n%n", low, high, getThreadInfo());
 			}
+
+			sleep(5000); // This is to show that this part is executed in parallel. You can check the total execution time and 5 seconds should be added just once.
 			return;
 		}
 
@@ -52,7 +56,7 @@ class ArrayReader<T extends Serializable> extends RecursiveAction {
 public class RecursiveActionSample {
 
 	public static void main(String[] args) {
-		ForkJoinPool pool = new ForkJoinPool(4); // Set the thread count to 4. So the execution should take around 1 second.
+		ForkJoinPool pool = new ForkJoinPool(4); // This will result in the execution time of roughly 15 seconds, since each part with size 5 will be printed in 2,5 seconds and printing makes other threads wait, while the last wait of 5 seconds is done in parallel, so requires 5 seconds in total to be executed in all threads.
 		LocalTime start = LocalTime.now();
 		Integer[] array = IntStream.range(0, 20).boxed().toArray(Integer[]::new);
 		pool.invoke(new ArrayReader<>(array, 0, array.length - 1));
