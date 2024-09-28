@@ -2,6 +2,7 @@ package com.sanver.basics.threads;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.text.NumberFormat;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -9,16 +10,19 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static com.sanver.basics.utils.Utils.getThreadInfo;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class InterruptAndFutureCancelSample {
     public static void main(String[] args) {
+        var formatter = NumberFormat.getInstance();
+
         Runnable print = () -> {
             int i = 0;
             while (true) {
                 i++;
-                if (i % 100_000_000 == 0) {
-                    System.out.print(i + " ");
+                if (i % 300_000_000 == 0) {
+                    System.out.printf("%14s %s%n", formatter.format(i), getThreadInfo());
                 }
             }
         };
@@ -30,7 +34,7 @@ public class InterruptAndFutureCancelSample {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
-                    System.out.printf("%n%nThread is interrupted. %s%n%n", e);
+                    System.out.printf("%n%nThread is interrupted. %s. Exception: %s%n%n", getThreadInfo(), e);
                     break;
                 }
             }
