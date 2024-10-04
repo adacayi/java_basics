@@ -1,14 +1,14 @@
 package com.sanver.basics.algorithms;
 
+import java.util.Arrays;
+
 public class QuickSort {
 
     public static void main(String[] args) {
         int[] array = {7, 2, 1, 6, 8, 5, 3, 4};
+        System.out.println("Initial array: " + Arrays.toString(array));
         quickSort(array, 0, array.length - 1);
-        System.out.println("Sorted array: ");
-        for (int num : array) {
-            System.out.print(num + " ");
-        }
+        System.out.println("Sorted array : " + Arrays.toString(array));
     }
 
     public static void quickSort(int[] array, int low, int high) {
@@ -21,18 +21,22 @@ public class QuickSort {
 
     public static int partition(int[] array, int low, int high) {
         int pivot = array[high];
-        int i = low - 1;
+        int i = low;
+        int temp;
+
         for (int j = low; j < high; j++) {
-            if (array[j] < pivot) {
-                i++;
-                int temp = array[i];
+            if (array[j] <= pivot) {
+                temp = array[i];
                 array[i] = array[j];
                 array[j] = temp;
+                i++;
             }
         }
-        int temp = array[i + 1];
-        array[i + 1] = array[high];
+
+        temp = array[i];
+        array[i] = pivot;
         array[high] = temp;
-        return i + 1;
+
+        return i;
     }
 }
