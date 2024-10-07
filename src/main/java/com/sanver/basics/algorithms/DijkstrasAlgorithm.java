@@ -10,33 +10,34 @@ public class DijkstrasAlgorithm {
         var priorityQueue = new PriorityQueue<Node>();
         int n = matrix.length;
         boolean[][] isVisited = new boolean[n][n];
-        int[][] distance = new int[n][n];
+        int[][] distances = new int[n][n];
         char[][] directions = new char[n][n];
         int x;
         int y;
+        int distance;
         int newDistance;
 
         // Initialize distance array with large values
-        for (var row : distance) {
+        for (var row : distances) {
             Arrays.fill(row, Integer.MAX_VALUE);
         }
 
-        distance[0][0] = 0;
+        distances[0][0] = 0;
 
-        priorityQueue.offer(new Node(0, 0, 0, ' '));
+        priorityQueue.offer(new Node(0, 0, 0));
 
         // Perform Dijkstra's algorithm
         while (!priorityQueue.isEmpty()) {
             var node = priorityQueue.poll();
             x = node.x;
             y = node.y;
+            distance = node.distance;
 
             if (isVisited[x][y]) {
                 continue;
             }
 
             isVisited[x][y] = true;
-            directions[x][y] = node.direction;
 
             // If we've reached the (xEnd, yEnd) cell, we're done
             if (x == xEnd && y == yEnd) {
@@ -46,43 +47,47 @@ public class DijkstrasAlgorithm {
             // Explore the four directions (Down, Right, Up, Left)
 
             if (x + 1 < n && !isVisited[x + 1][y]) {
-                newDistance = node.distance + matrix[x + 1][y];
+                newDistance = distance + matrix[x + 1][y];
 
-                if (newDistance < distance[x + 1][y]) {
-                    distance[x + 1][y] = newDistance;
-                    priorityQueue.offer(new Node(x + 1, y, newDistance, 'd'));
+                if (newDistance < distances[x + 1][y]) {
+                    distances[x + 1][y] = newDistance;
+                    directions[x + 1][y] = 'd';
+                    priorityQueue.offer(new Node(x + 1, y, newDistance));
                 }
             }
 
             if (y + 1 < n && !isVisited[x][y + 1]) {
-                newDistance = node.distance + matrix[x][y + 1];
+                newDistance = distance + matrix[x][y + 1];
 
-                if (newDistance < distance[x][y + 1]) {
-                    distance[x][y + 1] = newDistance;
-                    priorityQueue.offer(new Node(x, y + 1, newDistance, 'r'));
+                if (newDistance < distances[x][y + 1]) {
+                    distances[x][y + 1] = newDistance;
+                    directions[x][y + 1] = 'r';
+                    priorityQueue.offer(new Node(x, y + 1, newDistance));
                 }
             }
 
             if (x - 1 >= 0 && !isVisited[x - 1][y]) {
-                newDistance = node.distance + matrix[x - 1][y];
+                newDistance = distance + matrix[x - 1][y];
 
-                if (newDistance < distance[x - 1][y]) {
-                    distance[x - 1][y] = newDistance;
-                    priorityQueue.offer(new Node(x - 1, y, newDistance, 'u'));
+                if (newDistance < distances[x - 1][y]) {
+                    distances[x - 1][y] = newDistance;
+                    directions[x - 1][y] = 'u';
+                    priorityQueue.offer(new Node(x - 1, y, newDistance));
                 }
             }
 
             if (y - 1 >= 0 && !isVisited[x][y - 1]) {
-                newDistance = node.distance + matrix[x][y - 1];
+                newDistance = distance + matrix[x][y - 1];
 
-                if (newDistance < distance[x][y - 1]) {
-                    distance[x][y - 1] = newDistance;
-                    priorityQueue.offer(new Node(x, y - 1, newDistance, 'l'));
+                if (newDistance < distances[x][y - 1]) {
+                    distances[x][y - 1] = newDistance;
+                    directions[x][y - 1] = 'l';
+                    priorityQueue.offer(new Node(x, y - 1, newDistance));
                 }
             }
         }
 
-        return new Result(buildPath(directions, xEnd, yEnd), distance[xEnd][yEnd]);
+        return new Result(buildPath(directions, xEnd, yEnd), distances[xEnd][yEnd]);
     }
 
     // Reconstruct the path by backtracking from the (xEnd,yEnd) cell
@@ -166,13 +171,11 @@ public class DijkstrasAlgorithm {
         private final int x;
         private final int y;
         private final int distance;
-        private final char direction;
 
-        Node(final int x, final int y, final int distance, final char direction) {
+        Node(final int x, final int y, final int distance) {
             this.x = x;
             this.y = y;
             this.distance = distance;
-            this.direction = direction;
         }
 
         @Override
@@ -190,7 +193,6 @@ public class DijkstrasAlgorithm {
                     .add("x=" + x)
                     .add("y=" + y)
                     .add("distance=" + distance)
-                    .add("direction=" + direction)
                     .toString();
         }
     }
