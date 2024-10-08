@@ -31,7 +31,7 @@ public class SemaphoreSample {
         var permits = 3;
         var semaphore = new Semaphore(permits);
 
-        var futures = IntStream.range(0, 10).mapToObj(x -> CompletableFuture.runAsync(()->{
+        var futures = IntStream.range(0, 10).mapToObj(x -> CompletableFuture.runAsync(() -> {
             for (int i = 0; i < 2_000; i++) {
                 semaphore.acquireUninterruptibly();
                 try {
@@ -53,12 +53,19 @@ public class SemaphoreSample {
     }
 
     private static void checkConcurrentProcessCount(CompletableFuture<Void> all, AtomicInteger processing, int permits) {
-        CompletableFuture.runAsync(()->{
+        CompletableFuture.runAsync(() -> {
+            var previousCount = 0;
+
             while (!all.isDone()) {
                 var processCount = processing.get();
 
                 if (processCount > permits) {
-                    System.out.println("Too many concurrent processes: " + processCount);
+                    throw new IllegalStateException("Too many concurrent processes: " + processCount);
+                } else {
+                    if (previousCount != processCount) {
+                        System.out.println("Process count: " + processCount);
+                        previousCount = processCount;
+                    }
                 }
             }
         });
