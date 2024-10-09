@@ -10,7 +10,8 @@ public class AccessModifierSample extends A {
         var a = new A();
 //        a.name = "John"; This cannot be accessed since name is private
 //        a.address = "Flat 1"; This cannot be accessed even AccessModifierSample extends A, because protected only allows for accessing the address field of this class instance, not another A instance.
-//        a.surname = "Brown"; This cannot be accessed since AccessModifierSample and A are not in the same package.
+//        new AccessModifierSample().address = "Some address"; This would work
+//        a.surname = "Brown"; This cannot be accessed since AccessModifierSample and class A are not in the same package.
         a.age = 15;
         System.out.println(a);
 
