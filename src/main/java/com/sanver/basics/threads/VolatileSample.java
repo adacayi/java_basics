@@ -5,20 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-// https://www.baeldung.com/java-volatile
-// Volatile ensures all threads see the latest value of a volatile object and also ensures code execution order.
-// Note: Synchronize also provides this, but it is more costly.
-// Volatile also ensures no reordering of execution of the volatile variable assignments.
-// Reordering is an optimization technique for performance improvements.
-// Different components may apply this optimization:
-// The processor may flush its write buffer in an order other than the program order.
-// The processor may apply an out-of-order execution technique.
-// The JIT compiler may optimize via reordering.
-
-// Finally, Happens-Before Ordering
-// Suppose thread A writes to a volatile variable x, and then thread B reads the same volatile variable x.
-// In such cases, the values that were visible to A before writing the volatile variable x will be visible to B after reading the volatile variable x in B.
-// i.e. assume a normal variable y is set to 5 before changing x in thread A, and we read x in thread B and then read y in thread B, then y will be read as 5 in B as well.
+/**
+ *  <a href="https://www.baeldung.com/java-volatile">Source</a>
+ *  <p>
+ *  Volatile ensures all threads see the latest value of a volatile object and also ensures code execution order.
+ *  Note: Synchronize also provides this, but it is more costly.
+ *  Volatile also ensures no reordering of execution of the volatile variable assignments.
+ *  Reordering is an optimization technique for performance improvements.
+ *  Different components may apply this optimization:
+ *  The processor may flush its write buffer in an order other than the program order.
+ *  The processor may apply an out-of-order execution technique.
+ *  The JIT compiler may optimize via reordering.
+ *  </p>
+ *
+ *  <p><b>Happens-Before Ordering</b><br>
+ *  Suppose thread A writes to a volatile variable x, and then thread B reads the same volatile variable x.
+ *  In such cases, the values that were visible to A before writing the volatile variable x will be visible to B after reading the volatile variable x in B.
+ *  i.e. assume a normal variable y is set to 5 before changing x in thread A, and we read x in thread B and then read y in thread B, then y will be read as 5 in B as well.
+ *  </p>
+ */
 public class VolatileSample {
     private static final int LIMIT = 10_000_000;
     private static final List<InstantValue> mainThreadData = new ArrayList<>();
@@ -29,12 +34,11 @@ public class VolatileSample {
     public static void main(String[] args) {
         var reader = CompletableFuture.runAsync(() -> {
             while (value < LIMIT) {
-                readerThreadData.add(new InstantValue(System.nanoTime(), value));
+                readerThreadData.add(new InstantValue(System.nanoTime(), value)); // Since System.nanoTime() is calculated first, this guarantees that the value read is read at the earliest that time.
             }
         });
 
-        for (int i = 0; i < LIMIT; i++) {
-            value++;
+        for (; value < LIMIT; value++) {
             mainThreadData.add(new InstantValue(System.nanoTime(), value));
         }
 
