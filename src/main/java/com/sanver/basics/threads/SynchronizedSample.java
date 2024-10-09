@@ -1,37 +1,29 @@
 package com.sanver.basics.threads;
 
+import java.text.NumberFormat;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.IntStream;
+
 public class SynchronizedSample {
 
-	static int value;
+    static int value;
 
-	public static void main(String[] args) {
-		int limit = 10000;
-		// limit++; // If we wrote a statement like that we would get an error in the
-		// increment lambda expression
-		// "Local
-		// variable limit defined in an enclosing scope must be final or effectively
-		// final" on the line where we used increment in the inner function. So
-		// limit must
-		// behave as a final variable at least or be final.
-		Object lock = new Object();
-		Runnable increment = () -> {
-			for (int i = 0; i < limit; i++) {// limit can be accessed from inner function. But it must behave as
-												// if it was a final variable. We cannot change its value.
-				synchronized (lock) {
-					value++;
-				}
-			}
-		};
-		Thread first = new Thread(increment);
-		Thread second = new Thread(increment);
-		first.start();
-		second.start();
-		try {
-			first.join();
-			second.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println(value);
-	}
+    public static void main(String[] args) {
+        int limit = 1_000_000;
+        int threadCount = 10;
+        var lock = new Object();
+
+        Runnable increment = () -> {
+            for (int i = 0; i < limit; i++) {
+                synchronized (lock) { // Remove synchronized to see the result might not be equal to limit * threads
+                    value++;
+                }
+            }
+        };
+
+        var futures = IntStream.range(0, threadCount).mapToObj(x -> CompletableFuture.runAsync(increment)).toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(futures).join();
+        var format = NumberFormat.getInstance();
+        System.out.println("Result: " + format.format(value));
+    }
 }
