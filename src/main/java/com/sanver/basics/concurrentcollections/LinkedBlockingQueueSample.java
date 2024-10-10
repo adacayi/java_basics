@@ -1,8 +1,5 @@
 package com.sanver.basics.concurrentcollections;
 
-import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowRunnable;
-import static com.sanver.basics.utils.Utils.sleep;
-
 import java.text.NumberFormat;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -18,58 +15,60 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class LinkedBlockingQueueSample {
 
-  static int value = 0;
+    public static void main(String[] args) {
+        testThreadSafety();
+        testBlocking();
+    }
 
-  public static void main(String[] args) {
-    testThreadSafety();
-    testBlocking();
-  }
+    private static void testThreadSafety() {
+        BlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
 
-  private static void testThreadSafety() {
-    BlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
+        var iteration = 200_000;
+        var write1 = CompletableFuture.runAsync((() -> {
+            for (int i = 0; i < iteration; i++) {
+                queue.add(i); // put and offer are also thread safe
+            }
+        }));
 
-    var iteration = 200_000;
-    var write1 = CompletableFuture.runAsync((rethrowRunnable(() -> {
-      for(int i = 0; i < iteration; i++){
-        queue.put(i);
-      }
-    })));
+        var write2 = CompletableFuture.runAsync(() -> {
+            for (int i = 0; i < iteration; i++) {
+                queue.add(i); // put and offer are also thread safe
+            }
+        });
 
-    var write2 = CompletableFuture.runAsync((rethrowRunnable(() -> {
-      for(int i = 0; i < iteration; i++){
-        queue.put(i);
-      }
-    })));
+        write1.join();
+        write2.join();
+        System.out.println("Queue size: " + NumberFormat.getInstance().format(queue.size()));
+    }
 
-    write1.join();
-    write2.join();
-    System.out.println("Queue size: " + NumberFormat.getInstance().format(queue.size()));
-  }
+    private static void testBlocking() {
+        BlockingQueue<Integer> queue = new LinkedBlockingQueue<>(1);
+        final int limit = 100;
 
-  private static void testBlocking() {
-    BlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
+        var read = CompletableFuture.runAsync(() -> {
+            int value = 0;
+            while (value < limit - 1) {
+                try {
+                    value = queue.take();
+                    System.out.printf("%d removed. Queue size: %d%n", value, queue.size());// Blocks until queue has an element. Poll and remove methods won't block. If there are no elements, poll will return null and remove will throw a NoSuchElementException.
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
 
-    var read = CompletableFuture.runAsync(rethrowRunnable(() -> {
-      int value;
+        var write = CompletableFuture.runAsync((() -> {
+            for(int value = 0; value < limit; value++){
+                try {
+                    queue.put(value);// Waits until queue is not full. Add and offer methods won't block.
+                    System.out.printf("%d added. Queue size = %d%n", value, queue.size());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }));
 
-      while (true) {
-          value = queue.take();// Blocks until queue has an element.
-          System.out.println(value + " removed");
-      }
-    }));
-
-    var write = CompletableFuture.runAsync((rethrowRunnable(() -> {
-      while (true) {
-        sleep(1000);
-
-        value++;
-        queue.put(value);// Waits until queue is not full
-        System.out.println(value + " added");
-      }
-    })));
-
-
-    read.join();
-    write.join();
-  }
+        read.join();
+        write.join();
+    }
 }
