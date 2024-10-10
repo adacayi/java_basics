@@ -4,8 +4,8 @@ import com.sanver.basics.utils.PerformanceComparer;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
@@ -19,19 +19,20 @@ public class SyncPerformance {
     // The performance order is
     // 1- Adding to ArrayList without any synchronization
     // 2- Adding to ArrayList inside a synchronized block
-    // 3- Collections.synchronizedList
+    // 3- Collections.synchronizedList / Collections.synchronizedCollection
     // 4- Vector
     // 5- CopyOnWriteArrayList
 
     public static final String FORMAT = "%-34s";
-    private static final int TASK_SIZE = 3;
+    private static final int TASK_SIZE = 6;
     private static final int INCREMENT = 10_000_000; // This will take hours for CopyOnWriteArrayList, so the code for this is commented out. You can uncomment to test it.
-    private static final ExecutorService POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); // This pool is used to assure all futures are completed before the program exits.
+    private static final ExecutorService POOL = Executors.newFixedThreadPool(TASK_SIZE * 5);
 
     public static void main(String[] args) {
         var unsynchronized = getRunnable(new ArrayList<>(), "Unsynchronized ArrayList");
         var sync = getSync();
         var collectionsSync = getRunnable(Collections.synchronizedList(new ArrayList<>()), "Collections.synchronizedList");
+        var collectionsCollectionSync = getRunnable(Collections.synchronizedCollection(new ArrayList<>()), "Collections.synchronizedCollection");
         var vector = getRunnable(new Vector<>(), "Vector");
 //        var copyOnWriteArrayList = getRunnable(new CopyOnWriteArrayList<>(), "CopyOnWriteArrayList");
 
@@ -39,16 +40,18 @@ public class SyncPerformance {
                 unsynchronized, String.format(FORMAT, "Unsynchronized ArrayList"),
                 sync, String.format(FORMAT, "Synchronized block with ArrayList"),
                 vector, String.format(FORMAT, "Vector"),
-                collectionsSync, String.format(FORMAT, "Collections.synchronizedList")
+                collectionsSync, String.format(FORMAT, "Collections.synchronizedList"),
+                collectionsCollectionSync, String.format(FORMAT, "Collections.synchronizedCollection")
 //                ,copyOnWriteArrayList, "CopyOnWriteArrayList"
         ));
 
         comparer.compare();
+
         System.out.printf("%n%n");
-        POOL.shutdown(); // WriteListSizeAsync will be executed before the main thread finishes.
+        POOL.shutdown();
     }
 
-    private static Runnable getRunnable(List<Integer> list, String name) {
+    private static Runnable getRunnable(Collection<Integer> list, String name) {
         return () -> {
             var futures = IntStream.range(0, TASK_SIZE)
                     .mapToObj(x -> CompletableFuture.runAsync(() -> {
@@ -81,7 +84,7 @@ public class SyncPerformance {
         };
     }
 
-    public static void writeListSizeAsync(List<?> list, String name) {
+    public static void writeListSizeAsync(Collection<?> list, String name) {
         CompletableFuture.runAsync(() -> {
             sleep(5000); // This is to make sure that task finish times for all different lists are written first.
             System.out.printf(FORMAT + " list size: %s%n", name, NumberFormat.getInstance().format(list.size()));
