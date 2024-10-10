@@ -60,7 +60,7 @@ public class LinkedBlockingQueueSample {
         var write = CompletableFuture.runAsync((() -> {
             for(int value = 0; value < limit; value++){
                 try {
-                    queue.put(value);// Waits until queue is not full. Add and offer methods won't block.
+                    queue.put(value);// Waits until queue is not full. add and offer methods won't block. If the queue is full, add method will throw an IllegalStateException and offer will return false and do not add the item to the queue.
                     System.out.printf("%d added. Queue size = %d%n", value, queue.size());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
