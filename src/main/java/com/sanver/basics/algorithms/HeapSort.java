@@ -70,13 +70,14 @@ public class HeapSort {
         int left;
         int right;
         int max;
+        int lastInternalNodeKey = parent(length - 1);
 
-        while (key < length - 1) {
+        while (key <= lastInternalNodeKey) { // Check only nodes with at least one child
             max = key;
             left = left(key);
             right = right(key);
 
-            if (left < length && array[left] > array[max]) {
+            if (array[left] > array[max]) { // No need to check if left < length, since key <= lastInternalNodeKey asserts that the node has at least a left child.
                 max = left;
             }
 
@@ -121,6 +122,7 @@ public class HeapSort {
         if (array == null) {
             return;
         }
+
         int length = array.length;
 
         if (length < 2) {
@@ -128,6 +130,7 @@ public class HeapSort {
         }
 
         int lastInternalNodeKey = parent(length - 1); // This is the last internal node's key. i.e. after this node all the nodes are leaf.
+
         for (int i = lastInternalNodeKey; i >= 0; i--) {
             heapify(array, i, length);
         }
