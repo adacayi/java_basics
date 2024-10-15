@@ -36,7 +36,7 @@ public class ArrayListSample {
         }
 
         System.out.printf("%n%nList.listIterator() showing index with listIterator.nextIndex(): %n");
-        var iterator2 = list.listIterator(0); // This sets the iterator to the start of the list, similar to list.listIterator()
+        var iterator2 = list.listIterator(); // This sets the iterator to the start of the list, similar to list.listIterator(0)
         while (iterator2.hasNext()) {
             System.out.printf("%d- %s%n", iterator2.nextIndex(), iterator2.next());
         }
