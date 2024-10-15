@@ -50,9 +50,10 @@ public class BinaryDecimalConversions {
         writeBinaryOfInt(number, "%-,3d >>> 3: %s", number >>> 3);
         System.out.println();
         number = (int) -Math.pow(2, 31) + 320;//320 is 2^8+2^6
-        writeBinaryOfInt(number, "%-,10d      : %s");
+        writeBinaryOfInt(number, "%-,10d      : %s, number of trailing zeros " + Integer.numberOfTrailingZeros(number));
         writeBinaryOfInt(number, "%-,10d >>  4: %s", number >> 4);
         writeBinaryOfInt(number, "%-,10d >>> 4: %s", number >>> 4);
+        writeBinaryOfInt(number, "%-,10d >>> 4: %s, Number of Leading zeros is " + Integer.numberOfLeadingZeros(number >>> 4)+ ", ", number >>> 4);
         System.out.println();
         String binary = "1100";
         System.out.printf("Converting from binary %s to decimal: %,d\n", binary, Integer.parseInt(binary, 2));
