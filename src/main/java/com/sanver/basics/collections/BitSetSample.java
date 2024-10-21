@@ -9,6 +9,8 @@ public class BitSetSample {
         int length = 10;
         BitSet divisibleBy2 = new BitSet(length); // BitSets are packed into arrays of "words." Currently, a word is a long, which consists of 64 bits. BitSet(length) will initialize a long array of size (length - 1) >> 6 + 1 since every long can hold 64 bits.
         System.out.println("divisibleBy2 size (number of bits it can hold): " + divisibleBy2.size()); // Size of the long array times 64 since every long can hold 64 bits.
+        System.out.println("divisibleBy2 length (index of the last true bit plus 1): " + divisibleBy2.length()); // length returns the index of the last true bit plus 1.
+        System.out.println("divisibleBy2 cardinality (number of bits set to true): " + divisibleBy2.cardinality()); // length returns the index of the last true bit plus 1.
         BitSet divisibleBy3 = new BitSet(length);
         BitSet divisibleBy2And3;
         BitSet divisibleBy2Or3;
@@ -30,18 +32,19 @@ public class BitSetSample {
         System.out.printf("Divisible by 2 and 3: %s%n", divisibleBy2And3);
 
         System.out.print("Divisible by 2 and 3 content: ");
-        for (i = 0; i < divisibleBy2And3.length(); i++) // length returns the index of the last true bit plus 1.
-            // In this case it is 7.
-            System.out.printf("%s, ",divisibleBy2And3.get(i));
+        for (i = 0; i < divisibleBy2And3.length(); i++) {// length returns the index of the last true bit plus 1. In this case it is 7.
+            System.out.printf("%s, ", divisibleBy2And3.get(i));
+        }
 
         System.out.println();
         int size = divisibleBy2And3.size();
         System.out.println("Size of divisible by 2 and 3 BitSet is " + size);
         System.out.println("length() for divisible by 2 and 3 BitSet is (length returns the index of the last true bit plus 1) " + divisibleBy2And3.length());
+        System.out.println("cardinality() for divisible by 2 and 3 BitSet is (cardinality returns the number of bits set to true) " + divisibleBy2And3.cardinality());
 
         for (i = 0; i < size; i++) {
             if (divisibleBy2And3.get(i))
-                System.out.printf("%d, ",i);
+                System.out.printf("%d, ", i);
         }
     }
 }
