@@ -1,6 +1,6 @@
 package com.sanver.basics.basicoperators;
 
-import static com.sanver.basics.basicoperators.BinaryHelpers.writeBinaryOfInt;
+import static com.sanver.basics.basicoperators.BinaryHelpers.writeBinaryOf;
 
 public class BinaryDecimalConversions {
     public static void main(String... args) {
@@ -13,54 +13,62 @@ public class BinaryDecimalConversions {
         // For -128 in 8 bits though let's represent -127 first and then subtract 1 since we cannot represent 128 with 8 bits (if we want negatives as well).
         // 127 is 01111111. The complement is 10000000. If we add 1 then we get 10000001 as -127. Now -128 is -1 of that. So it is 10000000 in 8 bits.
         int number = 2;
-        System.out.printf("To write the negative of %d write ~%d + 1 = %d\n", number, number, ~number + 1);
+        System.out.printf("To write the negative of %d write ~%d + 1 = %d%n", number, number, ~number + 1);
         number = -2;
-        System.out.printf("To write the negative of %d write ~(%d) + 1 = %d\n", number, number, ~number + 1);
+        System.out.printf("To write the negative of %d write ~(%d) + 1 = %d%n", number, number, ~number + 1);
         System.out.println();
-        writeBinaryOfInt(0, "%-5d: %s (32 bit representation)", 0);
-        writeBinaryOfInt(0, "%-5d: %s (8 bit representation)", 0, 8);
-        writeBinaryOfInt(1, "%-5d: %s (8 bit representation)", 1, 8);
-        writeBinaryOfInt(-1, "%-5d: %s (8 bit representation)", -1, 8);
-        writeBinaryOfInt(-1, "%-5d: %s (32 bit representation)", -1);
-        writeBinaryOfInt(127, "%-5d: %s (8 bit representation)", 127, 8);
-        writeBinaryOfInt(-127, "%-5d: %s (8 bit representation)", -127, 8);
-        writeBinaryOfInt(-127, "%-5d: %s (32 bit representation)", -127);
-        writeBinaryOfInt(128, "%-5d: %s (32 bit representation)", 128);
-        writeBinaryOfInt(-128, "%-5d: %s (32 bit representation)", -128);
-        writeBinaryOfInt(-128, "%-5d: %s (8 bit representation)", -128, 8);
-        writeBinaryOfInt(1);
-        writeBinaryOfInt(-2);
-        writeBinaryOfInt(4);
-        writeBinaryOfInt(-3);
-        writeBinaryOfInt(9);
-        writeBinaryOfInt(-9);
+        var format64Bit = "%-,5d: %s (64 bit representation)";
+        var format32Bit = "%-,5d: %s (32 bit representation)";
+        var format8Bit = "%-,5d: %s (8 bit representation)";
+        writeBinaryOf(Long.MAX_VALUE, "%,26d: %s (64 bit representation)");
+        writeBinaryOf(Long.MIN_VALUE, "%,26d: %s (64 bit representation)");
+        writeBinaryOf(0, format64Bit, 0, 64);
+        writeBinaryOf(0, format32Bit, 0);
+        writeBinaryOf(0, format8Bit, 0, 8);
+        writeBinaryOf(1, format8Bit, 1, 8);
+        writeBinaryOf(-1, format8Bit, -1, 8);
+        writeBinaryOf(-1, format32Bit, -1);
+        writeBinaryOf(-1, format64Bit, -1, 64);
+        writeBinaryOf(127, format8Bit, 127, 8);
+        writeBinaryOf(-127, format8Bit, -127, 8);
+        writeBinaryOf(-127, format32Bit, -127);
+        writeBinaryOf(128, format32Bit, 128);
+        writeBinaryOf(-128, format32Bit, -128);
+        writeBinaryOf(-128, format8Bit, -128, 8);
+        writeBinaryOf(1);
+        writeBinaryOf(-2);
+        writeBinaryOf(4);
+        writeBinaryOf(-3);
+        writeBinaryOf(9);
+        writeBinaryOf(-9);
         System.out.println();
-        System.out.printf("%-,5d: %s\n", -12, Integer.toBinaryString(-12));// This is to show Integer.toBinaryString
+        System.out.printf("%-,5d: %s%n", -12, Integer.toBinaryString(-12));// This is to show Integer.toBinaryString
         // method
         System.out.println();
-        writeBinaryOfInt(-1, "%-,3d         : %s");
-        writeBinaryOfInt(-1, "%-,3d  >> 31  : %s", -1 >> 31);
-        writeBinaryOfInt(-1, "%-,3d  >>> 31 : %s", -1 >>> 31);
-        writeBinaryOfInt(-2, "%-,3d         : %s");
-        writeBinaryOfInt(-2, "%-,3d  >> 31  : %s", -2 >> 31);
+        writeBinaryOf(-1, "%-,3d         : %s");
+        writeBinaryOf(-1, "%-,3d  >> 31  : %s", -1 >> 31);
+        writeBinaryOf(-1, "%-,3d  >>> 31 : %s", -1 >>> 31);
+        writeBinaryOf(-2, "%-,3d         : %s");
+        writeBinaryOf(-2, "%-,3d  >> 31  : %s", -2 >> 31);
         System.out.println();
         number = 48;
-        writeBinaryOfInt(number, "%-,3d      : %s");
-        writeBinaryOfInt(number, "%-,3d >>  3: %s", number >> 3);
-        writeBinaryOfInt(number, "%-,3d >>> 3: %s", number >>> 3);
+        writeBinaryOf(number, "%-,3d      : %s");
+        writeBinaryOf(number, "%-,3d >>  3: %s", number >> 3);
+        writeBinaryOf(number, "%-,3d >>> 3: %s", number >>> 3);
         System.out.println();
         number = (int) -Math.pow(2, 31) + 320;//320 is 2^8+2^6
-        writeBinaryOfInt(number, "%-,10d      : %s, number of trailing zeros " + Integer.numberOfTrailingZeros(number));
-        writeBinaryOfInt(number, "%-,10d >>  4: %s", number >> 4);
-        writeBinaryOfInt(number, "%-,10d >>> 4: %s", number >>> 4);
-        writeBinaryOfInt(number, "%-,10d >>> 4: %s, Number of Leading zeros is " + Integer.numberOfLeadingZeros(number >>> 4)+ ", ", number >>> 4);
+        writeBinaryOf(number, "%-,10d      : %s, number of trailing zeros " + Integer.numberOfTrailingZeros(number));
+        writeBinaryOf(number, "%-,10d >>  4: %s", number >> 4);
+        writeBinaryOf(number, "%-,10d >>> 4: %s", number >>> 4);
+        writeBinaryOf(number, "%-,10d >>> 4: %s, Number of Leading zeros is " + Integer.numberOfLeadingZeros(number >>> 4)+ ", ", number >>> 4);
         System.out.println();
         String binary = "1100";
-        System.out.printf("Converting from binary %s to decimal: %,d\n", binary, Integer.parseInt(binary, 2));
+        var convertFormat = "Converting from binary %s to decimal: %,d%n";
+        System.out.printf(convertFormat, binary, Integer.parseInt(binary, 2));
         binary = "1111111111111111111111111111111";// 31 1s.
-        System.out.printf("Converting from binary %s to decimal: %,d\n", binary, Integer.parseInt(binary, 2));
+        System.out.printf(convertFormat, binary, Integer.parseInt(binary, 2));
         binary = "11111111111111111111111111111111";// 32 digit
-        System.out.printf("Converting from binary %s to decimal: %,d\n", binary, (int) Long.parseLong(binary, 2));
+        System.out.printf(convertFormat, binary, (int) Long.parseLong(binary, 2));
         // For 32 digits we have to use Long.parseLong and convert it to int
     }
 
