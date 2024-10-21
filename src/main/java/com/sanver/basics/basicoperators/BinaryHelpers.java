@@ -1,36 +1,45 @@
 package com.sanver.basics.basicoperators;
 
 public class BinaryHelpers {
+
+    public static final String DEFAULT_FORMAT = "%-,5d: %s";
+
     private BinaryHelpers() {
     }
 
     /**
      * Writes the binary representation of the number. If the number is within the integer range, it writes it in 32 bit form by default
      *
-     * @param number The number to return the binary representation of.
-     * @param args   Optional parameters. First argument is for formatting the output, second parameter is for the number of bits to be printed
+     * @param number The number to print the binary representation of.
      */
-    public static void writeBinaryOf(long number, Object... args) {
-        var format = "%-,5d: %s";
-        long newNumber = number;
-        var numberOfBits = number > Integer.MAX_VALUE || number < Integer.MIN_VALUE ? 64 : 32;
+    public static void writeBinaryOf(long number) {
+        writeBinaryOf(DEFAULT_FORMAT, number, defaultNumberOfBits(number));
+    }
 
-        if (args != null && args.length > 0) {
-            format = (String) args[0];
-            if (args.length > 1) {
-                newNumber = Long.parseLong(args[1].toString());
-            }
-            if (args.length > 2) {
-                numberOfBits = (int) args[2];
-            }
-        }
+    /**
+     * Writes the binary representation of the number. If the number is within the integer range, it writes it in 32 bit form by default
+     *
+     * @param format Output format to print the binary representation of the first and second argument
+     * @param number The number to print the binary representation of.
+     */
+    public static void writeBinaryOf(String format, long number) {
+        writeBinaryOf(format, number, defaultNumberOfBits(number));
+    }
 
-        System.out.printf(format, number, toBinaryString(newNumber, numberOfBits));
+    private static int defaultNumberOfBits(long number) {
+        return number > Integer.MAX_VALUE || number < Integer.MIN_VALUE ? 64 : 32;
+    }
 
-        if (newNumber != number)
-            System.out.printf(" Value: %,d%n", newNumber);
-        else
-            System.out.println();
+    /**
+     * Writes the binary representation of the number.
+     *
+     * @param format Output format to print the binary representation of the first and second argument
+     * @param number The number to print the binary representation of.
+     * @param numberOfBits The number of bits to be printed
+     */
+    public static void writeBinaryOf(String format, long number, int numberOfBits) {
+        System.out.printf(format, number, toBinaryString(number, numberOfBits));
+        System.out.println();
     }
 
     public static String toBinaryString(long number, int numberOfBits) {
