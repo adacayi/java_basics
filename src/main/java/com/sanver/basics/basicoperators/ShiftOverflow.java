@@ -1,4 +1,4 @@
-package com.sanver.basics.math;
+package com.sanver.basics.basicoperators;
 
 import java.text.NumberFormat;
 
