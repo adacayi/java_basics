@@ -70,6 +70,16 @@ public class BinaryDecimalConversions {
         binary = "11111111111111111111111111111111";// 32 digit
         System.out.printf(convertFormat, binary, (int) Long.parseLong(binary, 2));
         // For 32 digits we have to use Long.parseLong and convert it to int
-    }
 
+        System.out.println();
+
+        number = 127;
+        binary = Integer.toString(number, 2);
+        String hexadecimal = Integer.toString(number, 16);
+        System.out.printf("%3d: %-8s Base 2 representation%n", -1, Integer.toString(-1, 2)); // Note that this is not the binary representation of -1, but the mathematical representation of -1 in base 2.
+        System.out.printf("%d: %-8s Base 2 Representation%n", number, binary);
+        System.out.printf("%d: %-8s Hexadecimal Representation%n", number, hexadecimal);
+        System.out.printf("%d: %-8x Hexadecimal Representation By %%x%n", number, number);
+        System.out.printf("%3s: %-8d Converting to decimal%n", hexadecimal, Integer.parseInt(hexadecimal, 16));
+    }
 }
