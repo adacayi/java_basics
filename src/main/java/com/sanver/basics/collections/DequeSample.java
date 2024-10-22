@@ -19,7 +19,7 @@ public class DequeSample {
         System.out.printf("Size %d consecutive sub arrays: %n", n);
 
         for (i = 0; i < n; i++) {
-            deque.add(numbers[i]); // This method is equivalent to addLast
+            deque.add(numbers[i]); // This method is equivalent to addLast. We can also use offer or offerLast as well, which will call addLast and return true afterward.
         }
 
         System.out.println(deque);
@@ -38,5 +38,6 @@ public class DequeSample {
         System.out.println(deque.pop()); // This method is equivalent to remove and removeFirst
         System.out.println(deque.pop());
         System.out.println(deque.pop());
+        System.out.println(deque.pollFirst()); // This is similar to poll. If we used pop, we would get a NoSuchElementException since there are no more elements in the queue, but poll will return null if there are no more elements.
     }
 }
