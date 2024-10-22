@@ -10,55 +10,83 @@ public class HashMapSizeChange {
         // java.lang.reflect.InaccessibleObjectException: Unable to make field transient java.util.HashMap$Node[] java.util.HashMap.table accessible: module java.base does not "opens java.util" to unnamed module
         // To overcome it, run this with the following jvm options --add-opens java.base/java.util=ALL-UNNAMED
         // https://stackoverflow.com/questions/70756414/java-lang-reflect-inaccessibleobjectexception-unable-to-make-field-private-fina
-        Map<Integer, String> map = new HashMap<>();
-        System.out.println("Initial capacity");
-        System.out.printf("Size : %-3d Capacity: %-3d\n", map.size(), getCapacity(map));
-        System.out.println("\nAdding 100 elements");
+        Map<Integer, Integer> map = new HashMap<>();
+        System.out.println("Initial state of the map");
+        System.out.printf("Size: 0 Underlying table is null Threshold: %-3d%n", getThreshold(map));
+        System.out.printf("%nWhen allocated, the table length will always be a power of 2 (starting from 16 as the default initial capacity) and when the threshold is exceeded, the table size will double%n");
+        System.out.printf("%nPutting 100 entries%n%n");
 
         for (int i = 0; i < 100; i++) {
-            add(i, map);
+            put(i, i, map);
         }
 
-        System.out.println("\nRemoving 100 elements");
+        System.out.printf("%nRemoving 100 entries%n%n");
 
         for (int i = 0; i < 100; i++) {
             remove(i, map);
         }
 
-        System.out.println("\nBe aware that the size of the HashMap did not shrink.");
-        System.out.println("\nAdding 24 elements");
+        System.out.printf("%nBe aware that the size of the HashMap did not shrink.%n");
+        System.out.printf("%nPutting 24 entries%n%n");
 
         for (int i = 0; i < 24; i++) {
-            add(i, map);
+            put(i, i, map);
         }
 
-        System.out.println("\nTo decrease capacity, we have to generate a new HashMap from the current one." +
-                "\nHashMap<Integer, String> newMap = new HashMap<>(map);\n");
-        HashMap<Integer, String> newMap = new HashMap<>(map);
-        System.out.printf("Size : %-3d Capacity: %-3d\n", newMap.size(), getCapacity(newMap));
+        System.out.printf("%nTo decrease capacity, we have to generate a new HashMap from the current one." +
+                "%nHashMap<Integer, String> newMap = new HashMap<>(map);%n%n");
+        HashMap<Integer, Integer> newMap = new HashMap<>(map);
+        printMap(newMap);
+        System.out.println("Since the new map's capacity is calculated based on tableSizeFor(map.size() / loadFactor + 1) = (24 / 0.75 + 1), the capacity will be tableSizeFor(33) which results in 64");
+        System.out.println("Check the constructor public HashMap(Map<? extends K, ? extends V> m) for more details");
+    }
+
+    private static void printMap(Map<?, ?> map) {
+        System.out.printf("Size: %-3d Underlying table capacity: %-3d Threshold: %-3d%n", map.size(), getCapacity(map), getThreshold(map));
     }
 
     private static int getCapacity(Map<?, ?> map) {
-        Map.Entry[] table = new Map.Entry[0];
-        try {
-            Field tableField = HashMap.class.getDeclaredField("table");
-            tableField.setAccessible(true);
-            table = (Map.Entry[]) tableField.get(map);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        var table = getTable(map);
         return table == null ? 0 : table.length;
     }
 
-    public static <K, V> V add(K key, Map<K, V> map) {
-        V result = map.put(key, null);
-        System.out.printf("Size : %-3d Capacity: %-3d\n", map.size(), getCapacity(map));
+    private static <K,V> Map.Entry<K, V>[] getTable(Map<K, V> map) {
+        Map.Entry<K, V>[] table = null;
+
+        try {
+            Field tableField = HashMap.class.getDeclaredField("table");
+            tableField.setAccessible(true);
+            table = (Map.Entry<K,V>[]) tableField.get(map);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return table;
+    }
+
+    private static int getThreshold(Map<?, ?> map) {
+        int threshold = 0;
+
+        try {
+            Field thresholdField = HashMap.class.getDeclaredField("threshold");
+            thresholdField.setAccessible(true);
+            threshold = (int)thresholdField.get(map);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return threshold;
+    }
+
+    public static <K, V> V put(K key, V value, Map<K, V> map) {
+        V result = map.put(key, value);
+        printMap(map);
         return result;
     }
 
     public static <K, V> V remove(K key, Map<K, V> map) {
         V result = map.remove(key);
-        System.out.printf("Size : %-3d Capacity: %-3d\n", map.size(), getCapacity(map));
+        printMap(map);
         return result;
     }
 }
