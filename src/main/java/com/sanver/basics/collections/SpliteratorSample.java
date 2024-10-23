@@ -16,7 +16,7 @@ public class SpliteratorSample {
         // An ideal trySplit method efficiently (without traversal) divides its elements exactly in half, allowing balanced parallel computation.
         Spliterator<Integer> spliterator = IntStream.range(0, 100).spliterator();
         Spliterator<Integer> subSplit1 = spliterator.trySplit(); // If spliterator cannot be split (because emptiness, inability to split after traversal has commenced, data structure constraints, and efficiency considerations) trySplit returns null.
-        Spliterator<Integer> subSplit2 = spliterator.trySplit();
+        Spliterator<Integer> subSplit2 = subSplit1.trySplit();
         Spliterator<Integer> subSplit3 = spliterator.trySplit();
         print(subSplit1, "subSplit1");
         print(subSplit2, "subSplit2");
