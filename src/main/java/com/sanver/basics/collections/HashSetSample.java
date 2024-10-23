@@ -23,11 +23,11 @@ public class HashSetSample {
         differenceFirstSet = new HashSet<>(firstSet);
         differenceFirstSet.removeAll(secondSet);
 
-        System.out.println(firstSet.contains("Ahmet"));
-        System.out.println(String.join(", ", firstSet));
-        System.out.println(secondSet);
-        System.out.println(union);
-        System.out.println(intersection);
-        System.out.println(differenceFirstSet);
+        System.out.println("First set: " + firstSet);
+        System.out.println("Second set: " + secondSet);
+        System.out.println("firstSet.contains(\"Ahmet\"):" + firstSet.contains("Ahmet"));
+        System.out.println("Union: " + union);
+        System.out.println("Intersection: " + intersection);
+        System.out.println("First set difference second set: " + differenceFirstSet);
     }
 }
