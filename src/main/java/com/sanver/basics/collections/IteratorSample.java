@@ -12,16 +12,21 @@ public class IteratorSample {
         var list = new ArrayList<>(List.of(1, 2, 3, 5, 6, 7));
         var iterator = list.iterator();
 
+        System.out.printf("Printing the list with %n%n\twhile (iterator.hasNext()) {%n\t\tSystem.out.printf(\"%%d \", iterator.next());%n\t}%n%n\t");
+
         while (iterator.hasNext()) {
             System.out.printf("%d ", iterator.next());
         }
-        System.out.println();
 
-        iterator = list.iterator(); // If we did not renew this, then the following code below won't print any items.
+        System.out.printf("%n%n");
 
+        iterator = list.iterator(); // If we did not renew this, then iterator.next() would throw NoSuchElementException below
+
+        System.out.printf("Printing the list with %n%n\titerator.next();%n\titerator.forEachRemaining(x -> System.out.printf(\"%%d \", x));%n%n\t");
         iterator.next();
         iterator.forEachRemaining(x -> System.out.printf("%d ", x));
-        System.out.println();
+
+        System.out.printf("%n%n");
 
         iterator = list.iterator();
 
