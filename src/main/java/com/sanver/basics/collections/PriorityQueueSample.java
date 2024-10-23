@@ -23,10 +23,10 @@ public class PriorityQueueSample {
 
         students.forEach(priorityQueue::offer); // Insert elements to the priority queue to form a min-heap. Priority queue uses an array to store the elements, with an initial capacity, which can be determined when constructed.
 
+        System.out.printf("priorityQueue.forEach(System.out::println): %n%n");
         priorityQueue.forEach(System.out::println); // Notice that this does not need to be completely ordered based on the studentComparator, since this is a min-heap, a complete binary tree where each parent should be less than or equal to its children.
-        System.out.println();
-        System.out.println(String.join("\n", priorityQueue.toString().split("Student"))); // The order will be the same as the forEach
-        System.out.println();
+        System.out.printf("%npriorityQueue.toString():%n%n%s%n ", priorityQueue); // The order will be the same as the forEach
+        System.out.printf("%nPolling: %n%n");
         while (!priorityQueue.isEmpty()) {
             System.out.println(priorityQueue.poll()); // Retrieves and removes the head of this queue, which will always be the smallest element of the queue.
             // poll and remove both retrieve and remove the head of the queue but remove throws an exception when the queue is empty, poll does not.
