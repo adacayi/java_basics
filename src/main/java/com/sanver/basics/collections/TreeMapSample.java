@@ -12,7 +12,7 @@ public class TreeMapSample {
 
     static class Person implements Comparable<Person> {
         String name;
-        Boolean isMale;
+        boolean isMale;
         String country;
         String city;
 
@@ -28,7 +28,7 @@ public class TreeMapSample {
             return city;
         }
 
-        public Person(String name, String country, String city, Boolean isMale) {
+        public Person(String name, String country, String city, boolean isMale) {
             this.name = name;
             this.isMale = isMale;
             this.country = country;
@@ -57,6 +57,11 @@ public class TreeMapSample {
     }
 
     public static void main(String[] args) {
+        // When running this code, you might encounter the following error:
+        // java.lang.reflect.InaccessibleObjectException: Unable to make field transient java.util.HashMap$Node[] java.util.HashMap.table accessible: module java.base does not "opens java.util" to unnamed module
+        // To overcome it, run this with the following jvm options --add-opens java.base/java.util=ALL-UNNAMED
+        // https://stackoverflow.com/questions/70756414/java-lang-reflect-inaccessibleobjectexception-unable-to-make-field-private-fina
+
         Map<Person, Integer> hashMap = new HashMap<>();
         Person ahmet = new Person("Ahmet", "Turkiye", "Konya", true);
         Person mustafa = new Person("Mustafa", "England", "London", true);
@@ -73,9 +78,9 @@ public class TreeMapSample {
 
 
         Map<Person, Integer> treeMap = new TreeMap<>(hashMap);
-        System.out.println("Hashmap puts its elements based on their hash(o)^hash(o>>>16)&(capacity-1) while TreeMap sorts by its keys\n");
+        System.out.println("Hashmap uses an array to store its elements and  puts its elements based on their hash(o) ^ (hash(o) >>> 16) & (capacity - 1) while TreeMap uses a binary tree and puts its elements by comparing their keys\n");
         System.out.println("HashMap output:\n");
-        hashMap.forEach((k, v) -> System.out.printf("%d %s %s\n", v, k, "Hash value: " + getHash(hashMap, k)));
+        hashMap.forEach((k, v) -> System.out.printf("%d %s %s%n", v, k, "Hash value: " + getHash(hashMap, k)));
         System.out.println();
         System.out.println("Tree output: (Key is Person instance and it is sorted by country, city, name and then gender\n");
         treeMap.forEach((k, v) -> System.out.println(v + " " + k));
