@@ -58,6 +58,12 @@ public class ArrayListSample {
             System.out.println(previous);
         }
 
-        System.out.printf("%nFinal list after iterator.remove() %n%s%n", list);
+        System.out.printf("%nList after iterator.remove() %n%s%n", list);
+
+        list.removeIf(x -> x.equals("Mustafa"));
+        System.out.printf("%nList after list.removeIf(x -> x.equals(\"Mustafa\")) %n%s%n", list);
+
+        list.replaceAll(x -> x.length() > 5 ? x + " Bey" : x);
+        System.out.printf("%nList after list.replaceAll(x -> x.length() > 5 ? x + \" Bey\" : x); %n%s%n", list);
     }
 }
