@@ -10,14 +10,14 @@ public class ListIteratorSample {
         var previous = list.get(0);
 
         while (listIterator.hasNext()) {
-            var item = listIterator.next(); // ListIterator.next() returns the item in the cursor index and increments the cursor by one
+            var item = listIterator.next(); // ListIterator.next() returns the item in the cursor index and increments the cursor by one.
 
-            if(item - previous > 1) {
-                listIterator.previous(); // ListIterator.previous() returns the item in cursor - 1 index decrements the cursor by one.
-                // The cursor is now moved back to the item's index, hence we can insert an element just before it with the ListIterator.add method.
+            if (item - previous > 1) {
+                listIterator.previous(); // ListIterator.previous() returns the item in the cursor - 1 index, and then decrements the cursor by one.
+                // The cursor is now moved back to the item's index (which is previous item's index + 1, since listIterator.next() caused the cursor to move to item's index + 1), hence we can insert an element just before it with the ListIterator.add method.
 
-                for (int i = 1 ; i < item - previous; i++) {
-                    listIterator.add(item - i); // This adds the element at the cursor position like list.add(item, cursor) and increments the cursor by one
+                for (int i = 1; i < item - previous; i++) {
+                    listIterator.add(item - i); // This adds the element at the cursor position like list.add(item, cursor) and increments the cursor by one. If there are items already in that position and after it, they are shifted.
                     listIterator.previous();
                 }
 
@@ -34,14 +34,15 @@ public class ListIteratorSample {
         System.out.printf("%nMultiplying elements by 10%n");
 
         while (listIterator.hasPrevious()) {
-            var item = listIterator.previous(); // ListIterator.previous() returns the item in cursor - 1 index decrements the cursor by one.
+            var item = listIterator.previous(); // ListIterator.previous() returns the item in the cursor - 1 index and decrements the cursor by one.
             listIterator.set(item * 10); // Sets the value of the item at the cursor index.
         }
 
         System.out.println(list);
 
         System.out.printf("%nPrinting indexes%n");
-        while(listIterator.hasNext()){
+
+        while (listIterator.hasNext()) {
             var index = listIterator.nextIndex(); // This returns the cursor value
             var item = listIterator.next();
             System.out.printf("%d: %d%n", index, item);
@@ -49,7 +50,7 @@ public class ListIteratorSample {
 
         System.out.printf("%nPrinting indexes in reverse order%n");
 
-        while(listIterator.hasPrevious()){
+        while (listIterator.hasPrevious()) {
             var index = listIterator.previousIndex(); // This returns the cursor value - 1
             var item = listIterator.previous();
             System.out.printf("%d: %d%n", index, item);
