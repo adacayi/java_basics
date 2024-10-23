@@ -16,17 +16,17 @@ import java.util.stream.IntStream;
  * 		 iterating over it:
  * 		 <br><br>
  *
- <pre>
- <code>List list = Collections.synchronizedList(new ArrayList());
- synchronized (list) {
-   Iterator i = list.iterator(); // Must be in synchronized block
-   while (i.hasNext()) {
-	foo(i.next());
-   }
- }
- </code>
- </pre>
- * 		 <br><br>
+ * <pre>
+ * {@code
+ *         List list = Collections.synchronizedList(new ArrayList());
+ *         synchronized (list) {
+ *             Iterator i = list.iterator(); // Must be in synchronized block
+ *             while (i.hasNext()) {
+ *                 foo(i.next());
+ *             }
+ *         }
+ * }
+ * </pre>
  * 		 Failure to follow this advice may result in non-deterministic behavior.
  * 		 The returned list will be serializable if the specified list is serializable.
  */
