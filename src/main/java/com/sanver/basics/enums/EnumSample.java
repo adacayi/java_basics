@@ -41,7 +41,7 @@ public class EnumSample {
         for (Days day : days)
             System.out.printf("%s has index %d%n", day, day.getIndex());
 
-        System.out.printf("%nThe ordinal of Saturday is %d%n", Days.SATURDAY.ordinal());
+        System.out.printf("%nThe ordinal of Sunday is %d%n", Days.SUNDAY.ordinal());
         System.out.println("A random day is " + getRandomEnum(Days.class));
     }
 
