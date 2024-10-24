@@ -7,17 +7,16 @@ import java.util.ListIterator;
 public class ArrayListSample {
 
     public static void main(String[] args) {
-        List<String> list = new ArrayList<>(List.of("Ahmet", "Mustafa", "Veli", "Salih"));
+        var list = new ArrayList<>(List.of(1, 3, 5, 6, 9));
         // You don't need to specify ArrayList type on the right since Java can infer it from the left hand-side.
         // i.e. there is no need to write ArrayList<String>(3) on the right.
-        list.add("Ibrahim");
-        list.set(2, "Muhammed");
+        list.add(11);
+        list.set(3, 7);
 
         System.out.printf("List.forEach: %n");
         list.forEach(System.out::println);
 
         System.out.printf("%n%nList.get(i): %n");
-
         for (int i = 0; i < list.size(); i++)
             System.out.println(list.get(i));
 
@@ -29,7 +28,7 @@ public class ArrayListSample {
         }
 
         System.out.printf("%n%nList.listIterator(list.size()) and listIterator.previous() showing index with listIterator.previousIndex(): %n");
-        ListIterator<String> listIterator = list.listIterator(list.size()); // This sets the iterator to the end of the list
+        ListIterator<Integer> listIterator = list.listIterator(list.size()); // This sets the iterator to the end of the list
 
         while (listIterator.hasPrevious()) {
             System.out.printf("%d- %s%n", listIterator.previousIndex(), listIterator.previous());
@@ -51,7 +50,7 @@ public class ArrayListSample {
         while (iterator3.hasPrevious()) {
             var previous = iterator3.previous();
 
-            if (previous.equals("Salih")) {
+            if (previous == 7) {
                 iterator3.remove();
             }
 
@@ -60,10 +59,31 @@ public class ArrayListSample {
 
         System.out.printf("%nList after iterator.remove() %n%s%n", list);
 
-        list.removeIf(x -> x.equals("Mustafa"));
-        System.out.printf("%nList after list.removeIf(x -> x.equals(\"Mustafa\")) %n%s%n", list);
+        list.removeIf(x -> x == 9);
+        System.out.printf("%nList after list.removeIf(x -> x == 9) %n%s%n", list);
 
-        list.replaceAll(x -> x.length() > 5 ? x + " Bey" : x);
-        System.out.printf("%nList after list.replaceAll(x -> x.length() > 5 ? x + \" Bey\" : x); %n%s%n", list);
+        list.replaceAll(x -> x > 3 ? x * 2 : x);
+        System.out.printf("%nList after list.replaceAll(x -> x > 3 ? x * 2 : x); %n%s%n", list);
+
+        var subList = list.subList(1, 3);
+        System.out.printf("%nlist.subList(1, 3): %s%n", subList);
+
+        subList.set(1, 5);
+        System.out.printf("%nAfter subList.set(1, 5)%n");
+        print(subList, list);
+
+        subList.add(7);
+        System.out.printf("%nAfter subList.add(7)%n");
+        print(subList, list);
+
+        subList.remove(1);
+        System.out.printf("%nAfter subList.remove(1)%n");
+        print(subList, list);
+    }
+
+    private static void print(List<Integer> subList, List<Integer> list) {
+        System.out.println("subList:" + subList);
+        System.out.println("List   : " + list);
+        System.out.println();
     }
 }
