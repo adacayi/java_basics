@@ -2,8 +2,8 @@ package com.sanver.basics.arrays;
 
 import lombok.Value;
 
-import static com.sanver.basics.utils.ArrayPrinter.printArray;
-import static com.sanver.basics.utils.ArrayPrinter.printArrays;
+import static com.sanver.basics.utils.ArrayUtils.printArray;
+import static com.sanver.basics.utils.ArrayUtils.printArrays;
 
 public class PrintingArrays {
     public static void main(String[] args) {

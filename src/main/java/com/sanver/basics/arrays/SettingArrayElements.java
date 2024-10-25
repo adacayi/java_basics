@@ -2,7 +2,7 @@ package com.sanver.basics.arrays;
 
 import java.util.Arrays;
 
-import static com.sanver.basics.utils.ArrayPrinter.printArray;
+import static com.sanver.basics.utils.ArrayUtils.printArray;
 
 public class SettingArrayElements {
 

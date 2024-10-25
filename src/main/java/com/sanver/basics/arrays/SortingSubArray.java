@@ -3,7 +3,7 @@ package com.sanver.basics.arrays;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import static com.sanver.basics.utils.ArrayPrinter.printArray;
+import static com.sanver.basics.utils.ArrayUtils.printArray;
 
 public class SortingSubArray {
 

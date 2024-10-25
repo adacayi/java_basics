@@ -2,13 +2,12 @@ package com.sanver.basics.streamapi;
 
 import java.util.stream.Stream;
 
-import static com.sanver.basics.utils.ArrayPrinter.printArray;
+import static com.sanver.basics.utils.ArrayUtils.printArray;
 
 public class ToArraySample {
-
     static class Person {
-        final private String name;
-        final private int age;
+        private final String name;
+        private final int age;
 
         public Person(String name, int age) {
             this.name = name;
@@ -32,5 +31,4 @@ public class ToArraySample {
         //toArray(x->new Person[x])
         printArray(people);
     }
-
 }
