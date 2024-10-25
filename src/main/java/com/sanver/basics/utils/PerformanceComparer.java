@@ -24,6 +24,9 @@ public class PerformanceComparer {
 
     public synchronized void compare() {
         var countDownLatch = new CountDownLatch(1);
+        var maxNameLength = taskMap.values().stream().mapToInt(String::length).max().orElse(0);
+        var format = "Task %-" + maxNameLength + "s completed in: %s%06d%n";
+
         var completableFutures = taskMap.entrySet().stream()
                 .map(entry -> {
                     var stopWatch = new StopWatch();
@@ -33,7 +36,7 @@ public class PerformanceComparer {
                         try {
                             countDownLatch.await();
                         } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            Thread.currentThread().interrupt();
                         }
                         stopWatch.start();
                         task.run();
@@ -43,7 +46,8 @@ public class PerformanceComparer {
                             System.out.printf("An error occurred for task %s. Error: %s%n", taskName, ex);
                             return;
                         }
-                        System.out.printf("Task %s completed in: %s%06d%n", taskName, stopWatch, stopWatch.getNanoTime() % 1_000_000);
+
+                        System.out.printf(format, taskName, stopWatch, stopWatch.getNanoTime() % 1_000_000);
                     });
                 })
                 .toArray(CompletableFuture[]::new);
