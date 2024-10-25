@@ -11,7 +11,8 @@ import static com.sanver.basics.utils.ArrayPrinter.printArrays;
 
 public class CopyingArray {
     public static void main(String[] args) {
-        int[] a, b = {3, 2, 1};
+        int[] a;
+        int[] b = {3, 2, 1};
         int[][] b1 = {{0, 1, 3}, {2, 4}, {5, 2}};
         int[][] a1;
         a = Arrays.copyOf(b, 5);
@@ -35,9 +36,12 @@ public class CopyingArray {
         printArrays(people, copyPeople);
         people[0][0][0].setAge(40);
         printArrays(people, copyPeople);
-        var copyPeople2 = deepCopy(people); // As can be seen this deepCopy method can be used instead of arrayDeepCopy and it is not specific to arrays
-        // One advantage of this over using ObjectMapper is, it doesn't require objects to have default constructors.
-        // https://www.baeldung.com/java-deep-copy
+        var copyPeople2 = deepCopy(people); // As can be seen this deepCopy method can be used instead of arrayDeepCopy, and it is not specific to arrays
+      /* The advantages of using Gson instead of ObjectMapper are
+        1- It doesn't require a default constructor for the class to be deserialized
+        2- It doesn't require getters for fields for serialization (If there is no getter for a field, its value is not serialized. If no getter exists at all, objectMapper.writeValueAsString will throw an InvalidDefinitionException: No serializer found for class)
+        https://www.baeldung.com/java-deep-copy
+        */
         people[0][0][0].setAge(80);
         printArrays(people, copyPeople2);
     }
