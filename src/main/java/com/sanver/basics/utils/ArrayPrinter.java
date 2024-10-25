@@ -3,6 +3,10 @@ package com.sanver.basics.utils;
 import java.util.Arrays;
 
 public class ArrayPrinter {
+    private ArrayPrinter() {
+
+    }
+
     /**
      * This method is for printing out single dimensional arrays.
      * If an array is multidimensional, printArray(Object[] array) method is called as the appropriate overload.
@@ -32,19 +36,8 @@ public class ArrayPrinter {
         else if (aClass == boolean[].class)
             System.out.println(Arrays.toString((boolean[]) array));
         else {
-            printArray((Object[]) array); // We call the other overload instead of using Arrays.toString() to convert the array to string. The reason behind is, array might be a multidimensional array that is casted to object (e.g. Object array = (Object) new int[][]{ {1,2}, {3,4} }.
+            System.out.println(Arrays.deepToString((Object[])array));
         }
-    }
-
-    /**
-     * This method is printing out multidimensional arrays and is also called for single dimensional Object[] arrays as well.
-     * @param array The array that will be printed out
-     */
-    public static void printArray(Object[] array) {
-        if (!array.getClass().isArray()) {
-            throw new IllegalArgumentException("Argument is not an array");
-        }
-        System.out.println(Arrays.deepToString(array));
     }
 
     /**
@@ -53,11 +46,7 @@ public class ArrayPrinter {
      */
     public static void printArrays(Object... arrays) {
         for (var array : arrays) {
-            if (array instanceof Object[]) {
-                printArray((Object[]) array);
-            } else {
-                printArray(array);
-            }
+            printArray(array);
         }
     }
 }
