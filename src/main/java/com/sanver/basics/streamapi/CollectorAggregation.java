@@ -1,5 +1,7 @@
 package com.sanver.basics.streamapi;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.StringJoiner;
@@ -64,6 +66,11 @@ public class CollectorAggregation {
         // In the last step the finisher constructs the desired String from the
         // StringJoiner.
         System.out.println(supplier.get().collect(personNameCollector));
-    }
 
+        var largeSumCollector = Collector.<Long, BigDecimal[], BigDecimal>of(() -> new BigDecimal[]{new BigDecimal(0)}, (x, y) -> x[0] = x[0].add(new BigDecimal(y)), (x, y) -> new BigDecimal[]{x[0].add(y[0])}, x -> x[0]); // Since BigDecimal is immutable we used BigDecimal[] which is mutable.
+        var values = new long[]{(long) Math.pow(10, 18), 3 * (long) Math.pow(10, 18), Long.MAX_VALUE};
+        var sumResult = Arrays.stream(values).boxed().collect(largeSumCollector);
+        var format = NumberFormat.getInstance();
+        System.out.printf("Sum of %s: %s%n", Arrays.stream(values).mapToObj(format::format).collect(Collectors.joining(" + ")), format.format(sumResult));
+    }
 }
