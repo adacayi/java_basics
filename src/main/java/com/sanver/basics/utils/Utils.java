@@ -26,9 +26,22 @@ public class Utils {
         while (System.nanoTime() - start < nanos);
     }
 
+    /**
+     *
+     * @return Thread id, thread name and is daemon information
+     */
     public static String getThreadInfo() {
+        return getThreadInfo("Thread id: %-3d Thread name: %-4s Is Daemon: %-5s");
+    }
+
+    /**
+     * Returns thread information containing thread id, thread name and is daemon information based on the given format
+     * @param format Format to output thread information. e.g. "Thread id: %-3d Thread name: %-33s Is Daemon: %-5s"
+     * @return Thread id, thread name and is daemon information
+     */
+    public static String getThreadInfo(String format) {
         var thread = Thread.currentThread();
-        return String.format("Thread id: %-3d Thread name: %s Is Daemon: %s", thread.getId(), thread.getName(), thread.isDaemon());
+        return String.format(format, thread.getId(), thread.getName(), thread.isDaemon());
     }
 
     public static void printCurrentThread(String... info) {

@@ -1,5 +1,6 @@
 package com.sanver.basics.threads;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
@@ -40,39 +41,83 @@ import static com.sanver.basics.utils.Utils.sleep;
 public class ForkJoinPoolSample {
     // Check https://www.baeldung.com/java-fork-join
     public static void main(String[] args) {
-        var pool = ForkJoinPool.commonPool();
-        Integer result = pool.invoke(new Fibonacci(4));
-        System.out.printf("%nResult is %d%n%n", result);
-        // new ForkJoinPool with a specific number of threads
+        int[] values = {1, 2, 3, 4, 5, 6, 7, 8};
+        System.out.printf("Array: %39s%n", Arrays.toString(values));
+        var pool = ForkJoinPool.commonPool(); // Returns the common pool instance. This pool is statically constructed; its run state is unaffected by attempts to shutdown or shutdownNow. The threads are deamon threads.
+        // Notice main thread can be used with commonPool, but this is not the case for the new ForkJoinPool(3) instance.
+        var result = pool.invoke(new ArraySum(values)); // This waits for the task to complete, thus blocking the main thread.
+        System.out.println("Final result: " + result);
+
+        System.out.printf("%n------------------------%n");
+        System.out.printf("Array: %39s%n", Arrays.toString(values));
         pool = new ForkJoinPool(3); // 3 threads. The threads in this pool are daemon threads similar to ForkJoinPool.commonPool.
-        var fibonacci5 = new Fibonacci(5);
-        pool.submit(fibonacci5); // Another usage, which does not block the main thread. We can also use execute method.
-        result = fibonacci5.join(); // The join here also returns the result without throwing UninterruptedException or ExecutionException like the get method does.
-        System.out.printf("%nResult is %d%n", result);
+        var task = new ArraySum(values);
+        pool.execute(task); // Another usage. This does not block the main thread. We can also use submit method.
+        System.out.println("Final result: " + task.join()); // The join here also returns the result without throwing UninterruptedException or ExecutionException like the get method does.
+//        var future = pool.submit(task);
+//        System.out.println("Final result: " + future.join());
         // Since ForkJoinPool threads are daemon threads, main thread will exit, even when we don't call the pool.shutdown().
     }
 
-    static class Fibonacci extends RecursiveTask<Integer> { // This class needs to extend ForkJoinTask.
-        // There are two implementations for ForkJoinTask, RecursiveAction and RecursiveTask.
-        // RecursiveAction is for tasks that don't return a value, while RecursiveTask is for tasks that return value.
-        private final int n;
+    /**
+     * <p>
+     * This class needs to extend ForkJoinTask.
+     * There are two implementations for ForkJoinTask, RecursiveAction and RecursiveTask.
+     * RecursiveAction is for tasks that don't return a value, while RecursiveTask is for tasks that return value.
+     * </p>
+     */
+    private static class ArraySum extends RecursiveTask<Integer> {
+        private static final String FORMAT = "Thread id: %-3d Thread name: %-33s Is Daemon: %-5s";
+        private final int[] array;
 
-        Fibonacci(int n) {
-            this.n = n;
+        ArraySum(final int[] array) {
+            this.array = array;
+        }
+
+        private static void delay() {
+            sleep(5_000);
         }
 
         @Override
         protected Integer compute() {
-            System.out.printf("Calculating Fibonacci(%d). %s%n", n, getThreadInfo());
-            sleep(5000);
-
-            if (n <= 1) {//This if statement is the part where the divided job is executed.
-                return n;
+            int result = 0;
+            if (array == null || array.length == 0) {
+                return result;
             }
 
-            // This part is responsible for job division
-            var tasks = ForkJoinTask.invokeAll(List.of(new Fibonacci(n - 1), new Fibonacci(n - 2)));
-            return tasks.stream().mapToInt(ForkJoinTask::join).sum();
+            if (array.length == 1) {
+
+                System.out.printf("Calculating %34s. %s%n", Arrays.toString(array), getThreadInfo(FORMAT));
+                delay();
+                result = array[0];
+                System.out.printf("Finished calculating %25s. %s Result: %2d%n", Arrays.toString(array), getThreadInfo(FORMAT), result);
+                return array[0];
+            }
+
+            System.out.printf("Calculating %34s. %s%n", Arrays.toString(array), getThreadInfo(FORMAT));
+            delay();
+            int low = 0;
+            int high = array.length;
+            int mid = (low + high) >>> 1;
+            var sum1 = new ArraySum(Arrays.copyOf(array, mid));
+            var sum2 = new ArraySum(Arrays.copyOfRange(array, mid, high));
+            var futures = ForkJoinTask.invokeAll(List.of(sum1, sum2));
+            result = futures.stream().mapToInt(ForkJoinTask::join).sum();
+
+//          Alternate way 1
+//            sum1.fork();
+//            sum2.fork();
+//            result = sum1.join() + sum2.join();
+
+//          Alternate way 2
+//            var pool = getPool();
+//            var future1 = pool.submit(sum1);
+//            var future2 = pool.submit(sum2);
+//            result = future1.join() + future2.join();
+
+            delay();
+            System.out.printf("Finished calculating %25s. %s Result: %2d%n", Arrays.toString(array), getThreadInfo(FORMAT), result);
+            return result;
         }
     }
 }
