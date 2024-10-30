@@ -1,106 +1,52 @@
 package com.sanver.basics.streamapi;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GroupingSampleWithMultipleFields {
-    private static int lastId = 0;
-
-    static class Person {
-        private int id;
-        private String name;
-        private int age;
-        private String city;
-
-        public Person(String name, int age, String city) {
-            this.id = getNewId();
-            this.name = name;
-            this.age = age;
-            this.city = city;
-        }
-
-        public String toString() {
-            return String.format("%d- %s at age %d in %s", id, name, age, city);
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        private synchronized int getNewId() {
-            return ++lastId;
-        }
-    }
-
-    static class GroupKey {
-        private String name;
-        private String city;
-
-        public GroupKey(String name, String city) {
-            this.name = name;
-            this.city = city;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-
-            if (!(obj instanceof GroupKey)) {
-                return false;
-            }
-
-            var other = (GroupKey) obj;
-
-            return new EqualsBuilder()
-                    .append(name, other.name)
-                    .append(city, other.city)
-                    .isEquals();
-        }
-
-        @Override
-        public int hashCode() {
-            return new HashCodeBuilder()
-                    .append(name)
-                    .append(city)
-                    .hashCode();
-        }
-    }
+    private static final Random random = new Random();
+    private static AtomicInteger lastId = new AtomicInteger(0);
 
     public static void main(String[] args) {
         int personCount = 16;
-
-        var people = IntStream.rangeClosed(1, personCount).mapToObj(x ->
-                new Person(Math.random() > 0.5 ? "Abdullah" : "Hatice", (int) (Math.random() * 90 + 1), Math.random() > 0.5 ? "Istanbul" : "Urfa"))
-                .sorted(Comparator.comparing((Person x) -> x.name).thenComparing(x -> x.city).thenComparing(x -> x.age)).collect(Collectors.toList());
-        System.out.println("People:\n");
-
-        for (Person person : people) {
-            System.out.println(person);
-        }
-
-        System.out.println();
+        var people = IntStream.rangeClosed(1, personCount).mapToObj(x -> generatePerson()).sorted(Comparator.comparing((Person x) -> x.name).thenComparing(x -> x.city).thenComparing(x -> x.age)).toList();
+        people.forEach(System.out::println);
 
         var group = people.stream().collect(Collectors.groupingBy(p -> new GroupKey(p.getName(), p.getCity())));
+        System.out.printf("%nName city group:%n%n");
+        var format = "%-8s %-8s: %s";
+        var entry = new ArrayList<>(group.entrySet());
+        entry.sort(Comparator.comparing((Map.Entry<GroupKey, List<Person>> x) -> x.getKey().name()).thenComparing(x -> x.getKey().city()));
 
-        System.out.println("Name city group:\n");
-        group.forEach((key, value) -> System.out.println(String.format("%-18s: %s", key.name +" " +key.city, value.stream().map(Person::toString).collect(Collectors.joining(", ")))));
+        entry.forEach(e -> System.out.println(String.format(format, e.getKey().name(), e.getKey().city(), e.getValue().stream().map(Person::toString).collect(Collectors.joining(", ")))));
+    }
+
+    private static Person generatePerson() {
+        String[] names = {"Abdullah", "Hatice"};
+        String[] cities = {"Istanbul", "Urfa"};
+        return new Person(names[random.nextInt(0, names.length)], random.nextInt(1, 91), cities[random.nextInt(0, cities.length)]);
+    }
+
+    @Value
+    private static class Person {
+        int id = lastId.incrementAndGet();
+        String name;
+        int age;
+        String city;
+
+        public String toString() {
+            return String.format("%2d- %-8s %-2d %-8s", id, name, age, city);
+        }
+    }
+
+    private record GroupKey(String name, String city) {
     }
 }
