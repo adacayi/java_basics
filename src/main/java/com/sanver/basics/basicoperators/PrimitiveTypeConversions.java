@@ -9,9 +9,10 @@ public class PrimitiveTypeConversions {
         double c = b / 3;
         System.out.println("double c = b / 3; c: " + c);
         Integer d = 3 * a;
+//        Long e = a; // This casting won't work. java: incompatible types: int cannot be converted to java.lang.Long
         System.out.println("Integer d = 3 * a; d: " + d);
 //        Long e = d; // This casting won't work. java: incompatible types: java.lang.Integer cannot be converted to java.lang.Long
-//        Long e1 = (Long) d; // This won't work either. java: incompatible types: java.lang.Integer cannot be converted to java.lang.Long
+//        Long e1 = (Long) d; // This won't work. java: incompatible types: java.lang.Integer cannot be converted to java.lang.Long
         long e = d; // Notice conversion from boxed type to primitive is possible (Integer to long in this example)
         System.out.println("long e = d; e: " + e);
         char f = 65;
