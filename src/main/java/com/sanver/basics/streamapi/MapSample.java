@@ -1,33 +1,31 @@
 package com.sanver.basics.streamapi;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MapSample {
 
-	static class Person {
-		int id;
-		String name;
+    public static void main(String[] args) {
+        int personCount = 5;
 
-		public String toString() {
-			return id + " " + name;
-		}
-	}
+        List<Integer> idList = IntStream.rangeClosed(1, personCount).boxed().toList();
 
-	public static void main(String[] args) {
-		int personCount = 5;
+        List<Person> people = idList.stream().map(x -> {
+            Person p = new Person();
+            p.id = x;
+            p.name = "Ahmet_" + x;
+            return p;
+        }).toList();
 
-		List<Integer> idList = IntStream.rangeClosed(1, personCount).mapToObj(x -> new Integer(x))
-				.collect(Collectors.toList());
+        people.forEach(System.out::println);
+    }
 
-		List<Person> people = idList.stream().map(x -> {
-			Person p = new Person();
-			p.id = x;
-			p.name = "Ahmet_" + x;
-			return p;
-		}).collect(Collectors.toList());
+    static class Person {
+        int id;
+        String name;
 
-		people.forEach(System.out::println);
-	}
+        public String toString() {
+            return id + " " + name;
+        }
+    }
 }
