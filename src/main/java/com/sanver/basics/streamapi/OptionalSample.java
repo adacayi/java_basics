@@ -26,7 +26,7 @@ public class OptionalSample {
     String value = null;
     // Optional<String> optional=Optional.of(value);// This will give a runtime
     // exception since the value is null
-    Optional<String> optional = Optional.ofNullable(value);
+    Optional<String> optional = Optional.ofNullable(value); // 'Optional. ofNullable()' with null argument should be replaced with 'Optional. empty()'
     System.out.println(optional);
     System.out.println(optional.isPresent());
     // System.out.println(optional.get()); // This will give a runtime error since
