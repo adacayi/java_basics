@@ -40,5 +40,11 @@ public class StreamExecutionOrderSample {
         }).orElse(0);
 
         System.out.println("Reduce result: " + sum);
+
+        System.out.printf("%nNote that executing a terminal operation makes the stream inaccessible%n");
+        var multiplicationStream = Stream.of(2, 4, 6);
+        var multiplicationResult = multiplicationStream.reduce(1, (x, y) -> x * y);
+        System.out.println("Multiplication result: " + multiplicationResult);
+//        var count = multiplicationStream.count(); // This throws java.lang.IllegalStateException: stream has already been operated upon or closed
     }
 }
