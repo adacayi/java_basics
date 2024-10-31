@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.sanver.basics.utils.Utils.sleep;
+import static com.sanver.basics.utils.Utils.threadId;
 
 public class GroupingByConcurrentSample {
 
@@ -31,10 +32,6 @@ public class GroupingByConcurrentSample {
             System.out.printf("Finished Grouping %2d. Thread id: %2d%n", i, threadId());
             return i % 2 == 0 ? "Even" : "Odd";
         };
-    }
-
-    private static long threadId() {
-        return Thread.currentThread().getId();
     }
 
     private static void print(Map<String, List<Integer>> map) {
