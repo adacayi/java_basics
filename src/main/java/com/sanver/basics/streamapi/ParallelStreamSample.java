@@ -2,22 +2,23 @@ package com.sanver.basics.streamapi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.sanver.basics.utils.Utils.getThreadInfo;
 
 public class ParallelStreamSample {
 
     public static void main(String[] args) {
         int length = 10;
-        List<Integer> idList = IntStream.range(0, length).boxed().collect(Collectors.toList());
-        List<Integer> newList = new ArrayList<>();
-        idList = idList.parallelStream().collect(Collectors.toList());// collect method preserves order
+        List<Integer> idList = IntStream.range(0, length).boxed().toList();
         System.out.println(idList);
-        idList = idList.parallelStream().peek(x -> System.out.print(x + " ")).collect(Collectors.toList());
-        // Collect method preserves order but peek shows that elements are accesses in parallel
-        System.out.println();
+        idList = idList.parallelStream().map(x -> {
+            System.out.printf("Mapping %d to %2d. %s%n", x, 2 * x, getThreadInfo());
+            return 2 * x;
+        }).toList(); // toList and collect methods preserve order, however we can see that multiple threads are used.
         System.out.println(idList);
-        idList.parallelStream().forEach(x -> newList.add(x));
+        var newList = new ArrayList<Integer>();
+        idList.parallelStream().forEach(newList::add);
         System.out.println(newList);
     }
 }
