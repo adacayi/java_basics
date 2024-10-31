@@ -2,19 +2,14 @@ package com.sanver.basics.streamapi;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class SortedSample {
 
-    public static class Person {
-        String name;
-        int age;
-
-        public String getName() {
-            return name;
-        }
-
-        public int getAge() {
-            return age;
+    record Person(String name, int age) {
+        @Override
+        public String toString() {
+            return name + " " + age;
         }
     }
 
@@ -22,34 +17,15 @@ public class SortedSample {
         // We used a Person class since primitive streams do not have sorted method with
         // Comparator parameter. There is only a parameterless sorted method in
         // primitive streams.
-        Person[] people = {new Person() {
-            {
-                name = "Ahmet";
-                age = 3;
-            }
-        }, new Person() {
-            {
-                name = "Mustafa";
-                age = 2;
-            }
-        }, new Person() {
-            {
-                name = "Muhammed";
-                age = 1;
-            }
-        }};
+        Person[] people = {new Person("Ahmet", 3), new Person("Mustafa", 2), new Person("Muhammed", 1)};
 
-        System.out.println("Note that all sorting is done before moving to anyMatch method");
-        Comparator<Person> ageComparator = Comparator.comparing(Person::getAge);
+        Comparator<Person> ageComparator = Comparator.comparing(Person::age);
 
-        boolean result = Arrays.stream(people).sorted((x, y) -> {
+        var sorted = Arrays.stream(people).sorted((x, y) -> {
             System.out.println("Comparing " + x.age + " with " + y.age);
             return ageComparator.compare(x, y);
-        }).anyMatch(x -> {
-            System.out.println("Checking if " + x.name + " satisfies condition");
-            return x.age > 2;
-        });
+        }).map(Person::toString).collect(Collectors.joining(", "));
 
-        System.out.println(result);
+        System.out.println(sorted);
     }
 }
