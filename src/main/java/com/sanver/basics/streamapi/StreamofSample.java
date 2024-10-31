@@ -7,8 +7,8 @@ public class StreamofSample {
 
     public static void main(String[] args) {
         String[] names = {"Ahmet", "Mustafa", "Muhammed"};
-        int[] numbers = {4, 3, 5};
-        Integer[] boxedNumbers = Arrays.stream(numbers).boxed().toArray(x -> new Integer[numbers.length]);
+        int[] numbers = {5, 3, 4, 2};
+        Integer[] boxedNumbers = Arrays.stream(numbers).boxed().toArray(Integer[]::new);
         Stream.of(names).sorted().forEach(x -> System.out.printf("%s ", x));
         System.out.println();
         Stream.of(3, 2, 1, 5).sorted().forEach(x -> System.out.printf("%d ", x));
