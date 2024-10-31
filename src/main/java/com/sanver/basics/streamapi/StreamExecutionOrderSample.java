@@ -1,5 +1,6 @@
 package com.sanver.basics.streamapi;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -46,5 +47,23 @@ public class StreamExecutionOrderSample {
         var multiplicationResult = multiplicationStream.reduce(1, (x, y) -> x * y);
         System.out.println("Multiplication result: " + multiplicationResult);
 //        var count = multiplicationStream.count(); // This throws java.lang.IllegalStateException: stream has already been operated upon or closed
+
+        System.out.printf("%nThis is to show the order importance in the stream method chaining%n%n");
+        System.out.printf("Skip placed after call to map. Note that in this case there are 5 calls to map, although we have skip(2).%n%n");
+        var array1 = IntStream.range(0, 5).map(x -> {
+            System.out.printf("Mapping %d to %d%n", x, 2 * x);
+            return 2 * x;
+        }).skip(2).toArray();
+
+        System.out.printf("%nArray1: %s%n", Arrays.toString(array1));
+        System.out.printf("%nWhen skip is placed first. Note that in this case there are 3 calls to map instead of 5.%n%n");
+        var array2 = IntStream.range(0, 5).skip(2).map(x -> { // When we prioritize skip over map, we avoid unnecessary mapping for the skipped items. Intermediate operations which reduce the size of the stream should be placed before operations which are applying to each element.
+            System.out.printf("Mapping %d to %d%n", x, 2 * x);
+            return 2 * x;
+        }).toArray();
+
+        System.out.printf("%nArray2: %s%n", Arrays.toString(array2));
+
+        System.out.println("In general, intermediate operations which reduce the size of the stream should be placed before operations which are applying to each element to avoid redundant operations.");
     }
 }
