@@ -11,55 +11,82 @@ public class RegexTester {
             System.out.println("Enter text for source for regex");
             String text = scanner.nextLine();
             String patternString;
+            String firstFormat;
+            String secondFormat;
             Pattern pattern;
             Matcher matcher;
-            int groupCount, start, end, index;
+            int groupCount;
+            int start;
+            int end;
+            int cursor;
 
             while (true) {
                 System.out.print("Enter regex pattern: ");
                 patternString = scanner.nextLine();
 
-                if (patternString.trim().isEmpty())
+                if (patternString.trim().isEmpty()) {
                     return;
+                }
 
                 try {
                     pattern = Pattern.compile(patternString);
                     matcher = pattern.matcher(text);
                     groupCount = matcher.groupCount();
                 } catch (Exception e) {
-                    System.out.println("Pattern is erronous.");
+                    System.out.println("Pattern is erroneous.");
                     continue;
                 }
-                index = 0;
+
+                cursor = 0;
+
+                if (!matcher.find()) {
+                    System.out.println("No match found");
+                    continue;
+                }
+
+                matcher.reset(); // This is just to show the functionality of reset. We could use a do while instead below to avoid reset.
+
                 while (matcher.find()) {
-                    if (index == 0) {
+                    if (cursor == 0) {
                         System.out.println(text);
                     }
 
-                    if (matcher.group().isEmpty()) // Sometimes the group comes empty. Don't know the reason. To avoid mistakes we skip those groups.
+                    if (matcher.group().isEmpty()) { // Sometimes the group comes empty. Don't know the reason. To avoid mistakes we skip those groups.
                         // i.e. give the regex pattern as \w* to see empty groups.
                         continue;
+                    }
 
                     start = matcher.start();
-                    end = matcher.end() - 1;
-                    if (start == end) {
-                        System.out.printf("%" + (start + 1 - index) + "s", "|");
+                    end = matcher.end();
+                    firstFormat = "%" + (start - cursor + 1) + "s";
+                    secondFormat = "%" + (end - start - 1) + "s";
+                    if (start + 1 == end) {
+                        System.out.printf(firstFormat, "|");
                     } else {
-                        System.out.printf("%" + (start + 1 - index) + "s", "^");
-                        index = start + 1;
-                        System.out.printf("%" + (end + 1 - index) + "s", "^");
+                        System.out.printf(firstFormat, "^");
+                        System.out.printf(secondFormat, "^");
                     }
-                    index = end + 1;
-                    if (groupCount >= 1) {
-                        System.out.printf("\nGroup%s: ", groupCount > 1 ? "s" : "");
-                        for (int i = 1; i <= groupCount; i++)
-                            System.out.printf("{%s} ", matcher.group(i));
-                        System.out.println();
-                        index = 0;
+
+                    cursor = end;
+
+                    if (groupCount > 0) {
+                        printGroups(groupCount, matcher);
+                        cursor = 0;
                     }
                 }
+
                 System.out.println();
             }
         }
+    }
+
+    private static void printGroups(int groupCount, Matcher matcher) {
+            System.out.printf("%nGroup%s: ", groupCount > 1 ? "s" : "");
+
+            for (int i = 1; i <= groupCount; i++) {
+                System.out.printf("{%s} ", matcher.group(i));
+            }
+
+            System.out.println();
     }
 }
