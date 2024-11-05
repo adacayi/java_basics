@@ -3,14 +3,17 @@ package com.sanver.basics.console;
 public class PrintfSample {
 
     public static void main(String[] args) {
-        double money = 123457.3234;
-        double negativeMoney = -123457.3234;
-        System.out.printf("%-,15.2f \n", money);
-        System.out.printf("%,15.2f \n", money);
-        System.out.printf("%0,15.2f \n", money);
-        System.out.printf("%0,1.8f \n", money);
-        System.out.printf("% ,.2f \n", money);
-        System.out.printf("% ,.2f \n", negativeMoney);
+        double number = 6123457.32514;
+        double negativeNumber = -number;
+        System.out.printf("Number %13s: %,f%n","", number);
+        System.out.printf("%-20s: %-,15.3f %n", "%-,15.3f",number);
+        System.out.printf("%-20s: %-,15.2f %n", "%-,15.2f", number); // Notice that half up rounding is done
+        System.out.printf("%-20s: %,15.2f %n", "%,15.2f", number);
+        System.out.printf("%-20s: %0,15.2f %n", "%0,15.2f", number); // forces numerical values to be zero-padded ( default is blank padding )
+        System.out.printf("%-20s: %0,20.8f %n", "%0,20.8f", number); // notice that padding is used for the integer part and the decimal part.
+        System.out.printf("%-20s: %+,.2f %n", "%+,.2f", number);
+        System.out.printf("%-20s: % ,.2f %n", "% ,.2f", number); // space will display a minus sign if the number is negative or a space if it
+        System.out.printf("%-20s: % ,.2f %n", "% ,.2f", negativeNumber);
         // Java printf( ) Method Quick Reference
         // System.out.printf( "format-string" [, arg1, arg2, ... ] );
         // Format String:
