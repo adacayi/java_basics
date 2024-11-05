@@ -4,6 +4,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Look into {@link com.sanver.basics.regex.RegexTesterTest} for tests.
+ */
 public class RegexTester {
     public static void main(String... args) {
         // Sample source: Selamunaleykum. This is a pattern which is used to test, test for ^ regex ^ patterns.
@@ -21,7 +24,7 @@ public class RegexTester {
             int cursor;
 
             while (true) {
-                System.out.print("Enter regex pattern: ");
+                System.out.println("Enter regex pattern");
                 patternString = scanner.nextLine();
 
                 if (patternString.trim().isEmpty()) {
@@ -51,8 +54,8 @@ public class RegexTester {
                         System.out.println(text);
                     }
 
-                    if (matcher.group().isEmpty()) { // Sometimes the group comes empty. Don't know the reason. To avoid mistakes we skip those groups.
-                        // i.e. give the regex pattern as \w* to see empty groups.
+                    if (matcher.group().isEmpty()) { // Sometimes the group comes empty. e.g. if we use \w* it means 0 or more alphanumeric characters, in which case there can be zero. We need to skip these.
+                        // Give the regex pattern as \w* to see empty groups.
                         continue;
                     }
 
@@ -75,18 +78,20 @@ public class RegexTester {
                     }
                 }
 
-                System.out.println();
+                if(groupCount == 0) {
+                    System.out.println();
+                }
             }
         }
     }
 
     private static void printGroups(int groupCount, Matcher matcher) {
-            System.out.printf("%nGroup%s: ", groupCount > 1 ? "s" : "");
+        System.out.printf("%nGroup%s: ", groupCount > 1 ? "s" : "");
 
-            for (int i = 1; i <= groupCount; i++) {
-                System.out.printf("{%s} ", matcher.group(i));
-            }
+        for (int i = 1; i < groupCount; i++) {
+            System.out.printf("{%s} ", matcher.group(i));
+        }
 
-            System.out.println();
+        System.out.printf("{%s}%n%n", matcher.group(groupCount));
     }
 }
