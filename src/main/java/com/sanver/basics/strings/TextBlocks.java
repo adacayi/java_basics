@@ -28,7 +28,7 @@ public class TextBlocks {
                             \""".formatted(parameter);
                     Note that to escape %% we use %%%%
                 Source: https://www.baeldung.com/java-text-blocks
-                """.formatted(LocalDate.now()); // %s is for just preserving %s
+                """.formatted(LocalDate.now());// Note that since the """ is in a separate line, the last line will have a newline at the end as well. You can get rid of if by using trim(), or just putting the ending """ at the end of last line, instead of a new line.
         System.out.println(explanation);
         System.out.println("\nLines: ");
         explanation.lines().forEach(line -> System.out.printf("%2d- %s%n", ++count, line));
