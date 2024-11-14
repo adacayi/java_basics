@@ -8,14 +8,44 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 enum Days implements Capitalize { // Note: all enum types implicitly extend the java.lang.Enum. enums cannot extend another class. e.g. enum Days extends Object is not allowed. Implements is allowed though.
+    // The first thing in an enum must be its list of constants
+    SUNDAY(7){ // This calls the private constructor of the enum.
+        void print() { // This overrides the print method
+            System.out.println("The day is Sunday");
+        }
+    }, // This calls the constructor with parameter 7 to generate the SUNDAY instance of the Days enum.
+    MONDAY(1){
+        void print() {
+            System.out.println("The day is Monday");
+        }
+    },
+    TUESDAY(2){
+        void print() {
+            System.out.println("The day is Tuesday");
+        }
+    },
+    WEDNESDAY(3){
+        void print() {
+            System.out.println("The day is Wednesday");
+        }
+    },
+    THURSDAY(4){
+        void print() {
+            System.out.println("The day is Thursday");
+        }
+    },
+    FRIDAY(5){
+        void print() {
+            System.out.println("The day is Friday");
+        }
+    },
+    SATURDAY(6){
+        void print() {
+            System.out.println("The day is Saturday");
+        }
+    };
 
-    SUNDAY(7), // This calls the constructor with parameter 7 to generate the SUNDAY instance of the Days enum.
-    MONDAY(1),
-    TUESDAY(2),
-    WEDNESDAY(3),
-    THURSDAY(4),
-    FRIDAY(5),
-    SATURDAY(6);
+    abstract void print(); // This is to show that enums can have abstract methods, which can be implemented in the enum constants as seen above.
 
     private final int index; // You can define instance variables like normal classes
 
@@ -48,9 +78,10 @@ public class EnumSample {
     public static void main(String... args) {
         DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
         Days[] days = Days.values();
-        Days today = Arrays.stream(days).filter(x -> x.getIndex() == dayOfWeek.ordinal() + 1).findFirst().orElse(null);
+        Days today = Arrays.stream(days).filter(x -> x.getIndex() == dayOfWeek.ordinal() + 1).findFirst().orElse(Days.MONDAY);
 
         System.out.printf("Today is %s%n%n", today);
+        today.print();
 
         for (Days day : days) {
             System.out.printf("%-9s ordinal: %d, index %d%n", day, day.ordinal(), day.getIndex());
