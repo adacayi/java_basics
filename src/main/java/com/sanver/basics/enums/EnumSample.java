@@ -1,8 +1,10 @@
 package com.sanver.basics.enums;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-
-import static com.sanver.basics.utils.Utils.getRandomInt;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.stream.IntStream;
 
 enum Days {
 
@@ -31,22 +33,25 @@ enum Days {
 }
 
 public class EnumSample {
+    private static final Random RANDOM = new Random();
+
     public static void main(String... args) {
-        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+        DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
         Days[] days = Days.values();
-        Days today = days[dayOfWeek];
+        Days today = Arrays.stream(days).filter(x -> x.getIndex() == dayOfWeek.ordinal() + 1).findFirst().orElse(null);
 
         System.out.printf("Today is %s%n%n", today);
 
-        for (Days day : days)
-            System.out.printf("%s has index %d%n", day, day.getIndex());
+        for (Days day : days) {
+            System.out.printf("%-9s ordinal: %d, index %d%n", day, day.ordinal(), day.getIndex());
+        }
 
-        System.out.printf("%nThe ordinal of Sunday is %d%n", Days.SUNDAY.ordinal());
-        System.out.println("A random day is " + getRandomEnum(Days.class));
+        System.out.println("10 random days");
+        IntStream.range(0, 10).forEach(x -> System.out.println(getRandomEnum(Days.class)));
     }
 
     public static <T extends Enum<T>> T getRandomEnum(Class<T> type) {
         var values = type.getEnumConstants();
-        return values[getRandomInt(0, values.length - 1)];
+        return values[RANDOM.nextInt(0, values.length)];
     }
 }
