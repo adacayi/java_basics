@@ -41,6 +41,8 @@
     
     An `exports…to` directive enables you to specify in a comma-separated list precisely which module’s or modules’ code can access the exported package—this is known as a **qualified export**.
 
+    Note that `*` is not allowed in `exports`. This is to enforce fine-grained control over what parts of a module are exposed, promoting better encapsulation and modularity.
+
     ```
     module java.xml {
     exports javax.xml;
@@ -76,6 +78,52 @@
         uses com.company.myservice.MyService;
     }
     ```
+ 
+    The following example demonstrates the use of `uses` and `provides with` in the Java 9 Module System for service loading.
+    
+    ```java
+    // 1. Service Interface (in com.example.service)
+    package com.example.service;
+    
+    public interface MyService {
+        void execute();
+    }
+    
+    // 2. Service Provider (in com.example.provider)
+    package com.example.provider;
+    
+    import com.example.service.MyService;
+    
+    public class MyServiceImpl implements MyService {
+        @Override
+        public void execute() {
+            System.out.println("Service Executed");
+        }
+    }
+    
+    // 3. Module Descriptor for Provider
+    module com.example.provider {
+        requires com.example.service;
+        provides com.example.service.MyService with com.example.provider.MyServiceImpl;
+    }
+    
+    // 4. Service Consumer (in com.example.consumer)
+    module com.example.consumer {
+        requires com.example.service;
+        uses com.example.service.MyService;
+    }
+    
+    // 5. Service Loading in the Consumer
+    import com.example.service.MyService;
+    
+    import java.util.ServiceLoader;
+    
+    public class Main {
+        public static void main(String[] args) {
+            ServiceLoader<MyService> loader = ServiceLoader.load(MyService.class);
+            loader.forEach(MyService::execute);
+        }
+    }
     
 11. `provides…with`
 
@@ -123,10 +171,7 @@
     // module directives
     }
     ```
-    
-    #### Reflection Defaults
-    By default, a module with runtime reflective access to a package can see the package’s public types (and their nested public and protected types). However, the code in other modules can access all types in the exposed package and all members within those types, including private members via setAccessible, as in earlier Java versions.
-
+    **Note:** A module requiring the `modulename` above will not automatically be able to read the public classes of `modulename` at compile time, even though `modulename` is declared as open. The `modulename` should export the desired packages explicitly for that purpose. 
  
 
 
