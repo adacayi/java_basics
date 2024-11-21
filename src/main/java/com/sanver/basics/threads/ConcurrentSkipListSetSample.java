@@ -44,28 +44,29 @@ import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
  */
 
 public class ConcurrentSkipListSetSample {
-    private static final ConcurrentSkipListSet<Integer> values = new ConcurrentSkipListSet<>(); // Change this to HashSet to see the final set size being indeterminate because HashSet is not thread-safe and the elements of the set are not ordered according to string comparison but by hashcode and the capacity of the HashSet
+    private static final ConcurrentSkipListSet<String> values = new ConcurrentSkipListSet<>(); // Change this to HashSet to see the final set size being indeterminate because HashSet is not thread-safe and the elements of the set are not ordered according to string comparison but by hashcode and the capacity of the HashSet.
+    // Use ConcurrentHashMap.newKeySet() to see unordered results.
 
     public static void main(String[] args) {
         var latch = new CountDownLatch(1);
         IntConsumer populate = i -> {
             uncheck(() -> latch.await());
-            IntStream.range(0, 100).forEach(j -> values.add(100 * i + j));
+            IntStream.range(0, 100).forEach(j -> values.add("%03d".formatted(100 * i + j))); // %03d is used, so that the order of the strings are the same as their corresponding integer values.
         };
 
         var futures = IntStream.range(0, 10).mapToObj(i -> CompletableFuture.runAsync(() -> populate.accept(i))).toArray(CompletableFuture[]::new);
         latch.countDown();
         CompletableFuture.allOf(futures).join();
-        System.out.println("values.remove(1)  : " + values.remove(1));
-        System.out.println("values.ceiling(1) : " + values.ceiling(1));
-        System.out.println("values.ceiling(2) : " + values.ceiling(2));
-        System.out.println("values.floor(1)   : " + values.floor(1));
-        System.out.println("values.floor(0)   : " + values.floor(0));
-        System.out.println("values.higher(2)  : " + values.higher(2));
-        System.out.println("values.lower(0)   : " + values.lower(0));
-        System.out.println("values.pollFirst(): " + values.pollFirst());
-        System.out.println("values.pollLast() : " + values.pollLast());
-        System.out.println("values.addAll(Set.of(0, 1, 2, 999)): " + values.addAll(Set.of(0, 1, 2, 999))); // Returns true if this collection changed as a result of the call
+        System.out.println("values.remove(\"001\") : " + values.remove("001"));
+        System.out.println("values.ceiling(\"001\"): " + values.ceiling("001"));
+        System.out.println("values.ceiling(\"002\"): " + values.ceiling("002"));
+        System.out.println("values.floor(\"001\")  : " + values.floor("001"));
+        System.out.println("values.floor(\"000\")  : " + values.floor("000"));
+        System.out.println("values.higher(\"002\") : " + values.higher("002"));
+        System.out.println("values.lower(\"000\")  : " + values.lower("000"));
+        System.out.println("values.pollFirst()   : " + values.pollFirst());
+        System.out.println("values.pollLast()    : " + values.pollLast());
+        System.out.println("values.addAll(Set.of(\"000\", \"001\", \"002\", \"999\")): " + values.addAll(Set.of("000", "001", "002", "999"))); // Returns true if this collection changed as a result of the call
         System.out.printf("%nSize: %,d%n", values.size());
         System.out.println(values);
     }
