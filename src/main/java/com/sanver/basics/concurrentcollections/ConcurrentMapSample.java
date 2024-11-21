@@ -21,9 +21,13 @@ public class ConcurrentMapSample {
     public static void main(String[] args) {
         var list = List.of(3, 6, 2, 1);
         ConcurrentMap<String, List<Integer>> result = list.parallelStream()
-                .collect(Collectors.groupingByConcurrent(i -> i % 2 == 0 ? "Even" : "Odd"));
+                .collect(Collectors.groupingByConcurrent(i -> {
+                    var key = i%2 == 0 ? "Even" : "Odd";
+                    System.out.printf("%d: %-4s Thread id: %d%n", i, key, Thread.currentThread().getId()); // This is to demonstrate grouping is done concurrently
+                    return key;
+                }));
         result.forEach((k, v) -> System.out
-                .println(k + " " + v.stream().map(Object::toString).collect(Collectors.joining(", "))));
+                .printf("%-4s %s%n", k, v.stream().map(Object::toString).collect(Collectors.joining(", "))));
 
         var map = new ConcurrentHashMap<Integer, String>(); // Change this to HashMap to see varying sizes.
         int count = 10_000;
