@@ -1,4 +1,4 @@
-package com.sanver.basics.threads;
+package com.sanver.basics.concurrentcollections;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
