@@ -34,7 +34,7 @@ class B extends A {
     }
 }
 
-class C {
+class C extends B{
     static String staticValue = "Initial C"; // This line will be executed before the static block
 
     static {// Static blocks are only run once, either triggered by calling a static method or a constructor of the class
@@ -48,6 +48,7 @@ class C {
     }
 
     public C(String value) {
+        super(value);
         System.out.printf("Constructor C. Value = %s%n%n", value);
         this.value = value;
     }
