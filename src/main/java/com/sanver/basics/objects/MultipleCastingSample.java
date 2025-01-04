@@ -35,7 +35,8 @@ public class MultipleCastingSample {
     }
 
     @Value
-    @NonFinal
+    @NonFinal //Value classes are final. This is to make Person class non-final so that we can extend it.
+    // The fields are still final because of the @Value annotation. We need to annotate them with @NonFinal individually to make them not final.
     static class Person {
         String name;
         int age;
