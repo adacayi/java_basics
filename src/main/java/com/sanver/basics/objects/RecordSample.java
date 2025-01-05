@@ -91,8 +91,10 @@ public class RecordSample {
             // Demonstrating auto-generated toString(), equals(), and hashCode()
             System.out.println("Person toString: " + person); // toString is automatically generated
             System.out.println("Equal to default person: " + person.equals(defaultPerson));
-            System.out.println("Equal to new Person(\"Alice\", 25): " + person.equals(new Person("Alice", 25))); // Notice the equals method checks for equality of each field in the record, instead of a basic object equality
-            System.out.println("Hash code: " + person.hashCode());
+            var newPerson = new Person("Alice", 25);
+            System.out.printf("Equal to newPerson %s: %s%n", newPerson, person.equals(newPerson)); // Notice the equals method checks for equality of each field in the record, instead of a basic object equality
+            System.out.printf("%-20s: %,d%n","person.hashCode()", person.hashCode());
+            System.out.printf("%-20s: %,d%n","newPerson.hashCode()", newPerson.hashCode());
 
             // person.age = 12; // The age field is private and final. We cannot change its value, thus this line would result in a compile error.
             // This is just to demonstrate that static non-final fields in a record can be changed.
