@@ -1,5 +1,7 @@
 package com.sanver.basics.objects;
 
+import java.util.function.Consumer;
+
 /**
  * Demonstrates the use of Sealed Classes, a feature that restricts which classes or interfaces can extend
  * or implement a particular superclass or interface. Sealed classes provide a controlled and closed hierarchy,
@@ -27,8 +29,10 @@ public class SealedClassSample {
     /**
      * Sealed superclass {@code Shape}, which permits only specific subclasses (Circle, Rectangle, and Triangle).
      */
-    public abstract static sealed class Shape permits Circle, Rectangle, Triangle { // Note: In case when all permitted subclasses are declared in the same file there is no need to mention the explicitly and permits part of a declaration can be omitted.
-        public abstract double area();
+    public static sealed class Shape permits Circle, Rectangle, Triangle { // Note: In case when all permitted subclasses are declared in the same file there is no need to mention the explicitly and permits part of a declaration can be omitted.
+        public double area(){
+            return 0;
+        }
     }
 
     /**
@@ -111,7 +115,24 @@ public class SealedClassSample {
         } else if (shape instanceof Triangle t) {
             System.out.println("Processing a generic triangle with area: " + t.area());
         } else {
-            System.out.println("Unknown shape");
+            System.out.println("Generic shape with area: " + shape.area());
+        }
+    }
+
+    /**
+     * Switch pattern matching is finalized in Java 21
+     * @param shape the shape to process
+     */
+    public static void processShapeWithSwitchPatternMatching(Shape shape) {
+        switch (shape) {
+            case Circle c -> System.out.println("Processing a circle with area: " + c.area());
+            case Rectangle r -> System.out.println("Processing a rectangle with area: " + r.area());
+            case EquilateralTriangle et ->
+                    System.out.println("Processing an equilateral triangle with area: " + et.area());
+            case Triangle t -> System.out.println("Processing a generic triangle with area: " + t.area());
+            case Shape s -> System.out.println("Generic shape"); // If this was not defined, it would result in an error since all possible cases are not listed.
+            // If this was defined above, it would result in a compile error as well suggesting: Label is dominated by a preceding case label 'Shape s'
+            // Although we do not use s, s should be put in case Shape s, otherwise it will result in this error: Type pattern expected
         }
     }
 
@@ -123,10 +144,22 @@ public class SealedClassSample {
         Shape rectangle = new Rectangle(4.0, 6.0);
         Shape triangle = new Triangle(4.0, 5.0);
         Shape equilateralTriangle = new EquilateralTriangle(3.0);
+//        Shape genericShape = new Shape(){ // Anonymous classes are not allowed to extend the sealed class.
+//            @Override
+//            public double area() {
+//                return 0;
+//            }
+//        };
+        Shape genericShape = new Shape();
+        var shapes = new Shape[]{circle, rectangle, triangle, equilateralTriangle, genericShape};
+        processShapes(SealedClassSample::processShape, shapes);
+        System.out.println();
+        processShapes(SealedClassSample::processShapeWithSwitchPatternMatching, shapes);
+    }
 
-        processShape(circle);              // Circle
-        processShape(rectangle);           // Rectangle
-        processShape(triangle);            // Generic Triangle
-        processShape(equilateralTriangle); // Equilateral Triangle
+    public static void processShapes(Consumer<Shape> shapeProcessor, Shape... shapes) {
+        for (var shape: shapes) {
+            shapeProcessor.accept(shape);
+        }
     }
 }
