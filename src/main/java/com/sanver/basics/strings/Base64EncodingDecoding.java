@@ -1,5 +1,6 @@
 package com.sanver.basics.strings;
 
+import java.util.Arrays;
 import java.util.Base64;
 
 /**
@@ -21,9 +22,9 @@ import java.util.Base64;
  *
  * <h3>Padding Scenarios:</h3>
  * <ol>
- *   <li>When the input length is a multiple of 3 bytes: No padding is needed. The encoded output length will be a multiple of 4.</li>
- *   <li>When the input length is 1 byte more than a multiple of 3: Two <code>=</code> characters are added to make it a multiple of 4.</li>
- *   <li>When the input length is 2 bytes more than a multiple of 3: One <code>=</code> character is added.</li>
+ *   <li>When the input length is a multiple of 3 bytes: Each 3 bytes is 24 bits, and will be represented by a group of 4 6 bits, hence no padding is needed.</li>
+ *   <li>When the input length is 1 byte more than a multiple of 3: The remaining one byte is 8 bits and will be represented by 2 6 bits, hence two <code>=</code> characters are added to make it a multiple of 4.</li>
+ *   <li>When the input length is 2 bytes more than a multiple of 3: The remaining two bytes is 16 bits and will be represented by 3 6 bits, hence one <code>=</code> character is added.</li>
  * </ol>
  *
  * <p><b>Decoding:</b> The encoded Base64 string can be decoded back into the original binary format by reversing the encoding process.</p>
@@ -50,10 +51,40 @@ import java.util.Base64;
  */
 public class Base64EncodingDecoding {
     public static void main(String[] args) {
+        var originalMessage = "Original message: ";
+        var encodedMessage = "Encoded  message: ";
+        var decodedMessage = "Decoded  message: ";
+
+        {
+            System.out.printf("First example%n%n");
+
+            byte[] message = {0, -128, 127, 1, 126, -1, -125}; // 7 bytes, so there will be 2 groups of 3 bytes, which will be represented by 2 groups of 4 6 bits and the remaining one byte (8 bits) will be represented by 2 6 bits and 2 padding with =
+            String encoded = Base64.getEncoder().encodeToString(message);
+            byte[] decoded = Base64.getDecoder().decode(encoded);
+            System.out.println(originalMessage + Arrays.toString(message));
+            System.out.println(encodedMessage + encoded);
+            System.out.println(decodedMessage + Arrays.toString(decoded));
+        }
+
+        {
+            System.out.printf("%nSecond example%n%n");
+
+            byte[] message = {0, -128, 127, 1, 126, -1, -125};
+            byte[] encoded = Base64.getEncoder().encode(message);
+            byte[] decoded = Base64.getDecoder().decode(encoded);
+            System.out.println(originalMessage + Arrays.toString(message));
+            System.out.println(encodedMessage + Arrays.toString(encoded));
+            System.out.println(decodedMessage + Arrays.toString(decoded));
+        }
+
+        System.out.printf("%nThird example%n%n");
+
         var message = "Hi there..";
-        var encodedString = Base64.getEncoder().encodeToString(message.getBytes());
-        var decoded = Base64.getDecoder().decode(encodedString);
+        System.out.println(originalMessage + message);
+        var encoded = Base64.getEncoder().encodeToString(message.getBytes());
+        var decoded = Base64.getDecoder().decode(encoded);
         var decodedString = new String(decoded);
-        System.out.printf("Message: %s%nEncoded: %s%nDecoded: %s%n", message, encodedString, decodedString);
+        System.out.println(encodedMessage + encoded);
+        System.out.println(decodedMessage + decodedString);
     }
 }
