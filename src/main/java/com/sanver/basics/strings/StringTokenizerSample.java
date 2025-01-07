@@ -1,5 +1,6 @@
 package com.sanver.basics.strings;
 
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
@@ -13,6 +14,7 @@ import java.util.StringTokenizer;
  * <ol>
  *   <li><code>StringTokenizer</code> allows iteration through tokens without creating an array, which may be more memory-efficient in some cases.</li>
  *   <li><code>split()</code> method in <code>String</code> class returns an array of tokens, which may be more convenient but less efficient for large strings.</li>
+ *   <li>Each character in <code>StringTokenizer</code> delimiter is regarded as an individual delimiter, while the regex in <code>split()</code> is regarded as a whole for a regular expression for a delimiter.</li>
  * </ol>
  *
  * <h3>Common Methods of StringTokenizer:</h3>
@@ -32,6 +34,9 @@ public class StringTokenizerSample {
      * @param delimiter the delimiter used for splitting the sentence
      */
     public static void demonstrateStringTokenizer(String sentence, String delimiter) {
+        System.out.println("Sentence : " + sentence);
+        System.out.printf("Delimiter: \"%s\"%n%n", delimiter);
+
         StringTokenizer tokenizer = new StringTokenizer(sentence, delimiter);
 
         System.out.println("Total tokens: " + tokenizer.countTokens());
@@ -45,9 +50,11 @@ public class StringTokenizerSample {
         String sentence = "Java is fun to learn!";
         String delimiter = " ";
 
-        System.out.println("Sentence : " + sentence);
-        System.out.println("Delimiter: \"" + delimiter + "\"\n");
-
         demonstrateStringTokenizer(sentence, delimiter);
+        sentence = "First sentence; Second sentence- Third sentence!";
+        delimiter = ";-!";
+        System.out.println();
+        demonstrateStringTokenizer(sentence, delimiter);
+        System.out.println(Arrays.toString(sentence.split(";-!")));
     }
 }
