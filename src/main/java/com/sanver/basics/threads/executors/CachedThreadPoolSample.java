@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.sanver.basics.utils.LambdaExceptionUtil.rethrowRunnable;
+import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 import static com.sanver.basics.utils.Utils.printCurrentThread;
 import static com.sanver.basics.utils.Utils.printThreadPool;
 import static com.sanver.basics.utils.Utils.sleep;
@@ -28,7 +28,7 @@ public class CachedThreadPoolSample {
 
         for (int i = 0; i < taskCount; i++) {
             var processId = i + 1;
-            threadPool.execute(rethrowRunnable(() -> {
+            threadPool.execute(() -> uncheck(() -> {
                 printCurrentThread(String.format("Process %d is running", processId));
                 latch.await();
             }));
