@@ -1,5 +1,7 @@
 package com.sanver.basics.utils;
 
+import com.sanver.basics.lambda.RethrowAsUncheckedSample;
+
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -7,9 +9,9 @@ import java.util.function.Supplier;
 
 /**
  * This class provides a set of utility methods to handle checked exceptions in Java 8 streams.
- * Look into LambdaExceptionUtilSample.java for a reference snippet of code.
+ * Look into {@link RethrowAsUncheckedSample} for implementation and links for the simplified version.
  * Also check the unit tests in LambdaExceptionUtilTest.java.
- * @deprecated This class is deprecated, because it is easier to maintain and use the simpler {@link com.sanver.basics.utils.RethrowAsUnchecked} class.
+ * @deprecated This class is deprecated, because it is easier to maintain and use the simpler {@link RethrowAsUnchecked} class.
  */
 @Deprecated(since = "12-09-2024")
 public class LambdaExceptionUtil {
