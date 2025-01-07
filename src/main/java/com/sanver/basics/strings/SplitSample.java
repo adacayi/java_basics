@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class SplitSample {
     public static void main(String... args) {
         String value = "Selamunaleykum. This#will    be_separated, won't it?";
-        String[] split = value.split("[^A-Za-z'?,.]+");// This regex means excluding characters from A to z
+        String[] split = value.split("[^A-z'?,.]+");// This regex means excluding characters from A to z
         // (The characters in ASCII table between A and z which includes underscore.) and also excluding '?,.
         // So, we will see '?,. on the splits and "be_separated" won't be separated.
         // The separation is caused by the spaces and # in the above scenario.
