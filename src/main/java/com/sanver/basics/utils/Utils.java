@@ -26,33 +26,32 @@ public class Utils {
 
     public static void sleepNano(long nanos) {
         var start = System.nanoTime();
-        while (System.nanoTime() - start < nanos);
+        while (System.nanoTime() - start < nanos) ;
     }
 
     /**
-     *
      * @return The current thread's thread id, thread name and is daemon information
      */
     public static String getThreadInfo() {
-        return getThreadInfo("Thread id: %-3d Thread name: %-4s Is Daemon: %-5s");
+        return getThreadInfo("Thread id: %-3d Thread name: %-4s Is Daemon: %-5s Is Virtual: %-5s");
     }
 
     /**
      * Returns the current thread information containing the thread id, thread name and is daemon information based on the given format
+     *
      * @param format Format to output thread information. e.g. "Thread id: %-3d Thread name: %-33s Is Daemon: %-5s"
      * @return Thread id, thread name and is daemon information
      */
     public static String getThreadInfo(String format) {
         var thread = Thread.currentThread();
-        return String.format(format, thread.threadId(), thread.getName(), thread.isDaemon());
+        return format.formatted(thread.threadId(), thread.getName(), thread.isDaemon(), thread.isVirtual());
     }
 
     /**
-     *
      * @return The current thread's id, converted to int from long for convenience
      */
     public static int threadId() {
-        return (int)Thread.currentThread().threadId();
+        return (int) Thread.currentThread().threadId();
     }
 
     public static void printCurrentThread(String... info) {
@@ -113,20 +112,22 @@ public class Utils {
         int remainingCapacity = queue.remainingCapacity(); // Space left in the queue
         int queueCapacity = queueSize + remainingCapacity; // Total capacity of the queue
 
-        System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Queue capacity: %d Tasks in queue: %d Maximum pool size: %,d Largest pool size: %,d Keep alive time: %,ds%n%n",
+        System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Queue capacity: %d Tasks in queue: %d Maximum pool size: %,d Largest pool size: %,d Keep alive time: %,ds%n",
                 pool.getPoolSize(), pool.getActiveCount(), pool.getCorePoolSize(), queueCapacity, queueSize, pool.getMaximumPoolSize(), pool.getLargestPoolSize(), pool.getKeepAliveTime(TimeUnit.SECONDS));
     }
 
     private static void displayInfo(String... info) {
+        if (info.length == 0) {
+            return;
+        }
+
         System.out.println();
+
         for (var infoItem : info) {
             System.out.println(infoItem);
         }
-        var max = Arrays.stream(info).map(String::length).mapToInt(x -> x).max();
-
-        if (max.isPresent()) {
-            System.out.println(IntStream.range(0, max.getAsInt()).mapToObj(x -> "-").collect(Collectors.joining()));
-        }
+        var max = Arrays.stream(info).map(String::length).mapToInt(x -> x).max().orElse(0);
+        System.out.println(IntStream.range(0, max).mapToObj(x -> "-").collect(Collectors.joining()));
     }
 
     public static int getRandomInt(int a, int b) {
