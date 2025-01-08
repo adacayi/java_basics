@@ -4,8 +4,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -42,7 +44,7 @@ public class Utils {
      */
     public static String getThreadInfo(String format) {
         var thread = Thread.currentThread();
-        return String.format(format, thread.getId(), thread.getName(), thread.isDaemon());
+        return String.format(format, thread.threadId(), thread.getName(), thread.isDaemon());
     }
 
     /**
@@ -50,7 +52,7 @@ public class Utils {
      * @return The current thread's id, converted to int from long for convenience
      */
     public static int threadId() {
-        return (int)Thread.currentThread().getId();
+        return (int)Thread.currentThread().threadId();
     }
 
     public static void printCurrentThread(String... info) {
@@ -65,18 +67,54 @@ public class Utils {
         System.out.printf("The number of threads in the fork join pool: %d%n%n", pool.getPoolSize());
     }
 
-    public static void printThreadPool(ThreadPoolTaskExecutor threadPool, String... info) {
-        displayInfo(info);
-
-        System.out.printf("Active threads in the pool: %d%n", threadPool.getActiveCount());
-        System.out.printf("The number of threads in the pool: %d%n%n", threadPool.getPoolSize());
+    /**
+     * Prints detailed information about a {@link ThreadPoolTaskExecutor} to the console and additional information provided by the info parameter.
+     * This method calls {@link #printThreadPool(ThreadPoolExecutor, String...)}
+     */
+    public static void printThreadPool(ThreadPoolTaskExecutor pool, String... info) {
+        printThreadPool(pool.getThreadPoolExecutor(), info);
     }
 
-    public static void printThreadPool(ThreadPoolExecutor threadPool, String... info) {
+    /**
+     * Prints detailed information about a {@link ThreadPoolExecutor} to the console and additional information provided by the info parameter.
+     * The method displays metrics such as the current pool size, active thread count,
+     * core pool size, largest pool size, maximum pool size, and the keep-alive time.
+     * Largest pool size is the largest size the pool ever got to.
+     *
+     * @param pool the {@link ThreadPoolExecutor} whose details are to be printed.
+     *             Must not be null.
+     * @param info optional additional information that can be logged alongside
+     *             the thread pool details.
+     *
+     * <p>
+     * Example Output:
+     * <pre>
+     * Pool size: 5
+     * Active thread count: 3
+     * Core pool size: 4
+     * Queue capacity: 1
+     * Tasks in queue: 1
+     * Maximum pool size: 8
+     * Largest pool size: 6
+     * Keep alive time: 60s
+     * </pre>
+     * </p>
+     *
+     * <p><strong>Note:</strong> The method writes directly to {@code System.out}.</p>
+     *
+     * @see java.util.concurrent.ThreadPoolExecutor
+     * @see java.util.concurrent.TimeUnit
+     */
+    public static void printThreadPool(ThreadPoolExecutor pool, String... info) {
         displayInfo(info);
+        BlockingQueue<Runnable> queue = pool.getQueue();
 
-        System.out.printf("Active threads in the pool: %d%n", threadPool.getActiveCount());
-        System.out.printf("The number of threads in the pool: %d%n%n", threadPool.getPoolSize());
+        int queueSize = queue.size();  // Current number of tasks in the queue
+        int remainingCapacity = queue.remainingCapacity(); // Space left in the queue
+        int queueCapacity = queueSize + remainingCapacity; // Total capacity of the queue
+
+        System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Queue capacity: %d Tasks in queue: %d Maximum pool size: %,d Largest pool size: %,d Keep alive time: %,ds%n%n",
+                pool.getPoolSize(), pool.getActiveCount(), pool.getCorePoolSize(), queueCapacity, queueSize, pool.getMaximumPoolSize(), pool.getLargestPoolSize(), pool.getKeepAliveTime(TimeUnit.SECONDS));
     }
 
     private static void displayInfo(String... info) {
