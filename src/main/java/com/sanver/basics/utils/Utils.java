@@ -5,6 +5,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +57,7 @@ public class Utils {
 
     public static void printCurrentThread(String... info) {
         displayInfo(info);
-        System.out.println(getThreadInfo());
+        System.out.printf("%s%n%n", getThreadInfo());
     }
 
     public static void printForkJoinPool(ForkJoinPool pool, String... info) {
@@ -69,9 +70,31 @@ public class Utils {
     /**
      * Prints detailed information about a {@link ThreadPoolTaskExecutor} to the console and additional information provided by the info parameter.
      * This method calls {@link #printThreadPool(ThreadPoolExecutor, String...)}
+     *
+     * @param pool the {@link ThreadPoolTaskExecutor} whose details are to be printed.
+     *             Must not be null.
+     * @param info optional additional information that can be logged alongside
+     *             the thread pool details.
      */
     public static void printThreadPool(ThreadPoolTaskExecutor pool, String... info) {
         printThreadPool(pool.getThreadPoolExecutor(), info);
+    }
+
+    /**
+     * Prints detailed information about a {@link ExecutorService} to the console and additional information provided by the info parameter.
+     * This method calls {@link #printThreadPool(ThreadPoolExecutor, String...)}
+
+     * @param pool the {@link ExecutorService} whose details are to be printed.
+     *      *             Must be an instance of {@link ThreadPoolExecutor}
+     * @param info optional additional information that can be logged alongside
+     *             the thread pool details.
+     */
+    public static void printThreadPool(ExecutorService pool, String... info) {
+        if (pool instanceof ThreadPoolExecutor threadPoolExecutor) {
+            printThreadPool(threadPoolExecutor, info);
+        } else {
+            System.out.printf("%s is not a ThreadPoolExecutor.%n", pool.getClass().getName());
+        }
     }
 
     /**
@@ -112,7 +135,7 @@ public class Utils {
         int remainingCapacity = queue.remainingCapacity(); // Space left in the queue
         int queueCapacity = queueSize + remainingCapacity; // Total capacity of the queue
 
-        System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Queue capacity: %d Tasks in queue: %d Maximum pool size: %,d Largest pool size: %,d Keep alive time: %,ds%n",
+        System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Queue capacity: %,d Tasks in queue: %,d Maximum pool size: %,d Largest pool size: %,d Keep alive time: %,ds%n%n",
                 pool.getPoolSize(), pool.getActiveCount(), pool.getCorePoolSize(), queueCapacity, queueSize, pool.getMaximumPoolSize(), pool.getLargestPoolSize(), pool.getKeepAliveTime(TimeUnit.SECONDS));
     }
 
@@ -120,8 +143,6 @@ public class Utils {
         if (info.length == 0) {
             return;
         }
-
-        System.out.println();
 
         for (var infoItem : info) {
             System.out.println(infoItem);
