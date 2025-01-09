@@ -132,8 +132,10 @@ public class Utils {
         BlockingQueue<Runnable> queue = pool.getQueue();
 
         int queueSize = queue.size();  // Current number of tasks in the queue
-        int remainingCapacity = queue.remainingCapacity(); // Space left in the queue
-        int queueCapacity = queueSize + remainingCapacity; // Total capacity of the queue
+        int remainingCapacity = queue.remainingCapacity(); // Space left in the queue or Integer.MAX_VALUE if the queue is ScheduledThreadPoolExecutor.DelayedWorkQueue
+        int queueCapacity = queueSize > 0 && remainingCapacity == Integer.MAX_VALUE ? Integer.MAX_VALUE : queueSize + remainingCapacity; // Total capacity of the queue
+        // The LinkedBlockingQueue used by ThreadPoolExecutor returns capacity - count for remainingCapacity() where capacity represents the capacity of the queue and count represents the number of elements in the queue.
+        // However, for ScheduledThreadPoolExecutor, it uses DelayedWorkQueue, which always returns Integer.MAX_VALUE for the remainingCapacity() method implying there is no intrinsic limit for the queue to accept elements without blocking.
 
         System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Maximum pool size: %,d Queue capacity: %,d Tasks in queue: %,d Largest pool size: %,d Keep alive time: %,ds%n%n",
                 pool.getPoolSize(), pool.getActiveCount(), pool.getCorePoolSize(), pool.getMaximumPoolSize(), queueCapacity, queueSize, pool.getLargestPoolSize(), pool.getKeepAliveTime(TimeUnit.SECONDS));
