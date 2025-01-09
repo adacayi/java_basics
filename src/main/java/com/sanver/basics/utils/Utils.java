@@ -135,8 +135,8 @@ public class Utils {
         int remainingCapacity = queue.remainingCapacity(); // Space left in the queue
         int queueCapacity = queueSize + remainingCapacity; // Total capacity of the queue
 
-        System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Queue capacity: %,d Tasks in queue: %,d Maximum pool size: %,d Largest pool size: %,d Keep alive time: %,ds%n%n",
-                pool.getPoolSize(), pool.getActiveCount(), pool.getCorePoolSize(), queueCapacity, queueSize, pool.getMaximumPoolSize(), pool.getLargestPoolSize(), pool.getKeepAliveTime(TimeUnit.SECONDS));
+        System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Maximum pool size: %,d Queue capacity: %,d Tasks in queue: %,d Largest pool size: %,d Keep alive time: %,ds%n%n",
+                pool.getPoolSize(), pool.getActiveCount(), pool.getCorePoolSize(), pool.getMaximumPoolSize(), queueCapacity, queueSize, pool.getLargestPoolSize(), pool.getKeepAliveTime(TimeUnit.SECONDS));
     }
 
     private static void displayInfo(String... info) {
