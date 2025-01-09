@@ -71,7 +71,7 @@ public class AwaitTerminationShutdownSample {
         printThreadPool(pool, "Initial thread pool information");
         submitTasks(pool, task, 3, 12_000);
         pool.shutdown();
-        printThreadPool(pool, "Thread pool after shutdown is called. Notice shutdown does not wait for the tasks to finish, also the task in the queue remains");
+        printThreadPool(pool, "Thread pool after shutdown is called. Notice shutdown does not wait for the tasks to finish, also the task in the queue remains and will be executed.");
         sleep(WAIT_BETWEEN_CASES);
         executeTask(pool, task, 4);
         awaitTermination(pool);
@@ -89,8 +89,8 @@ public class AwaitTerminationShutdownSample {
 
     private static void shutdownNowExample(int id, boolean isInterruptable) {
         var task = getTask(isInterruptable);
-        String message = isInterruptable ? "Thread pool after shutdownNow is called. The task in the queue is removed. Notice since shutdownNow can interrupt the running threads the running threads are also finished." :
-                "Thread pool after shutdownNow is called. Notice since shutdownNow cannot interrupt the running threads, we still have active threads, but the task in the queue is removed.";
+        String message = isInterruptable ? "Thread pool after shutdownNow is called. The task in the queue is removed and will not be executed. Notice since shutdownNow can interrupt the running threads, the running threads are also interrupted." :
+                "Thread pool after shutdownNow is called. Notice since shutdownNow cannot interrupt the running threads, we still have active threads, but the task in the queue is removed and will not be executed.";
         ExecutorService pool;
         sleep(WAIT_BETWEEN_CASES);
         pool = Executors.newFixedThreadPool(2);
