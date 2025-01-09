@@ -21,7 +21,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         // ThreadPoolTaskExecutor is a java bean that allows for configuring a ThreadPoolExecutor in a bean style
         // by setting up the values for the instance variables like
         // corePoolSize, maxPoolSize, keepAliveSeconds, queueCapacity and exposing it as a Spring TaskExecutor.
-        // The default configuration of core pool size is 1, max pool size and queue capacity as 2147483647.
+        // The default configuration of core pool size is 1, max pool size, queue capacity as 2,147,483,647 (Integer.MAX_VALUE) and keep alive time is 60s.
         // This is roughly equivalent to Executors.newSingleThreadExecutor(), sharing a single thread for all tasks.
 
         // The corePoolSize is the minimum number of workers to keep alive without timing out
@@ -32,8 +32,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
         // the pool to a very high number.
 
         // Effectively, to set a fixed pool size, set the corePoolSize and maxPoolSize to same value.
-        // Note, queueCapacity must be greater than corePoolSize.
-        // Also, maxPoolSize must be greater than or equal to corePoolSize
+        // maxPoolSize must be greater than or equal to corePoolSize
 
         corePoolSizeSetLargerThanOperationCountWithUnboundMaxPoolSizeAndUnboundQueueCapacity();
         corePoolSizeSetWithUnboundMaxPoolSizeAndUnboundQueueCapacity();
@@ -149,8 +148,9 @@ public class ThreadPoolTaskExecutorPropertiesSample {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
 
-        printThreadPool(executor, "Final thread pool information");
+        printThreadPool(executor, "%nFinal thread pool information".formatted());
         executor.shutdown();
+        printThreadPool(executor, "%nThread pool information after shutdown called".formatted());
         System.out.printf("%nFinished corePoolSizeSetWithBoundMaxPoolSizeAndBoundQueueCapacity%n");
     }
 
@@ -220,7 +220,8 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     public static void executeThreads(ThreadPoolTaskExecutor executor,
                                       CountDownLatch countDownLatch,
                                       int numberOfOperations) {
-        printThreadPool(executor, "Initial thread pool information");
+        sleep(7_000);
+        printThreadPool(executor, "%nInitial thread pool information".formatted());
 
         for (int i = 0; i < numberOfOperations; i++) {
             try {
@@ -229,18 +230,23 @@ public class ThreadPoolTaskExecutorPropertiesSample {
                 System.out.println(e.getMessage());
             }
         }
+
+        sleep(3_000);
+        printThreadPool(executor, "%nAfter all execute calls invoked".formatted());
     }
 
     public static Runnable getRunnable(int i, CountDownLatch countDownLatch) {
         return () -> {
-            System.out.printf("Running process %d%n", i);
-            sleep(3000);
-            System.out.printf("Process %d finished%n", i);
+            System.out.printf("Started  process %d%n", i);
+            sleep(7_000);
+            System.out.printf("Finished process %d%n", i);
             countDownLatch.countDown();
         };
     }
 
     private static void printQueue(long corePoolSize, long maxPoolSize, long queueCapacity, long operationCount, long expectedPoolSize) {
+        sleep(7000);
+        System.out.printf("%nExpected queue properties%n");
         System.out.printf("Core pool size  is      : %s%n", numberFormat.format(corePoolSize));
         System.out.printf("Max  pool size  is      : %s%n", numberFormat.format(maxPoolSize));
         System.out.printf("Queue capacity  is      : %s%n", numberFormat.format(queueCapacity));
@@ -249,7 +255,7 @@ public class ThreadPoolTaskExecutorPropertiesSample {
     }
 
     private static long getExpectedPoolSize(long corePoolSize, long maxPoolSize, long queueCapacity, long operationCount) {
-        return Math.min(maxPoolSize, Math.min(operationCount, corePoolSize + Math.max(0, operationCount - corePoolSize - queueCapacity)) );
+        return Math.min(maxPoolSize, Math.min(operationCount, corePoolSize + Math.max(0, operationCount - corePoolSize - queueCapacity)));
     }
 
     private static void assertPoolSizeAndShutDownWhenFinished(CountDownLatch countDownLatch, ThreadPoolTaskExecutor executor, long expectedPoolSize) {
@@ -257,7 +263,8 @@ public class ThreadPoolTaskExecutorPropertiesSample {
             Assert.isTrue(executor.getPoolSize() == expectedPoolSize);
         }
 
-        printThreadPool(executor, "Final thread pool information");
+        printThreadPool(executor, "%nThread pool information after all tasks finished (Note that since keep alive time is 60s by default, pool size won't be reduced to core pool size if pool size is larger than core pool size)".formatted());
         executor.shutdown();
+        printThreadPool(executor, "%nThread pool information after shutdown called".formatted());
     }
 }
