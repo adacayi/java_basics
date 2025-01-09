@@ -15,6 +15,18 @@ public class ThreadPoolTaskExecutorSample {
         // ThreadPoolTaskExecutor is a java bean that allows for configuring a ThreadPoolExecutor in a bean style
         // by setting up the values for the instance variables like
         // corePoolSize, maxPoolSize, keepAliveSeconds, queueCapacity and exposing it as a Spring TaskExecutor.
+        // The default configuration of core pool size is 1, max pool size, queue capacity as 2,147,483,647 (Integer.MAX_VALUE) and keep alive time is 60s.
+        // This is roughly equivalent to Executors.newSingleThreadExecutor(), sharing a single thread for all tasks.
+
+        // The corePoolSize is the minimum number of workers to keep alive without timing out
+        // The pool size will exceed the corePoolSize only if the number of items trying to be executed at the same time
+        // exceeds the queueCapacity.
+
+        // Setting queueCapacity to 0 mimics Executors.newCachedThreadPool(), with immediate scaling of threads in
+        // the pool to a very high number.
+
+        // Effectively, to set a fixed pool size, set the corePoolSize and maxPoolSize to same value.
+        // maxPoolSize must be greater than or equal to corePoolSize
         var executor = new ThreadPoolTaskExecutor();
         // This will set thread name prefix, which can be seen in the logs
         executor.setThreadNamePrefix("Thread pool sample threads - ");
@@ -27,7 +39,7 @@ public class ThreadPoolTaskExecutorSample {
         System.out.printf("Default thread keep alive seconds: %d%n", executor.getKeepAliveSeconds());
         var keepAliveSeconds = 10;
         executor.setKeepAliveSeconds(keepAliveSeconds);
-        executor.initialize();
+        executor.initialize(); // ThreadPoolTaskExecutor needs to be initialized, otherwise submitting tasks to it will result in a runtime exception java.lang.IllegalStateException: ThreadPoolTaskExecutor not initialized
 
         printThreadPool(executor, "Initial state");
         var taskCount = 5;
