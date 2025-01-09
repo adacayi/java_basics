@@ -41,38 +41,45 @@ public class ThreadPoolTaskExecutorSample {
         executor.setKeepAliveSeconds(keepAliveSeconds);
         executor.initialize(); // ThreadPoolTaskExecutor needs to be initialized, otherwise submitting tasks to it will result in a runtime exception java.lang.IllegalStateException: ThreadPoolTaskExecutor not initialized
 
-        printThreadPool(executor, "Initial state");
+        printThreadPool(executor, "%nInitial state".formatted());
+        sleep(7_000);
         var taskCount = 5;
         var futures = new Future<?>[taskCount];
 
         for (int i = 1; i <= taskCount; i++) {
             if (i == 3) {
-                System.out.println("Note that since the queue capacity is one, task 3 will be put in to the queue, rather than increasing the pool size. Thus, it won't be executed immediately as well.");
+                System.out.println("Note that since pool size reached core pool size and the queue is not full, task 3 will be put in to the queue, rather than increasing the pool size. Thus, it won't be executed immediately as well.");
             }
 
             if (i > 3) {
                 System.out.println("Note that now the queue capacity is full with task 3, and the max pool size is not reached, this task will increase the pool size and will be executed immediately.");
             }
+            sleep(15_000);
             futures[i - 1] = executor.submit(getRunnable(i));
             sleep(20); // This is to make sure execution is started and "Running process x" is printed before printing the executor state.
-            printThreadPool(executor, String.format("State after task %d was submitted", i));
+            printThreadPool(executor, String.format("%nState after task %d was submitted", i));
         }
 
         printThreadPool(executor, "After all tasks submitted");
         Arrays.asList(futures).forEach(future -> uncheck(() -> future.get()));
-        printThreadPool(executor, "After all tasks finished");
+        printThreadPool(executor, "%nAfter all tasks finished".formatted());
         sleep(keepAliveSeconds * 1000L);
-        printThreadPool(executor, String.format("After keep alive seconds (%ds)", keepAliveSeconds));
+        printThreadPool(executor, "After keep alive seconds (%ds)".formatted(keepAliveSeconds));
         System.out.println("Notice that the pool size does not drop to zero, but to the core pool size after keep alive seconds.");
+        sleep(7_000);
         executor.shutdown(); // For ThreadPoolTaskExecutor, shutdown interrupts the active tasks, while this is not true for the ThreadPoolExecutor.
+        printThreadPool(executor, "%nAfter shutdown called".formatted());
     }
 
     public static Runnable getRunnable(int i) {
         return () -> {
             System.out.printf("Running process %d%n", i);
-            sleep(3000);
+
+            if (i != 3) {
+                sleep(70_000 - (i - 1) * 15_000L);
+            }
+
             System.out.printf("Process %d finished%n", i);
         };
     }
-
 }
