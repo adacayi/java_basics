@@ -30,7 +30,7 @@ class ArrayReader<T extends Serializable> extends RecursiveAction {
 	protected void compute() {
 		if (high - low < MAX) {// This if statement is the part where the divided job is executed.
 			synchronized (lock) {// If we did not include this synchronisation then the writings would be mixed.
-				System.out.printf("Writing %d-%d %s: ", low, high, getThreadInfo());
+				System.out.printf("Writing  %d-%d: %s%n", low, high, getThreadInfo());
 				for (int i = low; i <= high; i++) {
 					System.out.print(array[i] + " ");
 					sleep(500);
@@ -56,11 +56,12 @@ class ArrayReader<T extends Serializable> extends RecursiveAction {
 public class RecursiveActionSample {
 
 	public static void main(String[] args) {
-		ForkJoinPool pool = new ForkJoinPool(4); // This will result in the execution time of roughly 15 seconds, since each part with size 5 will be printed in 2,5 seconds and printing makes other threads wait, while the last wait of 5 seconds is done in parallel, so requires 5 seconds in total to be executed in all threads.
-		LocalTime start = LocalTime.now();
-		Integer[] array = IntStream.range(0, 20).boxed().toArray(Integer[]::new);
-		pool.invoke(new ArrayReader<>(array, 0, array.length - 1));
-		Duration duration = Duration.between(start, LocalTime.now());
-		System.out.printf("Time elapsed is %02d:%03d", duration.getSeconds(), duration.getNano() / 1000000);
+		try(var pool = new ForkJoinPool(4)) { // This will result in the execution time of roughly 15 seconds, since each part with size 5 will be printed in 2.5 seconds and printing makes other threads wait, while the last wait of 5 seconds is done in parallel, so requires 5 seconds in total to be executed in all threads.
+			LocalTime start = LocalTime.now();
+			Integer[] array = IntStream.range(0, 20).boxed().toArray(Integer[]::new);
+			pool.invoke(new ArrayReader<>(array, 0, array.length - 1));
+			Duration duration = Duration.between(start, LocalTime.now());
+			System.out.printf("Time elapsed is %02d:%03d", duration.getSeconds(), duration.getNano() / 1000000);
+		}
 	}
 }
