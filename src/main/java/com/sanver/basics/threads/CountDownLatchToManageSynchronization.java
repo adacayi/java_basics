@@ -3,11 +3,10 @@ package com.sanver.basics.threads;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.text.NumberFormat;
-import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.IntConsumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
@@ -24,24 +23,24 @@ public class CountDownLatchToManageSynchronization {
     private static int sum = 0;
 
     public static void main(String[] args) {
-        List<CountDownLatch> latches = IntStream.range(0, OPERATION_COUNT).mapToObj(x -> new CountDownLatch(1)).collect(Collectors.toList()); // This is to manage pausing and resuming individual tasks.
-        List<Boolean> finished = IntStream.range(0, OPERATION_COUNT).mapToObj(x -> false).collect(Collectors.toList()); // This is to check the completed status of each individual task. We cannot just check the individual future, since when we checked it might not have been completed yet, but the loop might have finished, which results in a wait in the manageLatches method, which won't be notified.
+        CountDownLatch[] latches = new CountDownLatch[OPERATION_COUNT];
+        Arrays.parallelSetAll(latches, x -> new CountDownLatch(1)); // This is to manage pausing and resuming individual tasks.
+        boolean[] finished = new boolean[OPERATION_COUNT]; // This is to check the completed status of each individual task.
+        var numberFormat = NumberFormat.getInstance();
 
         IntConsumer increment = x -> {
             for (int i = 0; i < INCREMENT_COUNT; i++) {
-                var latch = latches.get(x); // Get the task specific latch
+                var latch = latches[x]; // Get the task specific latch
                 uncheck(() -> latch.await()); // Wait for it to be opened.
                 sum += INCREMENT; // Increment the value.
+                var newLatch = new CountDownLatch(1);
+                latches[x] = newLatch;
 
                 synchronized (latch) {
-                    var newLatch = new CountDownLatch(1);
-                    latches.set(x, newLatch);
-                    latch.notifyAll(); // Notify manageLatches so that it opens the next latch.
-                    if (i == INCREMENT_COUNT - 1) {
-                        finished.set(x, true); // This needs to be in the synchronized block, otherwise manageLatches might call latch.wait before this.
-                    }
+                    latch.notify(); // Notify the manageLatches that the new latch has been set.
                 }
             }
+            finished[x] = true;
         };
 
         var stopWatch = new StopWatch();
@@ -50,7 +49,7 @@ public class CountDownLatchToManageSynchronization {
         manageLatches(latches, finished);// We won't need any joins, since manageLatches will carry on until all tasks are finished (finished list contains no true item).
         stopWatch.stop();
         System.out.printf("Operations with CountDownLatch completed in    : %s%06d%n", stopWatch, stopWatch.getNanoTime() % 1_000_000);
-        System.out.println("Sum = " + NumberFormat.getInstance().format(sum));
+        System.out.println("Sum = " + numberFormat.format(sum));
 
         stopWatch.reset();
         stopWatch.start();
@@ -68,20 +67,33 @@ public class CountDownLatchToManageSynchronization {
         CompletableFuture.allOf(futures).join();
         stopWatch.stop();
         System.out.printf("Operations with synchronized block completed in: %s%06d%n", stopWatch, stopWatch.getNanoTime() % 1_000_000);
-        System.out.println("Sum = " + NumberFormat.getInstance().format(sum));
+        System.out.println("Sum = " + numberFormat.format(sum));
     }
 
-    private static void manageLatches(List<CountDownLatch> latches, List<Boolean> finished) {
-        while (finished.stream().anyMatch(x -> !x)) {
-            for (int i = 0; i < latches.size(); i++) {
-                var latch = latches.get(i);
+    private static void manageLatches(CountDownLatch[] latches, boolean[] finished) {
+        while (!isFinished(finished)) {
+            for (int i = 0; i < latches.length; i++) {
+                if (finished[i]) {
+                    continue;
+                }
+
+                var latch = latches[i];
+
                 synchronized (latch) {
-                    latch.countDown(); // This is inside the synchronized block to make sure that notifyAll in the increment is not called before the wait in this block.
-                    if (finished.get(i) == false) { // This is to make sure that we don't wait for a latch that is already finished processing.
-                        uncheck(() -> latch.wait());
-                    }
+                    latch.countDown(); // This is inside the synchronized block to make sure that notify in the increment is not called before the wait in this block.
+                    uncheck(() -> latch.wait());
                 }
             }
         }
+    }
+
+    private static boolean isFinished(boolean[] finished) {
+        for (boolean b : finished) {
+            if (!b) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
