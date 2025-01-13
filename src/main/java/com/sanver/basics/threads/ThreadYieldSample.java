@@ -43,14 +43,14 @@ public class ThreadYieldSample {
 
     public static void main(String[] args) {
         try (var pool = Executors.newFixedThreadPool(1)) {
-            pool.submit(() -> {
+            pool.execute(() -> {
                 System.out.println("Task 1 started.  " + getThreadInfo());
                 Thread.yield(); // Thread.yield() does not result in the other process to carry on.
                 sleep(3000);
                 System.out.println("Task 1 finished. " + getThreadInfo());
             });
 
-            pool.submit(() -> {
+            pool.execute(() -> {
                 System.out.println("Task 2 started.  " + getThreadInfo());
                 Thread.yield();
                 sleep(3000);
@@ -74,8 +74,8 @@ public class ThreadYieldSample {
                 }
             }, pool);
             sleep(2000);
-            System.out.printf("Task 1 sum: %,d%n", task1Sum);
-            System.out.printf("Task 2 sum: %,d%n", task2Sum);
+            System.out.printf("Task 1 sum: %,d%n", task1Sum); // CompletableFuture is still running. This is to see how much progress has been made in the first task.
+            System.out.printf("Task 2 sum: %,d%n", task2Sum); // CompletableFuture is still running. This is to see how much progress has been made in the second task.
         }
     }
 }
