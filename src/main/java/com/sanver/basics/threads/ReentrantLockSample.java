@@ -50,9 +50,9 @@ public class ReentrantLockSample {
   private static Thread getWriteThread(Lock lock, List<Integer> list, Condition condition) {
     return new Thread(() -> {
       while (true) {
-        try { // use a try and finally block in which the lock is released, so if there is an exception meanwhile the lock will be released.
-          lock.lock();
+        lock.lock(); // We invoke the lock method outside try, so that if there is any exception thrown without lock being acquired, unlock() in the finally block will not be executed, and we will not get an IllegalMonitorStateException
 
+        try { // use a try and finally block in which the lock is released, so if there is an exception meanwhile the lock will be released.
           if (list.size() == 1) {
             try {
               condition.await();

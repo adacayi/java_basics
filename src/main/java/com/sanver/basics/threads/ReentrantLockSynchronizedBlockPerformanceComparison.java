@@ -13,8 +13,9 @@ public class ReentrantLockSynchronizedBlockPerformanceComparison {
     private static int valueForSynchronizedBlock = 0;
 
     public static void incrementForReentrantLock() {
+        reentrantLock.lock(); // We invoke the lock method outside try, so that if there is any exception thrown without lock being acquired, unlock() in the finally block will not be executed, and we will not get an IllegalMonitorStateException
+
         try {
-            reentrantLock.lock();
             valueForReentrantLock++;
         } finally {
             reentrantLock.unlock();
