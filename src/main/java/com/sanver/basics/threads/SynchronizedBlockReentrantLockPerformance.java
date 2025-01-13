@@ -4,64 +4,66 @@ package com.sanver.basics.threads;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.IntStream;
 
 import static com.sanver.basics.utils.PerformanceComparer.measure;
 import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 
 /**
- * This is to compare synchronized blocks vs. Reentrant lock with 2 thread scenario.
+ * This is to compare synchronized blocks vs. Reentrant lock with 2 threads scenario (One thread for read and one for write).
  * This also tests the performance of wait() and await(), and same functionality without wait().
  * Note that performance with multiple thread access might be different, so test it as well.
  */
 public class SynchronizedBlockReentrantLockPerformance {
-    public static final int OPERATION_COUNT = 1_000_000;
+    private static final int OPERATION_COUNT = 300_000;
+    private static final int THREAD_COUNT = 1; // Count of read and write threads. THREAD_COUNT = 1 means one read thread and 1 write thread, i.e. 2 threads in total.
     private static List<Integer> list = new ArrayList<>();
     private static List<Integer> read = new ArrayList<>();
+    private static ExecutorService executor;
 
     public static void main(String[] args) {
         var lock = new ReentrantLock();
         var condition = lock.newCondition();
         var blockLock = new Object();
 
-        measure(
-                () -> {
-                    clear();
-                    var future1 = CompletableFuture.runAsync(getReadNoWait(blockLock));
-                    var future2 = CompletableFuture.runAsync(getWriteNoWait(blockLock));
-                    future1.join();
-                    future2.join();
-                    printState();
-                }, "Synchronized block without wait");
-        measure(() -> {
-            clear();
-            var future1 = CompletableFuture.runAsync(getRead(blockLock));
-            var future2 = CompletableFuture.runAsync(getWrite(blockLock));
-            future1.join();
-            future2.join();
-            printState();
-        }, "Synchronized block with wait");
-        measure(
-                () -> {
-                    clear();
-                    var future1 = CompletableFuture.runAsync(getRead(lock));
-                    var future2 = CompletableFuture.runAsync(getWrite(lock));
-                    future1.join();
-                    future2.join();
-                    printState();
-                }, "Reentrant lock with no condition");
-        measure(
-                () -> {
-                    clear();
-                    var future1 = CompletableFuture.runAsync(getRead(lock, condition));
-                    var future2 = CompletableFuture.runAsync(getWrite(lock, condition));
-                    future1.join();
-                    future2.join();
-                    printState();
-                }, "Reentrant lock with condition"
-        );
+        try(var executor = Executors.newCachedThreadPool()) { // We used cached thread pool to make sure that there are both read and write threads so there is no blocking (if the thread count exceeds the pool max thread count, then all threads will be read threads, and they will all be blocked)
+            SynchronizedBlockReentrantLockPerformance.executor = executor;
+            measure(() -> {
+                clear();
+                var futures = getFutures(getRead(blockLock), getWrite(blockLock));
+                CompletableFuture.allOf(futures).join();
+                printState();
+            }, "Synchronized block with wait");
 
+            measure(
+                    () -> {
+                        clear();
+                        var futures = getFutures(getRead(lock, condition), getWrite(lock, condition));
+                        CompletableFuture.allOf(futures).join();
+                        printState();
+                    }, "Reentrant lock with condition"
+            );
+
+            measure(
+                    () -> {
+                        clear();
+                        var futures = getFutures(getReadNoWait(blockLock), getWriteNoWait(blockLock));
+                        CompletableFuture.allOf(futures).join();
+                        printState();
+                    }, "Synchronized block without wait");
+
+            measure(
+                    () -> {
+                        clear();
+                        var futures = getFutures(getRead(lock), getWrite(lock));
+                        CompletableFuture.allOf(futures).join();
+                        printState();
+                    }, "Reentrant lock with no condition");
+        }
     }
 
     private static void clear() {
@@ -70,7 +72,7 @@ public class SynchronizedBlockReentrantLockPerformance {
     }
 
     private static void printState() {
-        System.out.printf("Read: %,d Is ordered: %s List size: %,d%n", read.size(), isOrdered(), list.size());
+        System.out.printf("%nRead: %,d Is ordered: %s List size: %,d%n", read.size(), isOrdered(), list.size());
     }
 
     private static boolean isOrdered() {
@@ -83,6 +85,15 @@ public class SynchronizedBlockReentrantLockPerformance {
         }
 
         return true;
+    }
+
+    private static CompletableFuture<?>[] getFutures(Runnable runnable1, Runnable runnable2) {
+        var first = IntStream.range(0, THREAD_COUNT).mapToObj(x -> CompletableFuture.runAsync(runnable1, executor)).toArray(CompletableFuture[]::new);
+        var second = IntStream.range(0, THREAD_COUNT).mapToObj(x -> CompletableFuture.runAsync(runnable2, executor)).toArray(CompletableFuture[]::new);
+        CompletableFuture<?>[] combined = new CompletableFuture[first.length + second.length];
+        System.arraycopy(first, 0, combined, 0, first.length);
+        System.arraycopy(second, 0, combined, first.length, second.length);
+        return combined;
     }
 
     private static Runnable getReadNoWait(Object lock) {
@@ -118,12 +129,12 @@ public class SynchronizedBlockReentrantLockPerformance {
         return () -> {
             for (int i = 0; i < OPERATION_COUNT; i++) {
                 synchronized (lock) {
-                    if (list.isEmpty()) {
+                    while (list.isEmpty()) {
                         uncheck(() -> lock.wait());
                     }
                     var removed = list.remove(0);
                     read.add(removed);
-                    lock.notify();
+                    lock.notifyAll();
                 }
             }
         };
@@ -133,12 +144,12 @@ public class SynchronizedBlockReentrantLockPerformance {
         return () -> {
             for (int i = 0; i < OPERATION_COUNT; i++) {
                 synchronized (lock) {
-                    if (!list.isEmpty()) {
+                    while (!list.isEmpty()) {
                         uncheck(() -> lock.wait());
                     }
 
                     list.add(i);
-                    lock.notify();
+                    lock.notifyAll();
                 }
             }
         };
@@ -149,12 +160,12 @@ public class SynchronizedBlockReentrantLockPerformance {
             for (int i = 0; i < OPERATION_COUNT; i++) {
                 lock.lock();
                 try {
-                    if (list.isEmpty()) {
+                    while (list.isEmpty()) {
                         uncheck(() -> condition.await());
                     }
                     var removed = list.remove(0);
                     read.add(removed);
-                    condition.signal();
+                    condition.signalAll();
                 } finally {
                     lock.unlock();
                 }
@@ -167,12 +178,12 @@ public class SynchronizedBlockReentrantLockPerformance {
             for (int i = 0; i < OPERATION_COUNT; i++) {
                 lock.lock();
                 try {
-                    if (!list.isEmpty()) {
+                    while (!list.isEmpty()) {
                         uncheck(() -> condition.await());
                     }
 
                     list.add(i);
-                    condition.signal();
+                    condition.signalAll();
                 } finally {
                     lock.unlock();
                 }
