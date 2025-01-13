@@ -27,15 +27,16 @@ public class PerformanceComparer {
     }
 
     public static void measure(Runnable task, String taskName) {
-        var format = "Task %-" + taskName.length() + "s completed in: %s%06d%n";
+        var formattedTaskName = taskName.isBlank() ? "": (" %-" + taskName.length() + "s").formatted(taskName);
+        var format = "Task%s completed in: %s%06d%n";
 
         var stopWatch = new StopWatch();
         try {
             stopWatch.start();
             task.run();
-            System.out.printf(format, taskName, stopWatch, stopWatch.getNanoTime() % 1_000_000);
+            System.out.printf(format, formattedTaskName, stopWatch, stopWatch.getNanoTime() % 1_000_000);
         } catch (Exception ex) {
-            System.out.printf("An error occurred for task %s. Error: %s%n", taskName, ex);
+            System.out.printf("An error occurred for task%s. Error: %s%n", formattedTaskName, ex);
         } finally {
             stopWatch.stop();
         }
