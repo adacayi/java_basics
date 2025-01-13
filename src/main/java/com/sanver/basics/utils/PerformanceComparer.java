@@ -22,6 +22,25 @@ public class PerformanceComparer {
         this.taskMap = taskMap;
     }
 
+    public static void measure(Runnable runnable) {
+        measure(runnable, "");
+    }
+
+    public static void measure(Runnable task, String taskName) {
+        var format = "Task %-" + taskName.length() + "s completed in: %s%06d%n";
+
+        var stopWatch = new StopWatch();
+        try {
+            stopWatch.start();
+            task.run();
+            System.out.printf(format, taskName, stopWatch, stopWatch.getNanoTime() % 1_000_000);
+        } catch (Exception ex) {
+            System.out.printf("An error occurred for task %s. Error: %s%n", taskName, ex);
+        } finally {
+            stopWatch.stop();
+        }
+    }
+
     public synchronized void compare() {
         var countDownLatch = new CountDownLatch(1);
         var maxNameLength = taskMap.values().stream().mapToInt(String::length).max().orElse(0);
