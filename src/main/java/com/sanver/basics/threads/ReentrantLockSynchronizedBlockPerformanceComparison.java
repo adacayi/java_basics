@@ -1,12 +1,10 @@
 package com.sanver.basics.threads;
 
-import com.sanver.basics.utils.PerformanceComparer;
-
-import java.text.NumberFormat;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
+
+import static com.sanver.basics.utils.PerformanceComparer.measure;
 
 public class ReentrantLockSynchronizedBlockPerformanceComparison {
     private static final ReentrantLock reentrantLock = new ReentrantLock();
@@ -30,13 +28,10 @@ public class ReentrantLockSynchronizedBlockPerformanceComparison {
     }
 
     public static void main(String[] args) {
-        new PerformanceComparer(
-                Map.of(
-                        runMultipleTimes(() -> incrementForReentrantLock()), "Reentrant Lock    ",
-                        runMultipleTimes(() -> incrementForSynchronizedBlock()), "Synchronized Block")
-        ).compare();
-        System.out.println("Value for reentrant lock    : " + NumberFormat.getInstance().format(valueForReentrantLock));
-        System.out.println("Value for synchronized block: " + NumberFormat.getInstance().format(valueForSynchronizedBlock));
+        measure(runMultipleTimes(() -> incrementForReentrantLock()), "Reentrant Lock    ");
+        measure(runMultipleTimes(() -> incrementForSynchronizedBlock()), "Synchronized Block");
+        System.out.printf("Value for reentrant lock    : %,d%n", valueForReentrantLock);
+        System.out.printf("Value for synchronized block: %,d%n", valueForSynchronizedBlock);
     }
 
     private static Runnable runMultipleTimes(Runnable operation) {
