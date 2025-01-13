@@ -11,7 +11,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.IntStream;
 
 import static com.sanver.basics.utils.PerformanceComparer.measure;
-import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 
 /**
  * This is to compare synchronized blocks vs. Reentrant lock with 2 threads scenario (One thread for read and one for write).
@@ -21,20 +20,20 @@ import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 public class SynchronizedBlockReentrantLockPerformance {
     private static final int OPERATION_COUNT = 300_000;
     private static final int THREAD_COUNT = 1; // Count of read and write threads. THREAD_COUNT = 1 means one read thread and 1 write thread, i.e. 2 threads in total.
-    private static List<Integer> list = new ArrayList<>();
-    private static List<Integer> read = new ArrayList<>();
+    private static final Object BLOCK_LOCK = new Object();
+    private static final List<Integer> list = new ArrayList<>();
+    private static final List<Integer> read = new ArrayList<>();
     private static ExecutorService executor;
 
     public static void main(String[] args) {
         var lock = new ReentrantLock();
         var condition = lock.newCondition();
-        var blockLock = new Object();
 
-        try(var executor = Executors.newCachedThreadPool()) { // We used cached thread pool to make sure that there are both read and write threads so there is no blocking (if the thread count exceeds the pool max thread count, then all threads will be read threads, and they will all be blocked)
+        try (var executor = Executors.newCachedThreadPool()) { // We used cached thread pool to make sure that there are both read and write threads so there is no blocking (if the thread count exceeds the pool max thread count, then all threads will be read threads, and they will all be blocked)
             SynchronizedBlockReentrantLockPerformance.executor = executor;
             measure(() -> {
                 clear();
-                var futures = getFutures(getRead(blockLock), getWrite(blockLock));
+                var futures = getFutures(getRead(), getWrite());
                 CompletableFuture.allOf(futures).join();
                 printState();
             }, "Synchronized block with wait");
@@ -51,7 +50,7 @@ public class SynchronizedBlockReentrantLockPerformance {
             measure(
                     () -> {
                         clear();
-                        var futures = getFutures(getReadNoWait(blockLock), getWriteNoWait(blockLock));
+                        var futures = getFutures(getReadNoWait(), getWriteNoWait());
                         CompletableFuture.allOf(futures).join();
                         printState();
                     }, "Synchronized block without wait");
@@ -96,60 +95,75 @@ public class SynchronizedBlockReentrantLockPerformance {
         return combined;
     }
 
-    private static Runnable getReadNoWait(Object lock) {
+    private static Runnable getReadNoWait() {
         return () -> {
-            for (int i = 0; i < OPERATION_COUNT; i++) {
-                synchronized (lock) {
+            int i = 0;
+
+            while (i < OPERATION_COUNT) {
+                synchronized (BLOCK_LOCK) {
                     if (list.isEmpty()) {
-                        i--;
                         continue;
                     }
-                    var removed = list.remove(0);
+
+                    var removed = list.removeFirst();
                     read.add(removed);
+                    i++;
                 }
             }
         };
     }
 
-    private static Runnable getWriteNoWait(Object lock) {
+    private static Runnable getWriteNoWait() {
         return () -> {
-            for (int i = 0; i < OPERATION_COUNT; i++) {
-                synchronized (lock) {
+            int i = 0;
+
+            while (i < OPERATION_COUNT) {
+                synchronized (BLOCK_LOCK) {
                     if (!list.isEmpty()) {
-                        i--;
                         continue;
                     }
+
                     list.add(i);
+                    i++;
                 }
             }
         };
     }
 
-    private static Runnable getRead(Object lock) {
+    private static Runnable getRead() {
         return () -> {
             for (int i = 0; i < OPERATION_COUNT; i++) {
-                synchronized (lock) {
+                synchronized (BLOCK_LOCK) {
                     while (list.isEmpty()) {
-                        uncheck(() -> lock.wait());
+                        try {
+                            BLOCK_LOCK.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
-                    var removed = list.remove(0);
+
+                    var removed = list.removeFirst();
                     read.add(removed);
-                    lock.notifyAll();
+                    BLOCK_LOCK.notifyAll();
                 }
             }
         };
     }
 
-    private static Runnable getWrite(Object lock) {
+    private static Runnable getWrite() {
         return () -> {
             for (int i = 0; i < OPERATION_COUNT; i++) {
-                synchronized (lock) {
+                synchronized (BLOCK_LOCK) {
                     while (!list.isEmpty()) {
-                        uncheck(() -> lock.wait());
+                        try {
+                            BLOCK_LOCK.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
 
                     list.add(i);
-                    lock.notifyAll();
+                    BLOCK_LOCK.notifyAll();
                 }
             }
         };
@@ -161,9 +175,14 @@ public class SynchronizedBlockReentrantLockPerformance {
                 lock.lock();
                 try {
                     while (list.isEmpty()) {
-                        uncheck(() -> condition.await());
+                        try {
+                            condition.await();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
-                    var removed = list.remove(0);
+
+                    var removed = list.removeFirst();
                     read.add(removed);
                     condition.signalAll();
                 } finally {
@@ -179,7 +198,11 @@ public class SynchronizedBlockReentrantLockPerformance {
                 lock.lock();
                 try {
                     while (!list.isEmpty()) {
-                        uncheck(() -> condition.await());
+                        try {
+                            condition.await();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
 
                     list.add(i);
@@ -193,15 +216,18 @@ public class SynchronizedBlockReentrantLockPerformance {
 
     private static Runnable getRead(ReentrantLock lock) {
         return () -> {
-            for (int i = 0; i < OPERATION_COUNT; i++) {
+            int i = 0;
+
+            while (i < OPERATION_COUNT) {
                 lock.lock();
+
                 try {
                     if (list.isEmpty()) {
-                        i--;
                         continue;
                     }
-                    var removed = list.remove(0);
+                    var removed = list.removeFirst();
                     read.add(removed);
+                    i++;
                 } finally {
                     lock.unlock();
                 }
@@ -211,17 +237,19 @@ public class SynchronizedBlockReentrantLockPerformance {
 
     private static Runnable getWrite(ReentrantLock lock) {
         return () -> {
-            for (int i = 0; i < OPERATION_COUNT; i++) {
+            int i = 0;
+
+            while (i < OPERATION_COUNT) {
                 lock.lock();
                 try {
                     if (!list.isEmpty()) {
-                        i--;
                         continue;
                     }
                     list.add(i);
                 } finally {
                     lock.unlock();
                 }
+                i++;
             }
         };
     }
