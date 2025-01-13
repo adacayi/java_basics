@@ -1,58 +1,63 @@
 package com.sanver.basics.threads;
 
-import static com.sanver.basics.utils.Utils.sleep;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+
+import static com.sanver.basics.utils.Utils.sleep;
 
 public class WaitNotifySample {
+    private static final Object lock = new Object();
+    public static void main(String[] args) {
+        List<Integer> list = new ArrayList<>();
+        Runnable read = getRead(list);
 
-  static int value = 0;
+        Runnable write = getWrite(list);
 
-  public static void main(String[] args) {
-    Object lock = new Object();
-
-    List<Integer> list = new ArrayList<>();
-    Thread read = new Thread(() -> {
-      while (true) {
-        synchronized (lock) {
-          if (list.size() == 0) {
-            try {
-              lock.wait();
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
-          }
-
-          System.out.println(list.remove(0) + " removed");
-          lock.notifyAll();
+        try (var executor = Executors.newFixedThreadPool(2)) {
+            executor.execute(read);
+            executor.execute(write);
         }
-      }
-    });
+    }
 
-    Thread write = new Thread(() -> {
-      while (true) {
-        synchronized (lock) {
-          if (list.size() == 1) {
-            try {
-              lock.wait();
-            } catch (InterruptedException e) {
-              e.printStackTrace();
+    private static Runnable getRead(List<Integer> list) {
+        return () -> {
+            for (int i = 0; i < 10; i++) {
+                synchronized (lock) {
+                    while (list.isEmpty()) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                    System.out.println(list.removeFirst() + " removed");
+                    lock.notifyAll();
+                    sleep(1000); // The other thread does not regain the lock until this lock is released by the current thread.
+                }
             }
-          }
+        };
+    }
 
-          value++;
-          list.add(value);
-          System.out.println(value + " added");
-          lock.notifyAll(); // The other thread does not regain the lock until this lock is released by the
-          // current thread.
+    private static Runnable getWrite(List<Integer> list) {
+        return () -> {
+            for (int i = 1; i < 11; i++) {
+                synchronized (lock) {
+                    while (!list.isEmpty()) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
 
-          sleep(2000);
-        }
-      }
-    });
-
-    read.start();
-    write.start();
-  }
+                    list.add(i);
+                    System.out.println(i + " added");
+                    lock.notifyAll(); // The other thread does not regain the lock until this lock is released by the current thread.
+                    sleep(1000);
+                }
+            }
+        };
+    }
 }
