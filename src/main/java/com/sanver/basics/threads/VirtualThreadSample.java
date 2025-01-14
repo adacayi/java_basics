@@ -54,6 +54,7 @@ import static com.sanver.basics.utils.Utils.getThreadInfo;
  *
  * <h3>3. Context Switching Costs</h3>
  * <p>
+ * <a href = "https://www.javatpoint.com/context-switching-in-java">Context switching</a>
  * While virtual threads reduce the cost of context switching compared to platform
  * threads, there is still some overhead. For scenarios with extremely tight CPU-bound
  * loops or microtasks, the overhead may outweigh the benefits.
