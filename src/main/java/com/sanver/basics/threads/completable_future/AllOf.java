@@ -4,10 +4,11 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.sanver.basics.utils.Utils.sleep;
 
+/**
+ * @see <a href = "https://www.baeldung.com/java-completablefuture">Completable Future</a>
+ */
 public class AllOf {
   public static void main(String[] args) {
-    // https://www.baeldung.com/java-completablefuture
-
     var completableFuture1 = CompletableFuture.runAsync(getRunnable(1));
     var completableFuture2 = CompletableFuture.runAsync(getRunnable(2));
     var completableFuture3 = CompletableFuture.runAsync(getRunnable(3));
