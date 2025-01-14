@@ -1,14 +1,18 @@
 package com.sanver.basics.threads;
 
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static com.sanver.basics.utils.PerformanceComparer.measure;
 import static com.sanver.basics.utils.Utils.getThreadInfo;
+import static com.sanver.basics.utils.Utils.sleep;
+import static com.sanver.basics.utils.Utils.sleepNano;
 
 /**
  * Demonstrates the use of virtual threads in Java 21.
- *
+ * <p>Check <a href = "https://www.baeldung.com/java-virtual-thread-vs-thread">Virtual thread vs thread</a>
  * <p>
  * Virtual threads, introduced as a part of Project Loom, are lightweight threads
  * managed by the Java Virtual Machine (JVM) rather than the operating system. They
@@ -108,47 +112,72 @@ import static com.sanver.basics.utils.Utils.getThreadInfo;
 
 public class VirtualThreadSample {
 
+    public static final int THREAD_COUNT = 1_000_000;
+
     public static void main(String[] args) throws InterruptedException {
-        // Example 1: Creating and starting a single virtual thread
-        Thread virtualThread = Thread.ofVirtual().start(() ->
-                System.out.println("Hello from a virtual thread! " + getThreadInfo())
+        System.out.printf("Example 1: Creating and starting a single virtual thread%n%n");
+        var message = "Virtual thread from %-27s method: %-71s %s%n";
+        var virtualThread = Thread.startVirtualThread(() -> System.out.printf(message, "Thread.startVirtualThread()", Thread.currentThread(), getThreadInfo())); // Virtual threads are daemon threads with no name, but we can give name to them.
+        virtualThread.join();// Wait for the virtual thread to finish
+
+        Thread.Builder threadBuilder = Thread.ofVirtual();
+        threadBuilder.name("my-virtual-thread-", 1);
+        Thread thread = threadBuilder.unstarted(() -> System.out.printf(message, "Thread.Builder.unstarted()", Thread.currentThread(), getThreadInfo())); // Creates a new Thread from the current state of the builder to run the given task.
+        // The Thread's start method must be invoked to schedule the thread to execute.
+        // Thread.currentThread().toString() also contains information about the carrier thread (the platform thread that is used for the virtual thread)
+        thread.start();
+        thread.join();
+
+        virtualThread = threadBuilder.start(() ->
+                System.out.printf(message, "Thread.Builder.start()", Thread.currentThread(), getThreadInfo())
         );
-
-        // Wait for the virtual thread to finish
         virtualThread.join();
+        sleep(7_000);
 
-        // Example 2: Using an ExecutorService with virtual threads
+        System.out.printf("%nExample 2: Using an ExecutorService with virtual threads%n%n");
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            // Submit multiple tasks
+            // Execute multiple tasks
             for (int i = 0; i < 10; i++) {
                 int taskId = i; // Effectively final variable for use in the lambda
-                executor.submit(() ->
-                        System.out.println("Task " + taskId + " running in a virtual thread. " + getThreadInfo())
+                executor.execute(() -> {
+                            System.out.printf("Started  task %d in a virtual thread. %s%n", taskId, getThreadInfo());
+                            sleep(7_000);
+                            System.out.printf("Finished task %d in a virtual thread. %s%n", taskId, getThreadInfo());
+                        }
                 );
             }
         } // Automatically shuts down the executor
 
-        // Example 3: Running thousands of tasks efficiently
-        var threadIds = new ConcurrentSkipListSet<Long>();
-        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            IntStream.range(0, 100_000).forEach(i ->
-                    executor.submit(() -> {
-                                // Simulate some work
-                                try {
-                                    threadIds.add(Thread.currentThread().threadId());
-                                    Thread.sleep(10);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                    System.err.println("Task interrupted");
-                                }
-                            }
-                    ));
-        }
-        System.out.println("Submitted 100,000 tasks to virtual threads.");
-        System.out.printf("Virtual thread count: %,d%n", threadIds.size());
-        System.out.println(threadIds);
+        sleep(7_000);
+        System.out.printf("%nExample 3: Running a million tasks (not cpu bound) efficiently%n%n");
+        measure(getRunnable(Executors::newVirtualThreadPerTaskExecutor, () -> doWorkWithSleep()), "Virtual  thread tasks");
+        measure(getRunnable(Executors::newCachedThreadPool, () -> doWorkWithSleep()), "Platform thread tasks");
 
-        System.out.println("All tasks completed.");
+        System.out.printf("%nExample 4: Running a million task (cpu bound)%n%n");
+        measure(getRunnable(Executors::newVirtualThreadPerTaskExecutor, () -> doActiveWork()), "Virtual  thread tasks");
+        measure(getRunnable(Executors::newCachedThreadPool, () -> doActiveWork()), "Platform thread tasks");
+    }
+
+    private static Runnable getRunnable(Supplier<ExecutorService> executorSupplier, Runnable work) {
+        return () -> {
+            try (var executor = executorSupplier.get()) {
+                IntStream.range(0, THREAD_COUNT).forEach(i -> executor.submit(work));
+            }
+        };
+    }
+
+    /**
+     * Simulates some work with Thread.sleep()
+     */
+    private static void doWorkWithSleep() {
+        sleep(10);
+    }
+
+    /**
+     * Simulates some work by a while loop with no sleep
+     */
+    private static void doActiveWork() {
+        sleepNano(100_000);
     }
 }
 
