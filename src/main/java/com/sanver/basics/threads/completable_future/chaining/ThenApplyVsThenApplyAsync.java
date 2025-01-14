@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntUnaryOperator;
 
+import static com.sanver.basics.utils.Utils.getThreadInfo;
 import static com.sanver.basics.utils.Utils.printThreadPool;
 import static com.sanver.basics.utils.Utils.sleep;
 
@@ -15,13 +16,12 @@ public class ThenApplyVsThenApplyAsync {
         // thenApply uses the same executor of the CompletableFuture, or if the CompletableFuture is already completed, then it will use the thread from which it was called.
         // An executor can be specified for thenApplyAsync.
         // If no executor was specified, thenApplyAsync uses the ForkJoinPool.commonPool regardless of the previous CompletableFuture completion status.
-        var executor = (ThreadPoolExecutor)Executors.newFixedThreadPool(10, new CustomThreadFactory("Custom-pool-worker"));
+        var executor = (ThreadPoolExecutor) Executors.newCachedThreadPool(new CustomThreadFactory("Custom-pool-worker")); // If we used newFixedThreadPool(), new threads will be generated until the pool size is reached, even though the already generated threads are idle. We chose cachedThreadPool for simplicity.
 
         IntUnaryOperator square = x -> {
-            var thread = Thread.currentThread();
-            System.out.printf("Calculation of square of %3d  started. Thread id: %3d, Thread name: %s%n",x, thread.getId(), thread.getName());
+            System.out.printf("Calculation of square of %3d  started. %s%n", x, getThreadInfo());
             sleep(2000);
-            System.out.printf("Calculation of square of %3d finished. Thread id: %3d, Thread name: %s%n",x, thread.getId(), thread.getName());
+            System.out.printf("Calculation of square of %3d finished. %s%n", x, getThreadInfo());
             return x * x;
         };
 
