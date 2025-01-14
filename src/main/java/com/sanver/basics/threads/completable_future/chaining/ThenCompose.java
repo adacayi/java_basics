@@ -5,22 +5,29 @@ import static com.sanver.basics.utils.Utils.sleep;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 public class ThenCompose {
 
   public static void main(String[] args) throws ExecutionException, InterruptedException {
     //    The thenCompose() method is used for combining completable futures.
-    //    If thenApply is used instead, we end up
-    //    with nested CompletableFuture<CompletableFuture<>> instances
+    //    If thenApply is used with CompletableFutures, we will end up with nested CompletableFuture instances (CompletedFuture<CompletableFuture<>>)
+    Function<List<Integer>, CompletableFuture<String>> futureFunction= x -> CompletableFuture.supplyAsync(() -> String.format("Size of the result is %d%n", x.size()));
     var completableFuture = CompletableFuture.supplyAsync(() -> {
       sleep(3000);
       return List.of(3, 5, 6);
     });
-    var future = completableFuture.thenCompose(x -> CompletableFuture.supplyAsync(() -> String.format(
-        "Size of the result is %d\n",
-        x.size()))); // If we used thenApply here instead of thenCompose, the returned value will be
-    // CompletableFuture<CompletableFuture<String>>
+    CompletableFuture<String> future = completableFuture.thenCompose(futureFunction::apply);
     var result = future.get();
-    System.out.printf("The get method's return value: %s\n", result);
+    System.out.printf("The get method's return value: %s%n", result);
+
+    var completableFuture2 = CompletableFuture.supplyAsync(() -> {
+      sleep(3000);
+      return List.of(1, 2, 3);
+    });
+
+    CompletableFuture<CompletableFuture<String>> future2 = completableFuture2.thenApply(futureFunction::apply); // We could have used completableFuture.thenApply(x->String.format("Size of the result is %d%n", x.size()) to end up with CompletableFuture<String>, but we cannot use the CompletableFuture provided by the futureFunction in that case.
+    result = future2.get().get();
+    System.out.printf("The get method's return value: %s%n", result);
   }
 }
