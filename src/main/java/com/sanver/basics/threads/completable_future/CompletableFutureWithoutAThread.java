@@ -15,15 +15,17 @@ public class CompletableFutureWithoutAThread {
         CompletableFuture<String> future = new CompletableFuture<>();
         try (var executor = Executors.newFixedThreadPool(1)) {
             executor.execute(() -> {
-                System.out.println("Execution  started. " + getThreadInfo());
+                System.out.printf("Execution  started. %8s%s%n", "", getThreadInfo());
                 sleep(7_000);
-                System.out.println("Execution finished. " + getThreadInfo());
+                System.out.printf("Execution finished. %8s%s%n", "", getThreadInfo());
                 sleep(3_000);
-                future.complete("Completion value");
+                future.complete("result");
+                System.out.println("future.complete() executed. " + getThreadInfo());
             });
-            System.out.println("Execution  invoked. " +  getThreadInfo());
-            var result = future.join();
-            System.out.println("Completion value: " + result);
+            System.out.printf("Execution  invoked. %8s%s%n", "", getThreadInfo());
+            var result = future.join(); // This will be blocked until future.complete is executed.
+            sleep(10);// This is just to make sure the print after future.complete is printed first, to better demonstrate the code is blocked in main because of future.join() until future.complete() is executed.
+            System.out.printf("Result: %-19s %s%n", result, getThreadInfo());
         }
     }
 }
