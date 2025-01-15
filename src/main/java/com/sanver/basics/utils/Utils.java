@@ -5,7 +5,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -81,19 +81,19 @@ public class Utils {
     }
 
     /**
-     * Prints detailed information about a {@link ExecutorService} to the console and additional information provided by the info parameter.
-     * This method calls {@link #printThreadPool(ThreadPoolExecutor, String...)}
-
-     * @param pool the {@link ExecutorService} whose details are to be printed.
-     *      *             Must be an instance of {@link ThreadPoolExecutor}
+     * Prints detailed information about a {@link Executor} to the console and additional information provided by the info parameter.
+     * This method calls the relevant {@code printThreadPool()} overload.
+     *
+     * @param pool the {@link Executor} whose details are to be printed.
+     *             Must be an instance of {@link ThreadPoolExecutor} or {@link ForkJoinPool}
      * @param info optional additional information that can be logged alongside
      *             the thread pool details.
      */
-    public static void printThreadPool(ExecutorService pool, String... info) {
-        if (pool instanceof ThreadPoolExecutor threadPoolExecutor) {
-            printThreadPool(threadPoolExecutor, info);
-        } else {
-            System.out.printf("%s is not a ThreadPoolExecutor.%n", pool.getClass().getName());
+    public static void printThreadPool(Executor pool, String... info) {
+        switch(pool){
+            case ThreadPoolExecutor t -> printThreadPool(t, info);
+            case ForkJoinPool f -> printThreadPool(f, info);
+            default -> System.out.printf("%s is not a ThreadPoolExecutor or a ForkJoinPool.%n", pool.getClass().getName());
         }
     }
 
@@ -139,6 +139,13 @@ public class Utils {
 
         System.out.printf("Pool size: %,d Active thread count: %,d Core pool size: %,d Maximum pool size: %,d Queue capacity: %,d Tasks in queue: %,d Largest pool size: %,d Keep alive time: %,ds%n%n",
                 pool.getPoolSize(), pool.getActiveCount(), pool.getCorePoolSize(), pool.getMaximumPoolSize(), queueCapacity, queueSize, pool.getLargestPoolSize(), pool.getKeepAliveTime(TimeUnit.SECONDS));
+    }
+
+    public static void printThreadPool(ForkJoinPool pool, String... info) {
+        displayInfo(info);
+
+        System.out.printf("Pool size: %,d Active thread count: %,d Parallelism: %,d Tasks in queue: %,d%n%n",
+                pool.getPoolSize(), pool.getActiveThreadCount(), pool.getParallelism(), pool.getQueuedTaskCount());
     }
 
     private static void displayInfo(String... info) {
