@@ -30,6 +30,8 @@ public class TimeoutWithMultipleFuturesAndExecutor {
         var future5 = CompletableFuture.runAsync(runnable, executor).orTimeout(8000, TimeUnit.MILLISECONDS);// Since executor has 2 threads, if timeout was set to 1000, this will already be timed out before executed, so, the executor won't execute it, so we set it to 8 seconds since there is a 7 seconds wait in task 2 and 3.
         var combined = CompletableFuture.allOf(future1, future2, future3, future4, future5);
 
+        // Note that all futures are executed before handle is executed. Since future4 and future5 start after future2 and/or future3 are/is executed and a thread is freed in the executor, we see the completion of them as well before handle is executed.
+        // If we did not have future4 and future5 in the combined, we wouldn't see future2 and future3 completed before handle is executed.
         combined.handle((r, e) -> {
             if (e != null) {
                 System.out.printf("Handle executed. Some error occurred: %s%n", e);
@@ -38,18 +40,15 @@ public class TimeoutWithMultipleFuturesAndExecutor {
             System.out.printf("Handle executed: Completed successfully.%n");
             return 1;
         });
-        // Note that when timeout occurs, no unexecuted futures are assigned to freed threads.
-        // Execution of already started threads continues though.
 
         CompletableFuture.runAsync(() ->
                         System.out.println(
                                 "This thread cannot be acquired while the other 2 timed-out threads are still executing, because the "
-                                        + "pool size is 2 and although they are timed out they are still executing"),
+                                        + "pool size is 2 and although they are timed out they are still executing. " + getThreadInfo()),
                 executor
         );
 
-        executor.shutdown(); // This does not allow the main thread to exit until all threads in the thread pool are completed.
-        // combined.get() would not wait for the timed out futures to finish.
-        System.out.println("Final line");    // executor.shutdown() will not block the execution of the remaining code though. Note, there are still threads running, when this line is executed, hence the pool is not shut down yet.
+        executor.close();
+        System.out.println("Final line");
     }
 }
