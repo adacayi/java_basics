@@ -49,8 +49,10 @@ public class CopySample {
         sleep(4_000);
         copy.complete(null); // Simulates completion of the copied future by client. Since this does not change the original future's state, future.join() will wait for the finish of the actual execution of the runnable.
         System.out.println("Client called copy.complete(null)");
+        printStates(future, copy);
         future.join();
         System.out.println("future.join() executed. Note that at this stage \"Finished \" is already printed out.");
+        printStates(future, copy);
 
         sleep(7_000);
         System.out.printf("%nExample, original state affecting the copy state%n%n");
@@ -60,37 +62,49 @@ public class CopySample {
         copy.thenRun(() -> {
             sleep(1000);
             System.out.println("Copy thenRun1 finished. " + getThreadInfo());
-        }).thenRun(()->{
+        }).thenRun(() -> {
             sleep(1000);
             System.out.println("Copy thenRun2 finished. " + getThreadInfo());
         });
 
         future.join(); // When this is finished, original future's state will be SUCCESS, making the copy state SUCCESS as well.
         System.out.println("future.join() executed");
-        System.out.println(future.state());
-        System.out.println(copy.state()); // Since future state is SUCCESS, copy state becomes SUCCESS as well.
+        printStates(future, copy); // Since future state is SUCCESS, copy state becomes SUCCESS as well.
         copy.join(); // This will not wait for the thenRun parts to execute since copy state is already SUCCESS.
         System.out.println("copy.join() executed. Notice thenRun parts are not executed yet, because join will not wait since copy state is already SUCCESS");
         sleep(3000); // This is to show that thenRuns will still be executed if we waited enough.
         System.out.println("thenRun parts finally executed");
 
         sleep(7_000);
-        System.out.printf("%nExample, original state change after copy.join() not affecting copy.join()%n%n");
+        System.out.printf("%nExample, after invoking copy.join(), original state changing to SUCCESS does not result in copy.join() finish early%n%n");
 
         future = CompletableFuture.runAsync(runnable);
         copy = future.copy();
         copy.thenRun(() -> {
             sleep(1000);
             System.out.println("Copy thenRun1 finished. " + getThreadInfo());
-        }).thenRun(()->{
+        }).thenRun(() -> {
             sleep(1000);
             System.out.println("Copy thenRun2 finished. " + getThreadInfo());
         });
 
         System.out.println("State before copy.join()");
-        System.out.println(future.state());
-        System.out.println(copy.state());
+        printStates(future, copy);
+        printStatesAsync(future, copy);
         copy.join(); // This will wait for the thenRun parts to execute since at this point copy state is not SUCCESS.
         System.out.println("copy.join() executed. Notice thenRun parts are executed");
+    }
+
+    private static void printStatesAsync(CompletableFuture<Void> future, CompletableFuture<Void> copy) {
+        CompletableFuture.runAsync(() -> {
+            sleep(7_200);
+            System.out.println("future.state(): " + future.state());
+            System.out.println("copy.state()  : " + copy.state());
+        });
+    }
+
+    private static void printStates(CompletableFuture<Void> future, CompletableFuture<Void> copy) {
+        System.out.println("future.state(): " + future.state());
+        System.out.println("copy.state()  : " + copy.state());
     }
 }
