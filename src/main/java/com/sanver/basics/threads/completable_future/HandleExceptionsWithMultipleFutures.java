@@ -9,9 +9,8 @@ import static com.sanver.basics.utils.Utils.getThreadInfo;
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class HandleExceptionsWithMultipleFutures {
-
-    private static AtomicInteger count = new AtomicInteger(0);
-    private static AtomicInteger idCount = new AtomicInteger(0);
+    private static final AtomicInteger count = new AtomicInteger(0);
+    private static final AtomicInteger idCount = new AtomicInteger(0);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Supplier<String> supplier = () -> {
@@ -19,10 +18,11 @@ public class HandleExceptionsWithMultipleFutures {
             System.out.printf("%d: started. %s%n", id, getThreadInfo());
             sleep(7000);
             if (id == 2 || id == 3) {
-                throw new RuntimeException(String.format("Some error occurred in thread %s", getThreadInfo()));
+                System.out.printf("%d: Exception will be thrown in thread %s%n", id, getThreadInfo());
+                throw new IllegalArgumentException("%d: Some error occurred in thread %s".formatted(id, getThreadInfo()));
             }
             System.out.printf("%d: completed. Thread: %s%n", id, getThreadInfo());
-            return "completed";
+            return "%d: completed".formatted(id);
         };
 
         var future1 = CompletableFuture.supplyAsync(supplier);
@@ -60,6 +60,5 @@ public class HandleExceptionsWithMultipleFutures {
 
         // If combined.get() is called instead of finalCompletable.get(), it throws ExecutionException only wrapping the first exception.
         // Interestingly, combined.get() will also wait for handle and thenAccept to finish.
-//        combined.get();
     }
 }
