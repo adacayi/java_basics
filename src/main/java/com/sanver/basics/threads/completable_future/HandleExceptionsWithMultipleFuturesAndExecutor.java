@@ -20,12 +20,12 @@ public class HandleExceptionsWithMultipleFuturesAndExecutor {
             sleep(13000);
 
             if (id == 2 || id == 3) {
-                System.out.printf("%d: will throw an exception. %s%n", id, getThreadInfo());
-                throw new RuntimeException(String.format("Some error occurred in process %d %s", id, getThreadInfo()));
+                System.out.printf("%d: Exception will be thrown in thread %s%n", id, getThreadInfo());
+                throw new IllegalArgumentException("%d: Some error occurred in thread %s".formatted(id, getThreadInfo()));
             }
 
-            System.out.printf("%d: completed. %s%n", id, getThreadInfo());
-            return "completed";
+            System.out.printf("%d: completed. Thread: %s%n", id, getThreadInfo());
+            return "%d: completed".formatted(id);
         };
 
         var executor = Executors.newFixedThreadPool(5);
@@ -53,7 +53,8 @@ public class HandleExceptionsWithMultipleFuturesAndExecutor {
                 })
                 .thenAccept(x -> System.out.printf("Then accept executed. %s. The return value is: %s%n", getThreadInfo(), x));
 
-        handled.join();
+        var result = handled.join();
+        System.out.println("Result " + result);
         executor.shutdown();
     }
 }
