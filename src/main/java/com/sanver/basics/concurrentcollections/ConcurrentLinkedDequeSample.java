@@ -1,6 +1,5 @@
 package com.sanver.basics.concurrentcollections;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.IntStream;
 
@@ -13,9 +12,7 @@ public class ConcurrentLinkedDequeSample {
         var threadCount = 10;
         var elementCount = 1000;
 
-        Runnable add = () -> IntStream.range(0, elementCount).forEach(deque::add);
-        var futures = IntStream.range(0, threadCount).mapToObj(i -> CompletableFuture.runAsync(add)).toArray(CompletableFuture[]::new);
-        CompletableFuture.allOf(futures).join();
+        IntStream.range(0, threadCount).parallel().forEach(i -> IntStream.range(0, elementCount).forEach(deque::offer));
         System.out.printf("Deque size: %,d", deque.size());
     }
 }
