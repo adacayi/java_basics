@@ -163,4 +163,8 @@ public class Utils {
     public static int getRandomInt(int a, int b) {
         return random.nextInt(a, b + 1);
     }
+
+    public static void warmup() {
+        IntStream.range(1, Runtime.getRuntime().availableProcessors() * 3).parallel().forEach(x -> sleepNano(300_000_000));
+    }
 }
