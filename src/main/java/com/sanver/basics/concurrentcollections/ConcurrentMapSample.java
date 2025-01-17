@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import static com.sanver.basics.utils.Utils.getThreadInfo;
+
 /**
  * Even though Hashtable is thread safe, it is not very efficient.
  * Another fully synchronized Map, Collections.synchronizedMap, does not exhibit great efficiency either.
@@ -23,11 +25,11 @@ public class ConcurrentMapSample {
         ConcurrentMap<String, List<Integer>> result = list.parallelStream()
                 .collect(Collectors.groupingByConcurrent(i -> {
                     var key = i%2 == 0 ? "Even" : "Odd";
-                    System.out.printf("%d: %-4s Thread id: %d%n", i, key, Thread.currentThread().getId()); // This is to demonstrate grouping is done concurrently
+                    System.out.printf("%d: %-4s %s%n", i, key, getThreadInfo()); // This is to demonstrate grouping is done concurrently
                     return key;
                 }));
-        result.forEach((k, v) -> System.out
-                .printf("%-4s %s%n", k, v.stream().map(Object::toString).collect(Collectors.joining(", "))));
+        System.out.println("ConcurrentMap implementation is ConcurrentHashMap: " + (result instanceof ConcurrentHashMap));
+        System.out.println(result);
 
         var map = new ConcurrentHashMap<Integer, String>(); // Change this to HashMap to see varying sizes.
         int count = 10_000;
