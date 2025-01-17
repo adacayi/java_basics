@@ -25,24 +25,23 @@ public class CopyOnWriteArrayListSample {
         });
 
         var remove = CompletableFuture.runAsync(() -> {
-            for (int i = 0; i < count; ) {
+            int i = 0;
+
+            while (i < count) {
                 if (!list.isEmpty()) {
-                    list.remove(0);
+                    list.removeFirst();
                     i++;
                 }
             }
         });
 
-        sleep(1);
-        var iterator = list.iterator();
+        sleep(10);
 
-        while (iterator.hasNext()) {
-            iterator.next(); // This would give a ConcurrentModificationException if we used an ArrayList instead.
-        }
+        for (var ignored : list) ;// This might give a ConcurrentModificationException if we used an ArrayList instead.
 
         CompletableFuture.allOf(append, remove).join();
 
         System.out.println("Finished. List size = " + list.size());// Since the list is thread-safe, the size is 0.
-        // If we used ArrayList instead, the code would not end always.
+        // If we used ArrayList instead, it might result in exceptions like ConcurrentModificationException and ArrayIndexOutOfBoundsException or the remove completable future might never end because "i" never reaches "count".
     }
 }
