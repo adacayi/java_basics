@@ -50,7 +50,15 @@ public class ConcurrentMapsPerformanceComparison {
         measure(() -> IntStream.range(0, parallelism).parallel().forEach(i -> IntStream.range(0, block).forEach(j -> map.put(i * block + j, String.valueOf(i)))));
         sleep(2000);
         System.out.printf("Checking read performance for %s.  Reading %,d items asynchronously.%n", type, count);
-        measure(() -> IntStream.range(0, parallelism).parallel().forEach(i -> IntStream.range(0, block).forEach(j -> map.get(i * block + j))));
+        measure(() -> IntStream.range(0, parallelism).parallel().forEach(i -> IntStream.range(0, block).forEach(j -> {
+            var key = i * block + j;
+            String value;
+            if ((value = map.get(key)) == null) {
+                throw new AssertionError("Map should contain key" + key);
+            } else if (!value.equals(String.valueOf(i))) {
+                throw new AssertionError("Map should contain entry (%d, %s)".formatted(key, value));
+            }
+        })));
         sleep(2000);
     }
 }
