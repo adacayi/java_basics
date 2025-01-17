@@ -70,7 +70,7 @@ import static com.sanver.basics.utils.Utils.sleep;
  * @author ChatGPT
  * @version Java 21
  */
-public class ConcurrentList {
+public class ConcurrentLists {
     public static void main(String[] args) {
         copyOnWriteArrayList();
         synchronizedList();

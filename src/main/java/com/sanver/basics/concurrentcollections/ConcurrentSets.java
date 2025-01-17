@@ -58,7 +58,7 @@ import static com.sanver.basics.utils.Utils.sleep;
 
  * </ul>
  */
-public class ConcurrentSetSample {
+public class ConcurrentSets {
 
     public static void main(String[] args) {
         concurrentHashMapNewKeySet();
@@ -96,7 +96,7 @@ public class ConcurrentSetSample {
         sleep(7000);
 
         System.out.print("Using iterator     with synchronized block: ");
-        synchronized (set) { // Explicit synchronization required for methods using iterators.s
+        synchronized (set) { // Explicit synchronization required for methods using iterators.
             // This works, because synchronizedSet() actually wraps the original map methods by invoking them through synchronized blocks
             // which use the final set object (e.g. set in this example) as the monitor object, thus the synchronized block here will block all modifications to the map.
             for (var item : set) {
