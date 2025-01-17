@@ -92,7 +92,7 @@ import static com.sanver.basics.utils.Utils.sleep;
  *       <li>Explicit synchronization required for iteration</li>
  *     </ul>
  *   </li>
- *   <li>{@code java.util.concurrent.Map.of()}, {@code java.util.concurrent.Map.ofEntries()} (Immutable Map):
+ *   <li>{@code java.util.Map.of()}, {@code java.util.Map.ofEntries()} (Immutable Map):
  *     <ul>
  *       <li>Provides an immutable map for use in concurrent environments.</li>
  *       <li>Cannot be modified after creation, ensuring thread-safety.</li>
@@ -131,7 +131,7 @@ public class ConcurrentMaps {
     }
 
     private static void synchronizedMap() {
-        // As of Java 21, there is no direct concurrent map implementation that maintains insertion order, similar to LinkedHashMap. Alternatively you can wrap a LinkedHashMap with Collections.map
+        // As of Java 21, there is no direct concurrent map implementation that maintains insertion order, similar to LinkedHashMap. Alternatively you can wrap a LinkedHashMap with Collections.synchronizedMap().
         Map<String, Integer> map = Collections.synchronizedMap(new LinkedHashMap<>());
         putValues(map);
         System.out.printf("%nCollections.synchronizedMap(new LinkedHashMap<>()) (Maintains insertion order): %s%n", map);
@@ -220,10 +220,10 @@ public class ConcurrentMaps {
                 """);
     }
 
-    private static void testConcurrency(Map<String, Integer> map, String mapType) {
+    private static void testConcurrency(Map<String, Integer> map, String type) {
         map.clear();
         sleep(7000);
-        System.out.printf("%nTesting concurrency for %s%n", mapType);
+        System.out.printf("%nTesting concurrency for %s%n", type);
         sleep(3000);
         System.out.println("Putting 1,000 values asynchronously");
         var count = 1000;
