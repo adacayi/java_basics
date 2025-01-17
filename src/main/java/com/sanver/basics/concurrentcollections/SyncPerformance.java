@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
 import static com.sanver.basics.utils.Utils.sleep;
+import static com.sanver.basics.utils.Utils.warmup;
 
 public class SyncPerformance {
     // The performance order is
@@ -36,6 +37,7 @@ public class SyncPerformance {
         var vector = getRunnable(new Vector<>(), "Vector");
 //        var copyOnWriteArrayList = getRunnable(new CopyOnWriteArrayList<>(), "CopyOnWriteArrayList");
 
+        warmup();
         var comparer = new PerformanceComparer(Map.of(
                 unsynchronized, String.format(FORMAT, "Unsynchronized ArrayList"),
                 sync, String.format(FORMAT, "Synchronized block with ArrayList"),
