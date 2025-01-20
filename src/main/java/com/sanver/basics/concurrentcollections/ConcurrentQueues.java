@@ -25,6 +25,44 @@ import static com.sanver.basics.utils.Utils.sleep;
  *     <li>{@link java.util.concurrent.ConcurrentLinkedQueue} - A non-blocking, thread-safe queue based on a linked node structure. It follows FIFO (First-In-First-Out) ordering.</li>
  *     <li>{@link java.util.concurrent.ConcurrentLinkedDeque} - A highly concurrent, thread-safe deque (double-ended queue) allowing elements to be added or removed from both ends. It provides non-blocking methods for most operations but may use internal locking for certain bulk operations.</li>
  *     <li>{@link java.util.concurrent.LinkedBlockingQueue} - A blocking queue based on linked nodes, with an optional user-specified capacity. If no capacity is provided, it defaults to Integer.MAX_VALUE, making it practically unbounded but still technically limited. Threads block when retrieving from an empty queue or inserting into a full one.</li>
+ * <table>
+ * <caption>Summary of BlockingQueue methods</caption>
+ *  <tr>
+ *    <td></td>
+ *    <th scope="col" style="font-weight:normal; font-style:italic">Throws exception</th>
+ *    <th scope="col" style="font-weight:normal; font-style:italic">Special value</th>
+ *    <th scope="col" style="font-weight:normal; font-style:italic">Blocks</th>
+ *    <th scope="col" style="font-weight:normal; font-style:italic">Times out</th>
+ *  </tr>
+ *  <tr>
+ *    <th scope="row" style="text-align:left">Insert</th>
+ *    <td>{@code add(Object) add(e)}</td>
+ *    <td>{@code offer(Object) offer(e)}</td>
+ *    <td>{@code put(Object) put(e)}</td>
+ *    <td>{@code offer(Object, long, TimeUnit) offer(e, time, unit)}</td>
+ *  </tr>
+ *  <tr>
+ *    <th scope="row" style="text-align:left">Remove</th>
+ *    <td>{@code remove() remove()}</td>
+ *    <td>{@code poll() poll()}</td>
+ *    <td>{@code take() take()}</td>
+ *    <td>{@code poll(long, TimeUnit) poll(time, unit)}</td>
+ *  </tr>
+ *  <tr>
+ *    <th scope="row" style="text-align:left">Examine</th>
+ *    <td>{@code element() element()}</td>
+ *    <td>{@code peek() peek()}</td>
+ *    <td style="font-style: italic">not applicable</td>
+ *    <td style="font-style: italic">not applicable</td>
+ *  </tr>
+ * </table>
+ *
+ * <p>A {@code BlockingQueue} does not accept {@code null} elements.
+ * Implementations throw {@code NullPointerException} on attempts
+ * to {@code add}, {@code put} or {@code offer} a {@code null}.  A
+ * {@code null} is used as a sentinel value to indicate failure of
+ * {@code poll} operations.
+
  *     <li>{@link java.util.concurrent.ArrayBlockingQueue} - A bounded blocking queue backed by an array. Unlike {@code LinkedBlockingQueue}, which uses separate locks for put and take operations, {@code ArrayBlockingQueue} uses a single lock, which may lead to higher contention but can improve cache locality.</li>
  *     <li>{@link java.util.concurrent.PriorityBlockingQueue} - A blocking queue that orders elements according to their natural ordering or a specified comparator, similar to {@code PriorityQueue} but thread-safe.</li>
  *     <li>{@link java.util.concurrent.DelayQueue} - A blocking queue where elements can only be taken when their delay has expired. Used for scheduling tasks.</li>
