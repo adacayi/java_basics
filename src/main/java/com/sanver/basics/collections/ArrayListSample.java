@@ -7,9 +7,7 @@ import java.util.ListIterator;
 public class ArrayListSample {
 
     public static void main(String[] args) {
-        var list = new ArrayList<>(List.of(1, 3, 5, 6, 9));
-        // You don't need to specify ArrayList type on the right since Java can infer it from the left hand-side.
-        // i.e. there is no need to write ArrayList<String>(3) on the right.
+        var list = new ArrayList<>(List.of(1, 3, 5, 6, 9)); // List.of results in an immutable list, but ArrayList is mutable.
         list.add(11);
         list.set(3, 7);
 
