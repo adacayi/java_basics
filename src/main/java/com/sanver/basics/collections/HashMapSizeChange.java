@@ -36,7 +36,6 @@ public class HashMapSizeChange {
                 "%nHashMap<Integer, String> newMap = new HashMap<>(map);%n%n");
         HashMap<Integer, Integer> newMap = new HashMap<>(map);
         printMap(newMap);
-        System.out.println("Since the new map's capacity is calculated based on tableSizeFor(map.size() / loadFactor + 1) = (24 / 0.75 + 1), the capacity will be tableSizeFor(33) which results in 64");
         System.out.println("Check the constructor public HashMap(Map<? extends K, ? extends V> m) for more details");
     }
 
