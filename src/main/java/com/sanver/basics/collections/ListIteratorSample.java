@@ -18,7 +18,7 @@ public class ListIteratorSample {
 
                 for (int i = 1; i < item - previous; i++) {
                     listIterator.add(item - i); // This adds the element at the cursor position like list.add(item, cursor) and increments the cursor by one. If there are items already in that position and after it, they are shifted.
-                    listIterator.previous();
+                    listIterator.previous(); // Since add increments the cursor by one, we call previous, so we can insert the next item just before the previously added one, otherwise it will be added afterwards.
                 }
 
                 previous = previous + 1;
