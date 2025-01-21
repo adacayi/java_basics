@@ -1,7 +1,6 @@
 package com.sanver.basics.collections;
 
 import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -11,53 +10,67 @@ import java.util.Properties;
 
 public class PropertySample {
 
+    public static final String USER_HOME = "user.home";
+    public static final String SEPARATOR = "%n-----------------------------------------------------------------------------------%n%n";
+
     public static void main(String[] args) {
-        String separator = "\n-----------------------------------------------------------------------------------\n";
-        System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v)); // To show all system properties
-        System.out.println(separator);
-        System.out.println("\nAnother way of getting properties:\n");
+        System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v)); // System.getProperties() returns Properties. Properties extends Hashtable<Object,Object>.
+        System.out.printf(SEPARATOR);
+        System.out.printf("Another way of getting properties:%n%n");
         Iterator<?> iterator = (Iterator<?>) System.getProperties().propertyNames();
         String key;
+
         while (iterator.hasNext()) {
             key = (String) iterator.next();
             System.out.println(key + ": " + System.getProperty(key));
         }
 
-        System.out.println(separator);
-        String pathString = "src/main/java/com/sanver/basics/collections/mail.properties";
+        System.out.printf(SEPARATOR);
         Properties properties = new Properties();
         Properties systemProperties = System.getProperties();
         properties.putAll(System.getProperties());// This will copy all system properties to properties.
-        // Any change here won't effect System properties.
-        properties.setProperty("user.home", "Morden");// This won't change System properties.
-        System.out.printf("%s\n", System.getProperty("user.home"));
-        System.out.printf("%s\n", properties.getProperty("user.home"));
-        systemProperties.setProperty("user.home", "Morden");// This will change System properties
-        System.out.printf("%s\n", System.getProperty("user.home"));
-        System.out.println(separator);
+        // Any change here won't affect System properties.
+        properties.setProperty(USER_HOME, "C:\\home");// This won't change System properties.
+        System.out.printf("%s%n", System.getProperty(USER_HOME));
+        System.out.printf("%s%n", properties.getProperty(USER_HOME));
+        systemProperties.setProperty(USER_HOME, "C:\\home");// This will change System properties
+        System.out.printf("%s%n", System.getProperty(USER_HOME));
+        loadFromResource();
+        loadFromFile();
+    }
+
+    private static void loadFromResource() {
+        Properties properties;
+        System.out.printf(SEPARATOR);
         properties = new Properties();
-        try (BufferedInputStream stream = new BufferedInputStream(Files.newInputStream(Paths.get(pathString)))) {
+        System.out.println("Reading from resources folder");
+
+        var classLoader = Thread.currentThread().getContextClassLoader();
+        URL url = classLoader.getResource("trial.properties");
+
+        if (url != null)
+            try (var stream = url.openStream()) {
+                properties.load(stream);
+            } catch (IOException e) {
+                System.out.println("Error occured when opening the stream. " + e);
+            }
+
+        properties.forEach((k, v) -> System.out.println(k + ": " + v));
+    }
+
+    private static void loadFromFile() {
+        String pathString = "src/main/resources/trial.properties";
+        Properties properties;
+        System.out.printf(SEPARATOR);
+        properties = new Properties();
+
+        try (var inputStream = Files.newInputStream(Paths.get(pathString));
+             var stream = new BufferedInputStream(inputStream)) {
             properties.load(stream);// the properties will be added to the existing properties object.
             System.setProperties(properties);// This cleans all the initial properties in System
             System.getProperties().forEach((k, v) -> System.out.println(k + ": " + v));
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        System.out.println(separator);
-        properties = new Properties();
-        System.out.println("Reading from resources folder");
-        URL url = PropertySample.class.getResource("/trial.properties");
-
-        if (url != null)
-            try {
-                properties.load(url.openStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        properties.forEach((k, v) -> System.out.println(k + ": " + v));
     }
 }
