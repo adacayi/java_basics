@@ -1,10 +1,25 @@
 package com.sanver.basics.collections;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
 
+/**
+ * The {@code Stack} class in Java is synchronized because it extends {@code Vector},
+ * which provides synchronized methods. However, using {@code Stack} for thread-safe
+ * operations is generally discouraged due to the following reasons:
+ *
+ * <ul>
+ *   <li>Synchronization is applied at the method level, which can cause performance
+ *       bottlenecks in multi-threaded environments.</li>
+ *   <li>More efficient alternatives exist, such as:</li>
+ *   <ul>
+ *     <li>{@code Deque} (e.g., {@code ArrayDeque}) {@code LinkedList} for a non-thread-safe stack implementation.</li>
+ *     <li>{@code ConcurrentLinkedDeque} or {@code ArrayBlockingQueue} {@code LinkedBlockingQueue} for thread-safe stack alternatives.</li>
+ *   </ul>
+ * </ul>
+ *
+ */
 public class StackSample {
     public static void main(String... args) {
         System.out.println("This code will show if the paranthesis in a given statement is proper");
@@ -12,8 +27,10 @@ public class StackSample {
         String line;
 
         try (Scanner scanner = new Scanner(System.in)) {
-            do
-                System.out.println(isClosedProperly(line = scanner.nextLine()));
+            do {
+                line = scanner.nextLine();
+                System.out.println(isClosedProperly(line));
+            }
             while (!line.isEmpty());
         }
     }
@@ -21,12 +38,10 @@ public class StackSample {
     public static boolean isClosedProperly(String s) {
         char k;
         char[] array = s.toCharArray();
-        int i, n = array.length;
-        Stack<Character> stack = new Stack<>();
-        Map<Character, Character> closures = new HashMap<>(3, 1);
-        closures.put('(', ')');
-        closures.put('[', ']');
-        closures.put('{', '}');
+        int i;
+        int n = array.length;
+        var stack = new Stack<Character>();
+        var closures = Map.of('(', ')', '[', ']', '{', '}');
 
         for (i = 0; i < n; i++) {
             k = array[i];
