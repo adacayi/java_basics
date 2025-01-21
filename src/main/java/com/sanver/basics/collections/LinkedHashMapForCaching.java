@@ -1,6 +1,5 @@
 package com.sanver.basics.collections;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,27 +34,10 @@ import java.util.Map;
  * if the map is in access-order mode and the {@code removeEldestEntry} method is overridden.
  * </p>
  *
- * @param <K> the type of keys maintained by this map
- * @param <V> the type of mapped values
- * @see HashMap
- * @see Map
  */
 public class LinkedHashMapForCaching {
     public static void main(String[] args) {
-        final var maxEntries = 3;
-        final var loadFactor = 0.75f;
-
-        // LinkedHashMap extends HashMap, and uses the same implementation to store its elements in an array,
-        // but it overrides the newNode(), afterNodeAccess() and afterNodeInsertion() methods of the HashMap to also form a linked list
-        // with head and tail nodes, which are modified with put and remove.
-        // This linked list is used to keep track of the order of the elements.
-        // Check the newNode() method in LinkedHashMap, which is called from HashMap.putVal when a new value is inserted.
-        var linkedHashMap = new LinkedHashMap<Integer, String>((int) (maxEntries / loadFactor) + 1, loadFactor, true) { // Set accessOrder to true and override removeEldestEntry, so that the least accessed element is removed when the
-            @Override
-            protected boolean removeEldestEntry(Map.Entry eldest) {
-                return size() > maxEntries;
-            }
-        };
+        var linkedHashMap = getLinkedHashMap();
 
         System.out.println("LinkedHashMap which will remove the oldest entry based on access order after its size reaches 3 entries and a new entry is put");
         System.out.println("linkedHashMap.get(1): " + linkedHashMap.get(1));
@@ -66,12 +48,26 @@ public class LinkedHashMapForCaching {
 
         System.out.println(linkedHashMap);
         System.out.printf("%nlinkedHashMap.get(1): %s%n", linkedHashMap.get(1));
-        System.out.printf("%nlinkedHashMap after linkedHashMap.get(1):%n\tNote that the order is changed based on the access order%n\t%s%n", linkedHashMap);
-        System.out.printf("%nlinkedHashMap.get(1): %s%n", linkedHashMap.get(1));
-        System.out.printf("%nlinkedHashMap after linkedHashMap.get(1):%n\t%s%n", linkedHashMap);
-        System.out.printf("%nlinkedHashMap.get(2): %s%n", linkedHashMap.get(2));
-        System.out.printf("%nlinkedHashMap after linkedHashMap.get(2):%n\tNote that the order is changed based on the access order, not the access count (1 is accessed twice, but 2 is accessed once, but more recently)%n\t%s%n", linkedHashMap);
+        System.out.printf("%nlinkedHashMap after linkedHashMap.get(1):%n\tNote that the accessed item is moved to the end of the linked list of the LinkedHashMap%n\t%s%n", linkedHashMap);
+        System.out.printf("%nlinkedHashMap.put(2, \"Sam\"): %s%n", linkedHashMap.put(2, "Sam"));
+        System.out.printf("%nlinkedHashMap after linkedHashMap.put(2, \"Sam\"):%n\tNote that the updated item is moved to the end of the linked list of the LinkedHashMap%n\t%s%n", linkedHashMap);
         System.out.printf("%nlinkedHashMap.put(4, \"Roy\"): %s%n", linkedHashMap.put(4, "Roy"));
-        System.out.printf("%nlinkedHashMap after linkedHashMap.put(4, \"Roy\"): %n\tNote that the least recently accessed entry is removed which is 3.%n\t%s%n", linkedHashMap);
+        System.out.printf("%nlinkedHashMap after linkedHashMap.put(4, \"Roy\"): %n\tNote that the first item in the linked list of the LinkedHashMap is removed which is (3,Mary) and the inserted item is inserted to the end of the linked list.%n\t%s%n", linkedHashMap);
+    }
+
+    private static LinkedHashMap<Integer, String> getLinkedHashMap() {
+        final var maxEntries = 3;
+        final var loadFactor = 1;
+
+        // LinkedHashMap extends HashMap, and uses the same implementation to store its elements in an array,
+        // but it overrides the get(), newNode(), afterNodeInsertion(), afterNodeAccess() and afterNodeRemoval() methods of the HashMap to also form a linked list
+        // with head and tail nodes, which are modified with get (if accessOrder is set to true), put and remove methods.
+        // This linked list is used to keep track of the order of the elements (based on insertion order or access order).
+        return new LinkedHashMap<>(maxEntries, loadFactor, true) { // Set accessOrder to true and override removeEldestEntry, so that the least accessed element is removed when the
+            @Override
+            protected boolean removeEldestEntry(Map.Entry eldest) {
+                return size() > maxEntries;
+            }
+        };
     }
 }
