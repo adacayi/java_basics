@@ -7,8 +7,10 @@ import java.util.ListIterator;
 public class ArrayListSample {
 
     public static void main(String[] args) {
-        var list = new ArrayList<>(List.of(1, 3, 5, 6, 9)); // List.of results in an immutable list, but ArrayList is mutable.
+        var list = new ArrayList<>(List.of(1, 5, 6, 9)); // List.of results in an immutable list, but ArrayList is mutable.
+
         list.add(11);
+        list.add(1, 3);
         list.set(3, 7);
 
         System.out.printf("List.forEach: %n");
