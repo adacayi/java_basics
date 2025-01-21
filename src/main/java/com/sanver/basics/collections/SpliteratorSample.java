@@ -38,9 +38,24 @@ public class SpliteratorSample {
             return;
         }
 
-        System.out.printf("%-26s: %d%n", name + ".estimateSize()", spliterator.estimateSize()); // Returns an estimate of the number of elements that would be encountered by a forEachRemaining traversal
+        System.out.printf("%-26s: %d Characteristics: %s%n", name + ".estimateSize()", spliterator.estimateSize(), getCharacteristics(spliterator.characteristics())); // Returns an estimate of the number of elements that would be encountered by a forEachRemaining traversal
         spliterator.forEachRemaining(x -> System.out.print(x + " "));
         System.out.printf("%n%n");
+    }
+
+    private static String getCharacteristics(int characteristics) {
+        StringBuilder result = new StringBuilder();
+
+        if ((characteristics & Spliterator.ORDERED) != 0) result.append("ORDERED ");
+        if ((characteristics & Spliterator.DISTINCT) != 0) result.append("DISTINCT ");
+        if ((characteristics & Spliterator.SORTED) != 0) result.append("SORTED ");
+        if ((characteristics & Spliterator.SIZED) != 0) result.append("SIZED ");
+        if ((characteristics & Spliterator.SUBSIZED) != 0) result.append("SUBSIZED ");
+        if ((characteristics & Spliterator.NONNULL) != 0) result.append("NONNULL ");
+        if ((characteristics & Spliterator.IMMUTABLE) != 0) result.append("IMMUTABLE ");
+        if ((characteristics & Spliterator.CONCURRENT) != 0) result.append("CONCURRENT ");
+
+        return result.toString().trim();
     }
 }
 
