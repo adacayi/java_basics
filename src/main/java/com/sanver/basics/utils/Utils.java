@@ -2,7 +2,9 @@ package com.sanver.basics.utils;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -90,7 +92,7 @@ public class Utils {
      *             the thread pool details.
      */
     public static void printThreadPool(Executor pool, String... info) {
-        switch(pool){
+        switch (pool) {
             case ThreadPoolExecutor t -> printThreadPool(t, info);
             case ForkJoinPool f -> printThreadPool(f, info);
             default -> System.out.printf("%s is not a ThreadPoolExecutor or a ForkJoinPool.%n", pool.getClass().getName());
@@ -166,5 +168,71 @@ public class Utils {
 
     public static void warmup() {
         IntStream.range(1, Runtime.getRuntime().availableProcessors() * 3).parallel().forEach(x -> sleepNano(300_000_000));
+    }
+
+    /**
+     * Generates combination of numbers between 0 and limit for the given number of digits
+     * e.g. generateCombinations(2,3) will result in [(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)]
+     *
+     * @param digit represents the number of items in the permutation
+     * @param limit represents the maximum value an item can get
+     * @return the list of all permutations
+     */
+    public static List<List<Integer>> generateCombinations(int digit, int limit) {
+        return generateVariations(digit, limit, false);
+    }
+
+    /**
+     * Generates permutations of numbers between 0 and limit for the given number of digits
+     * e.g. generatePermutations(2,1) will result in [(0,0), (0,1), (1,0), (1,1)]
+     *
+     * @param digit represents the number of items in the permutation
+     * @param limit represents the maximum value an item can get
+     * @return the list of all permutations
+     */
+    public static List<List<Integer>> generatePermutations(int digit, int limit) {
+        return generateVariations(digit, limit, true);
+    }
+
+    private static List<List<Integer>> generateVariations(int digit, int limit, boolean orderMatters) {
+        Integer[] combination = new Integer[digit];
+        Arrays.parallelSetAll(combination, x -> -1);
+        var result = new ArrayList<List<Integer>>();
+
+        int currentDigit = 0;
+
+        while (currentDigit >= 0) {
+            while (fill(combination, currentDigit, limit, orderMatters)) {
+                result.add(List.of(combination));
+                if (currentDigit < digit - 1) {
+                    currentDigit = digit - 1;
+                }
+            }
+            currentDigit--;
+        }
+
+        return result;
+    }
+
+    private static boolean fill(Integer[] combination, int digit, int limit, boolean orderMatters) {
+        int length = combination.length;
+
+        if (orderMatters) {
+            if (combination[digit] + 1 > limit) {
+                return false;
+            }
+        } else {
+            if (combination[digit] + length - digit > limit) {
+                return false;
+            }
+        }
+
+        combination[digit]++;
+        if (orderMatters) {
+            IntStream.range(digit + 1, length).forEach(i -> combination[i] = 0);
+        } else {
+            IntStream.range(digit + 1, length).forEach(i -> combination[i] = combination[digit] + i - digit);
+        }
+        return true;
     }
 }
