@@ -9,8 +9,7 @@ public class ArrayUtils {
     }
 
     /**
-     * This method is for printing out single dimensional arrays.
-     * If an array is multidimensional, printArray(Object[] array) method is called as the appropriate overload.
+     * This method is for printing out a single array.
      * @param array The array that will be printed out
      */
     public static void printArray(Object array) {
