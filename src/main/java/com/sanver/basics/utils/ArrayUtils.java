@@ -8,45 +8,61 @@ public class ArrayUtils {
 
     }
 
-    /**
-     * This method is for printing out a single array.
-     * @param array The array that will be printed out
-     */
-    public static void printArray(Object array) {
-        var aClass = array.getClass();
+    public static void printArray(byte[] array) {
+        System.out.println(Arrays.toString(array));
+    }
 
-        if (!aClass.isArray()) {
-            throw new IllegalArgumentException("Argument is not an array");
-        }
+    public static void printArray(short[] array) {
+        System.out.println(Arrays.toString(array));
+    }
 
-        if (aClass == byte[].class)
-            System.out.println(Arrays.toString((byte[]) array));
-        else if (aClass == short[].class)
-            System.out.println(Arrays.toString((short[]) array));
-        else if (aClass == int[].class)
-            System.out.println(Arrays.toString((int[]) array));
-        else if (aClass == long[].class)
-            System.out.println(Arrays.toString((long[]) array));
-        else if (aClass == char[].class)
-            System.out.println(Arrays.toString((char[]) array));
-        else if (aClass == float[].class)
-            System.out.println(Arrays.toString((float[]) array));
-        else if (aClass == double[].class)
-            System.out.println(Arrays.toString((double[]) array));
-        else if (aClass == boolean[].class)
-            System.out.println(Arrays.toString((boolean[]) array));
-        else {
-            System.out.println(Arrays.deepToString((Object[])array));
-        }
+    public static void printArray(int[] array) {
+        System.out.println(Arrays.toString(array));
+    }
+
+    public static void printArray(long[] array) {
+        System.out.println(Arrays.toString(array));
+    }
+
+    public static void printArray(char[] array) {
+        System.out.println(Arrays.toString(array));
+    }
+
+    public static void printArray(float[] array) {
+        System.out.println(Arrays.toString(array));
+    }
+
+    public static void printArray(double[] array) {
+        System.out.println(Arrays.toString(array));
+    }
+
+    public static void printArray(boolean[] array) {
+        System.out.println(Arrays.toString(array));
+    }
+
+    public static void printArray(Object[] array) {
+        System.out.println(Arrays.deepToString(array));
     }
 
     /**
      * This method is to print out multiple arrays, each in a separate line
+     *
      * @param arrays The arrays to be printed
      */
     public static void printArrays(Object... arrays) {
         for (var array : arrays) {
-            printArray(array);
+            switch (array) {
+                case byte[] a -> printArray(a);
+                case short[] a -> printArray(a);
+                case int[] a -> printArray(a);
+                case long[] a -> printArray(a);
+                case char[] a -> printArray(a);
+                case float[] a -> printArray(a);
+                case double[] a -> printArray(a);
+                case boolean[] a -> printArray(a);
+                case Object[] a -> printArray(a);
+                default -> System.out.printf("%s is not an array%n", array);
+            }
         }
     }
 
