@@ -1,6 +1,5 @@
 package com.sanver.basics.arrays;
 
-import com.google.gson.Gson;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -8,6 +7,7 @@ import java.util.Arrays;
 
 import static com.sanver.basics.utils.ArrayUtils.arrayDeepCopyOf;
 import static com.sanver.basics.utils.ArrayUtils.printArrays;
+import static com.sanver.basics.utils.Utils.deepCopy;
 
 public class CopyingArray {
     public static void main(String[] args) {
@@ -46,15 +46,11 @@ public class CopyingArray {
         printArrays(people, copyPeople2);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T deepCopy(T object) {
-        var gson = new Gson();
-        return (T) gson.fromJson(gson.toJson(object), object.getClass());
-    }
-
     @Data
     static class Person {
-        @NonNull String name;
-        @NonNull int age;
+        @NonNull
+        String name;
+        @NonNull
+        int age;
     }
 }

@@ -1,5 +1,6 @@
 package com.sanver.basics.utils;
 
+import com.google.gson.Gson;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.ArrayList;
@@ -234,5 +235,11 @@ public class Utils {
             IntStream.range(digit + 1, length).forEach(i -> combination[i] = combination[digit] + i - digit);
         }
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T deepCopy(T object) {
+        var gson = new Gson();
+        return (T) gson.fromJson(gson.toJson(object), object.getClass());
     }
 }

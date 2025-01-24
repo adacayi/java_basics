@@ -2,6 +2,9 @@ package com.sanver.basics.utils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.HashSet;
+
+import static com.sanver.basics.utils.Utils.deepCopy;
 
 public class ArrayUtils {
     private ArrayUtils() {
@@ -71,40 +74,59 @@ public class ArrayUtils {
 
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T[] arrayDeepCopyOf(T[] original, int newLength) {
-        T[] copy = (original.getClass() == Object[].class) ? (T[]) new Object[newLength] : (T[]) Array.newInstance(original.getClass().getComponentType(), newLength);
+        return arrayDeepCopyOf(original, newLength, new HashSet<>());
+    }
 
-        Class<?> eClass;
+    @SuppressWarnings("unchecked")
+    private static <T> T[] arrayDeepCopyOf(T[] original, int newLength, HashSet<Object[]> dejaVu) {
+        if (original == null) {
+            throw new IllegalArgumentException("Array cannot be null");
+        }
+
+        dejaVu.add(original);
+        T[] copy = (original.getClass() == Object[].class) ? (T[]) new Object[newLength] : (T[]) Array.newInstance(original.getClass().getComponentType(), newLength);
         int min = Math.min(original.length, newLength);
 
         for (int i = 0; i < min; i++) {
-            eClass = original[i].getClass();
+            copy[i] = (T) switch (original[i]) {
+                case null -> null;
+                case byte[] a -> Arrays.copyOf(a, a.length);
+                case short[] a -> Arrays.copyOf(a, a.length);
+                case int[] a -> Arrays.copyOf(a, a.length);
+                case long[] a -> Arrays.copyOf(a, a.length);
+                case char[] a -> Arrays.copyOf(a, a.length);
+                case float[] a -> Arrays.copyOf(a, a.length);
+                case double[] a -> Arrays.copyOf(a, a.length);
+                case boolean[] a -> Arrays.copyOf(a, a.length);
+                case Byte[] a -> Arrays.copyOf(a, a.length);
+                case Short[] a -> Arrays.copyOf(a, a.length);
+                case Integer[] a -> Arrays.copyOf(a, a.length);
+                case Long[] a -> Arrays.copyOf(a, a.length);
+                case Character[] a -> Arrays.copyOf(a, a.length);
+                case Float[] a -> Arrays.copyOf(a, a.length);
+                case Double[] a -> Arrays.copyOf(a, a.length);
+                case Boolean[] a -> Arrays.copyOf(a, a.length);
+                case Byte a -> a;
+                case Short a -> a;
+                case Integer a -> a;
+                case Long a -> a;
+                case Character a -> a;
+                case Float a -> a;
+                case Double a -> a;
+                case Boolean a -> a;
+                case Object[] a -> {
+                    if (dejaVu.contains(a)) {
+                        throw new IllegalStateException("Circular reference detected in array: " + Arrays.deepToString(a));
+                    }
 
-            if (eClass.isArray()) {
-                if (eClass == byte[].class)
-                    copy[i] = (T) Arrays.copyOf((byte[]) original[i], ((byte[]) original[i]).length);
-                else if (eClass == short[].class)
-                    copy[i] = (T) Arrays.copyOf((short[]) original[i], ((short[]) original[i]).length);
-                else if (eClass == int[].class)
-                    copy[i] = (T) Arrays.copyOf((int[]) original[i], ((int[]) original[i]).length);
-                else if (eClass == long[].class)
-                    copy[i] = (T) Arrays.copyOf((long[]) original[i], ((long[]) original[i]).length);
-                else if (eClass == char[].class)
-                    copy[i] = (T) Arrays.copyOf((char[]) original[i], ((char[]) original[i]).length);
-                else if (eClass == float[].class)
-                    copy[i] = (T) Arrays.copyOf((float[]) original[i], ((float[]) original[i]).length);
-                else if (eClass == double[].class)
-                    copy[i] = (T) Arrays.copyOf((double[]) original[i], ((double[]) original[i]).length);
-                else if (eClass == boolean[].class)
-                    copy[i] = (T) Arrays.copyOf((boolean[]) original[i], ((boolean[]) original[i]).length);
-                else { // element is an array of object references
-                    copy[i] = (T) arrayDeepCopyOf((Object[]) original[i], ((Object[]) original[i]).length);
+                    yield arrayDeepCopyOf(a, a.length, dejaVu);
                 }
-            } else
-                copy[i] = original[i]; // This actually needs to be a deep copy of an object if we want the array objects to be different if they are not primitive types
+                default -> deepCopy(original[i]);
+            };
         }
 
+        dejaVu.remove(original);
         return copy;
     }
 }
