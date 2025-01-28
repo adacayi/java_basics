@@ -97,9 +97,21 @@ public class PrintfSample {
         System.out.printf("%-20s: % ,.2f %n", "% ,.2f", number); // space will display a minus sign if the number is negative or a space if it
         System.out.printf("%-20s: % ,.2f %n", "% ,.2f", negativeNumber);
         var obj = new PrintfSample();
-        System.out.printf("%s object.%nHashcode with %%h: %h.%nHashcode: %d.%nHashcode in hexadecimal: %x%n", obj, obj, obj.hashCode(), obj.hashCode()); // Notice toString appends the hexadecimal hashCode to class name.
+        var hashCode = obj.hashCode();
+        System.out.printf("%s object.%nHashcode with %%h: %h.%nHashCode: %d.%nHashCode in hexadecimal: %x%nHashCode in octal: %o%n", obj, obj, hashCode, hashCode, hashCode); // Notice toString appends the hexadecimal hashCode to class name.
         var text = "metal";
         System.out.printf("First 2 characters of \"%s\": %.2s%n", text, text);
+        numberSystems();
+    }
+
+    public static void numberSystems() {
+        int i = 42;
+        System.out.printf("%nShowing printing integers in different number systems%n");
+        System.out.printf("%nDecimal: %d%n", i);
+        System.out.printf("Binary : %s%n", Integer.toBinaryString(i));
+        System.out.printf("Octal  : %o%n", i);
+        System.out.printf("Hexadecimal (lowercase): %x%n", i);
+        System.out.printf("Hexadecimal (uppercase): %X%n", i);
     }
 
     @Override
