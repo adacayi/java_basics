@@ -2,6 +2,7 @@ package com.sanver.basics.streamapi;
 
 import lombok.Value;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,11 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GroupingSampleAggregation {
+    private static final Random random = new Random();
+
     public static void main(String[] args) {
         int personCount = 16;
-        var random = new Random();
-        var people = IntStream.rangeClosed(1, personCount).mapToObj(x ->
-                new Person(Math.random() > 0.5 ? "Abdullah" : "Hatice", random.nextInt(90) + 1, random.nextBoolean() ? "Istanbul" : "Urfa")).toList();
+        var people = IntStream.rangeClosed(1, personCount).mapToObj(x -> generatePerson()).sorted(Comparator.comparing(Person::getName).thenComparing(Person::getCity)).toList();
         System.out.printf("People%n%n");
 
         for (Person person : people) {
@@ -24,11 +25,18 @@ public class GroupingSampleAggregation {
 
         System.out.printf("%nName city groups%n%n");
         var format = "[%-8s, %-8s]: Average age = %.2f%n";
-        group.forEach((key, value) -> System.out.printf(format, key.name, key.city, value));
+        var comparator = Comparator.comparing((Map.Entry<GroupKey, Double> x) -> x.getKey().name()).thenComparing(x -> x.getKey().city());
+        group.entrySet().stream().sorted(comparator).forEach(entry -> System.out.printf(format, entry.getKey().name, entry.getKey().city, entry.getValue()));
+    }
+
+    public static Person generatePerson() {
+        String[] names = {"Abdullah", "Hatice"};
+        String[] cities = {"Istanbul", "Urfa"};
+        return new Person(names[random.nextInt(0, names.length)], random.nextInt(1, 91), cities[random.nextInt(0, cities.length)]);
     }
 
     @Value
-    private static class Person {
+    public static class Person {
         private static AtomicInteger lastId = new AtomicInteger(0);
         int id = lastId.incrementAndGet();
         String name;
@@ -36,7 +44,7 @@ public class GroupingSampleAggregation {
         String city;
 
         public String toString() {
-            return String.format("[%2d, %-8s, %2d, %-8s]", id, name, age, city);
+            return "[%2d, %-8s, %2d, %-8s]".formatted(id, name, age, city);
         }
     }
 
