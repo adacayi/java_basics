@@ -1,22 +1,41 @@
 package com.sanver.basics.streamapi;
 
-import java.util.function.IntConsumer;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.IntFunction;
+import java.util.stream.Collector;
 import java.util.stream.IntStream;
 
 import static com.sanver.basics.utils.Utils.sleep;
 
 public class ParallelStreamCollectSample {
     public static void main(String[] args) {
-        IntConsumer peek = i -> {
-            sleep(1000);
-            System.out.printf("%-2d Thread id: %-2d%n", i, Thread.currentThread().getId());
+        IntFunction<Integer> peek = i -> {
+            System.out.printf("%-2d %s%n", i, threadId());
+            sleep(2_000);
+            return i;
         };
-        var list = IntStream.range(0, 10).boxed().parallel().peek(peek::accept).collect(Collectors.toList()); // Collect is collecting elements in the original order, but does not cause the stream to be processed in sequential order, like the forEachOrdered does.
+        var collector = Collector.<Integer, List<Integer>>of(
+                ArrayList::new, (list, item) -> {
+                    System.out.printf("Collecting %d. Existing list: %s. %s%n", item, list, threadId());
+                    sleep(1000);
+                    list.add(item);
+                }, (list1, list2) -> {
+                    System.out.printf("Merging %s and %s. %s%n", list1, list2, threadId());
+                    sleep(1000);
+                    list1.addAll(list2);
+                    return list1;
+                });
+        var list = IntStream.range(0, 10).boxed().parallel().map(peek::apply).collect(collector); // Collect is collecting elements in parallel but returns the result in original order.
         list.add(10);
         System.out.println(list);
 
-        var list2 = IntStream.range(0, 10).boxed().parallel().peek(peek::accept).toList();
-        System.out.println(list2);
+        sleep(7_000);
+        var list2 = IntStream.range(0, 10).boxed().parallel().map(peek::apply).toList();
+        System.out.printf("%n%s%n", list2);
+    }
+
+    private static String threadId() {
+        return "Thread id: %-2d".formatted(Thread.currentThread().threadId());
     }
 }
