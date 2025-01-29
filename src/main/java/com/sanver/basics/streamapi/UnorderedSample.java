@@ -82,6 +82,7 @@ public class UnorderedSample {
     public static void main(String[] args) {
         Supplier<IntStream> getStream = () -> IntStream.range(0, 1000);
         System.out.println("findFirst result: " + getStream.get().parallel().findFirst().orElse(-1)); // If the stream has order, findFirst always returns the first element if the stream is not empty, even though the stream is a parallel.
-        System.out.println("findFirst result after invoking unordered(): " + getStream.get().unordered().parallel().findFirst().orElse(-1)); // Unordered removes order guarantee
+        System.out.println("findFirst result after invoking unordered().parallel(): " + getStream.get().unordered().parallel().findFirst().orElse(-1)); // Unordered removes order guarantee
+        System.out.println("findFirst result after invoking parallel().unordered(): " + getStream.get().parallel().unordered().findFirst().orElse(-1)); // Unordered removes order guarantee
     }
 }
