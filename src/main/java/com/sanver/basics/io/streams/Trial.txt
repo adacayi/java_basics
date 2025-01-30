@@ -1,3 +1,5 @@
-Ahmet has arrived.
+This is the first line
+This is the second
+This is the third
 
-Selamunaleyküm.
+This is the fifth
