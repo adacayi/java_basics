@@ -1,11 +1,14 @@
 package com.sanver.basics.io;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.NumberFormat;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class FileSample {
 
@@ -35,7 +38,11 @@ public class FileSample {
 		System.out.printf(format, "file.getName()", file.getName());
 		System.out.printf(format, "file.getParent()", file.getParent()); // Returns the parent as a String
 		System.out.printf(format, "file.getParentFile()", file.getParentFile()); // Returns the parent File
-		System.out.printf(format, "file.getTotalSpace()", numberFormat.format(file.getTotalSpace()));
+        try (var writer = new FileWriter(file)) {
+            writer.write(IntStream.range(1, 101).mapToObj(i -> i % 10 == 0 ? String.valueOf('\n') : String.valueOf((i + i / 10) % 10)).collect(Collectors.joining()));
+        } // This writes 100 characters to the file to showcase file.length() method usage.
+        System.out.printf(format, "file.length()", numberFormat.format(file.length())); // The length, in bytes, of the file denoted by this abstract pathname, or 0L if the file does not exist.
+        System.out.printf(format, "file.getTotalSpace()", numberFormat.format(file.getTotalSpace()));
 		System.out.printf(format, "file.getFreeSpace()", numberFormat.format(file.getFreeSpace()));
 		System.out.printf(format, "file.getUsableSpace()", numberFormat.format(file.getUsableSpace()));
 		System.out.printf(format, "file.isDirectory()", file.isDirectory());
