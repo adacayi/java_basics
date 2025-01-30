@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class BufferedReaderSample {
 
@@ -25,8 +24,7 @@ public class BufferedReaderSample {
             int len;
             var chunkLength = chunk.length;
             while ((len = reader.read(chunk, 0, chunkLength)) != -1) {
-                var content = len == chunkLength ? chunk : Arrays.copyOf(chunk, len);
-                System.out.print(new String(content));
+                System.out.print(new String(chunk, 0, len));
             }
             System.out.printf("Finished reading%n%n"); // Note that this is printed just after the last line content, which does not have a new line at the end.
         } catch (IOException e) {
