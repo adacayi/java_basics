@@ -18,17 +18,17 @@ public class EmployeeExternalizable implements Externalizable {
     private transient double salary; // Even transient is specified here, since writeExternal writes salary it will be serialized.
 
     /**
-     * Serializes only last name and salary
+     * Serializes only first name and salary
      */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(lastName);
+        out.writeUTF(firstName);
         out.writeDouble(salary);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        setLastName(in.readUTF());
+        setFirstName(in.readUTF());
         setSalary(in.readDouble());
     }
 }
