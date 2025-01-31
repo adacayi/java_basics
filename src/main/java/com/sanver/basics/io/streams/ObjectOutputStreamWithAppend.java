@@ -66,7 +66,7 @@ public class ObjectOutputStreamWithAppend {
     }
 
     // Custom ObjectOutputStream to prevent writing a new stream header
-    private static class AppendingObjectOutputStream extends ObjectOutputStream {
+    public static class AppendingObjectOutputStream extends ObjectOutputStream {
         public AppendingObjectOutputStream(OutputStream out) throws IOException {
             super(out);
         }
