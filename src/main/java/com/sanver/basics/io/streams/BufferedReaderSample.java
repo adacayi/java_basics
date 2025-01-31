@@ -22,8 +22,7 @@ public class BufferedReaderSample {
             reader.reset(); // Resets the stream to the most recent mark.
             char[] chunk = new char[10];
             int len;
-            var chunkLength = chunk.length;
-            while ((len = reader.read(chunk, 0, chunkLength)) != -1) {
+            while ((len = reader.read(chunk)) != -1) {
                 System.out.print(new String(chunk, 0, len));
             }
             System.out.printf("Finished reading%n%n"); // Note that this is printed just after the last line content, which does not have a new line at the end.
