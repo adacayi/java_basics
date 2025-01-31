@@ -20,7 +20,7 @@ public class BufferedWriterSample {
                 
                 """;
 
-        try (var out = new FileOutputStream(fileName); // If the file does not exist, it will be created. It will always overwrite the content if the file exists. If new FileOutputStream(fileName, true) is used instead, the file will be created if it does not exist and then bytes will be written to the end of the file.
+        try (var out = new FileOutputStream(fileName); // If the file does not exist, it will be created. It will always overwrite the content if the file exists. If new FileOutputStream(fileName, true) is used instead, the file will be created if it does not exist and if it does, then bytes will be written to the end of the file.
              var outputStreamWriter = new OutputStreamWriter(out, "Windows-1254");
              var writer = new BufferedWriter(outputStreamWriter);
              var in = new FileInputStream(fileName);
