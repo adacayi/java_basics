@@ -3,7 +3,6 @@ package com.sanver.basics.serialization;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+/**
+ * Check also {@link com.sanver.basics.io.streams.ObjectOutputStreamSample} and {@link com.sanver.basics.io.streams.ObjectOutputStreamWithAppend}
+ * for writing primitive values and appending to an existing serialization.
+ */
 public class ObjectOutputStreamSample {
     public static void main(String[] args) {
         String file = "src/main/java/com/sanver/basics/serialization/SerializedEmployee.txt";
@@ -26,8 +29,6 @@ public class ObjectOutputStreamSample {
              ObjectOutputStream writer = new ObjectOutputStream(buffer)) {
             writer.writeObject(employee);
             System.out.println("Object serialized to file " + file);
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -35,16 +36,14 @@ public class ObjectOutputStreamSample {
 
         // We cannot get the file content with the various methods in
         // Files in java.nio.file. It throws exception.
-        // Hence we used java.io classes.
+        // Hence, we used java.io classes.
 
         try (FileInputStream stream = new FileInputStream(file);
              InputStreamReader inputStreamReader = new InputStreamReader(stream, "Windows-1254");
              BufferedReader reader = new BufferedReader(inputStreamReader)) {
             reader.lines().forEach(System.out::println);
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
         } catch (IOException e1) {
-            e1.printStackTrace();
+            System.out.println(e1.getMessage());
         }
     }
 }
