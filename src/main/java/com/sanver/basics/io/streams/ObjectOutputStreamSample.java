@@ -128,32 +128,33 @@ public class ObjectOutputStreamSample {
 
     public static void main(String[] args) {
 
-        var path = Path.of("src", "main", "java", "com", "sanver", "basics", "learn", "practice");
+        var path = Path.of("src", "main", "java", "com", "sanver", "basics", "io", "stream");
         var file = path.resolve("data.dat").toFile();
+        file.deleteOnExit();
         try (var out = new FileOutputStream(file);
              var in = new FileInputStream(file);
-             var ow = new ObjectOutputStream(out);
-             var or = new ObjectInputStream(in)
+             var oos = new ObjectOutputStream(out);
+             var ois = new ObjectInputStream(in)
         ) {
-            ow.writeByte(5);
-            ow.writeShort(15_234);
-            ow.writeInt(1_000_000);
-            ow.writeLong(1_000_000_000_000L);
-            ow.writeChar(65);
-            ow.writeFloat(1.23456789f);
-            ow.writeDouble(1.23456789);
-            ow.writeBoolean(true);
-            ow.writeObject(generatePerson());
-            ow.flush();
-            System.out.println(or.readByte());
-            System.out.println(or.readShort());
-            System.out.println(or.readInt());
-            System.out.println(or.readLong());
-            System.out.println(or.readChar());
-            System.out.println(or.readFloat());
-            System.out.println(or.readDouble());
-            System.out.println(or.readBoolean());
-            Person person = (Person) or.readObject();
+            oos.writeByte(5);
+            oos.writeShort(15_234);
+            oos.writeInt(1_000_000);
+            oos.writeLong(1_000_000_000_000L);
+            oos.writeChar(65);
+            oos.writeFloat(1.23456789f);
+            oos.writeDouble(1.23456789);
+            oos.writeBoolean(true);
+            oos.writeObject(generatePerson());
+            oos.flush();
+            System.out.println(ois.readByte());
+            System.out.println(ois.readShort());
+            System.out.println(ois.readInt());
+            System.out.println(ois.readLong());
+            System.out.println(ois.readChar());
+            System.out.println(ois.readFloat());
+            System.out.println(ois.readDouble());
+            System.out.println(ois.readBoolean());
+            Person person = (Person) ois.readObject();
             System.out.println(person);
         } catch (Exception e) {
             System.out.println(e.getMessage());
