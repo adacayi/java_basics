@@ -27,6 +27,14 @@ public class BasicFilesOperations {
         createFileWithContent(rootPathString + "/sub1/sub2-file2.txt", "sub2-file2.txt content");
         Files.move(Path.of(rootPathString + "/sub1/sub2-file2.txt"), Path.of(rootPathString + "/sub1/sub2/sub2-file2.txt"), StandardCopyOption.REPLACE_EXISTING);
 
+
+        System.out.printf("All txt files under %s%n%n", rootPath);
+
+        try (var stream = Files.find(rootPath, 32, (path, attributes) -> attributes.isRegularFile() && path.toString().endsWith(".txt"))) {
+            stream.forEach(System.out::println);
+        }
+
+        System.out.printf("%nAll content%n%n");
         int maxPathLength;
 
         try (var stream = Files.walk(rootPath)) {
@@ -49,7 +57,6 @@ public class BasicFilesOperations {
             });
         }
 
-        System.out.println("\nDeleting " + rootPathString);
         deleteDirectory(rootPath);
     }
 
@@ -64,6 +71,8 @@ public class BasicFilesOperations {
     }
 
     private static void deleteDirectory(Path path) {
+        System.out.printf("%nDeleting %s%n%n", path);
+
         try (var stream = Files.walk(path)) {
             stream.sorted(Comparator.reverseOrder()).forEach(x -> {
                 System.out.println("Deleting: " + x);
