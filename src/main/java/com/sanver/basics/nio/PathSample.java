@@ -67,7 +67,7 @@ public class PathSample {
                 "directoryPath.getParent().getParent().resolve(directoryPath.getParent().getParent().relativize(filePath)): "
                         + directoryPath.getParent().getParent()
                         .resolve(directoryPath.getParent().getParent().relativize(filePath)));
-        try (var stream = Files.list(basePath.getParent())) {
+        try (var stream = Files.list(basePath.getParent())) { // It is suggested that we use try-with-resources with this stream
             System.out.println("Files.isSameFile(filePath, filePath.toAbsolutePath()): "
                     + Files.isSameFile(filePath, filePath.toAbsolutePath()));
             System.out.println(stream.map(p -> p.getFileName().toString())

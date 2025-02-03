@@ -30,14 +30,14 @@ public class BasicFilesOperations {
 
         System.out.printf("All txt files under %s%n%n", rootPath);
 
-        try (var stream = Files.find(rootPath, 32, (path, attributes) -> attributes.isRegularFile() && path.toString().endsWith(".txt"))) {
+        try (var stream = Files.find(rootPath, 32, (path, attributes) -> attributes.isRegularFile() && path.toString().endsWith(".txt"))) { // It is suggested that we use try-with-resources with this stream
             stream.forEach(System.out::println);
         }
 
         System.out.printf("%nAll content%n%n");
         int maxPathLength;
 
-        try (var stream = Files.walk(rootPath)) {
+        try (var stream = Files.walk(rootPath)) { // It is suggested that we use try-with-resources with this stream
             maxPathLength = stream.mapToInt(path -> path.toString().length()).max().orElse(0);
         }
 
