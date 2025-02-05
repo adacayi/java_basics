@@ -61,7 +61,7 @@ public class InstantSample {
         Good for calendar-based applications, scheduling
         Better for human-oriented date/time operations
          */
-        System.out.printf(format, "instant.atOffset(ZoneOffset.ofHours(3)", instant.atOffset(ZoneOffset.ofHours(3)));
+        System.out.printf(format, "instant.atOffset(ZoneOffset.ofHours(3))", instant.atOffset(ZoneOffset.ofHours(3)));
         System.out.printf(format, "instant.truncatedTo(ChronoUnit.MICROS)", instant.truncatedTo(ChronoUnit.MICROS));
         System.out.printf(format, "instant.truncatedTo(ChronoUnit.MILLIS)", instant.truncatedTo(ChronoUnit.MILLIS));
         System.out.printf(format, "instant.truncatedTo(ChronoUnit.SECONDS)", instant.truncatedTo(ChronoUnit.SECONDS));
