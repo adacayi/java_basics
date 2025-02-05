@@ -3,47 +3,98 @@ package com.sanver.basics.time;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.locks.LockSupport;
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
-import static com.sanver.basics.utils.Utils.sleepNano;
+import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
+import static com.sanver.basics.utils.Utils.sleep;
 
-/*
-System.nanoTime() directly is generally more precise than using Instant.now() for measuring short durations of code execution within the same JVM instance. Here's why:
-1.	Higher Resolution: System.nanoTime() provides nanosecond resolution, while Instant.now() usually has a resolution of microseconds or even milliseconds, depending on the platform and JVM.
-2.	Monotonic Clock: System.nanoTime() is based on a monotonic clock, meaning it measures the time elapsed since some arbitrary starting point. This makes it ideal for measuring durations, as it's not affected by adjustments to the system clock (like time zone changes or user adjustments). Instant may not use the monotonic clock.
-3.	Direct Measurement: System.nanoTime() directly accesses the high-resolution timer of the underlying system. Instant.now(), while internally using System.currentTimeMillis() or a similar mechanism, involves additional overhead due to object creation and potential conversions.
-
-Considerations:
-Overhead:  System.nanoTime() does have a small overhead. For very short code segments, this overhead could be significant relative to the duration being measured.
-Warm-up:  The first few calls to System.nanoTime() might take longer due to JVM warm-up. Consider making a few dummy calls before starting the actual measurement.
+/**
+ * <p>System.nanoTime() is generally more precise than using Instant.now() for measuring
+ * short durations of code execution within the same JVM instance.</p>
+ *
+ * <h2>Reasons:</h2>
+ * <ul>
+ *   <li><b>Higher Resolution:</b> {@code System.nanoTime()} provides nanosecond resolution,
+ *       while {@code Instant.now()} typically has microsecond or millisecond precision,
+ *       depending on the platform and JVM.</li>
+ *   <li><b>Monotonic Clock:</b> {@code System.nanoTime()} is based on a monotonic clock,
+ *       meaning it measures elapsed time from an arbitrary starting point.
+ *       This makes it ideal for measuring durations, as it is not affected by
+ *       system clock adjustments (such as time zone changes or manual modifications).
+ *       {@code Instant.now()} may not always use a monotonic clock.</li>
+ *   <li><b>Direct Measurement:</b> {@code System.nanoTime()} directly accesses
+ *       the high-resolution timer of the underlying system. In contrast,
+ *       {@code Instant.now()}, which internally relies on {@code System.currentTimeMillis()}
+ *       or similar mechanisms, has additional overhead due to object creation
+ *       and potential conversions.</li>
+ * </ul>
+ *
+ * <h2>Considerations:</h2>
+ * <ul>
+ *   <li><b>Overhead:</b> {@code System.nanoTime()} has a small performance overhead.
+ *       For extremely short code segments, this overhead could be significant relative
+ *       to the duration being measured.</li>
+ *   <li><b>Warm-up:</b> The first few calls to {@code System.nanoTime()} might take
+ *       longer due to JVM optimizations and warm-up. It is advisable to perform
+ *       a few dummy calls before starting actual measurements.</li>
+ * </ul>
  */
+
 public class NanoTimeSample {
-    public static void main(String[] args) throws InterruptedException {
-        var formatter = NumberFormat.getInstance();
-        var thread1 = new Thread(() -> {
-            LockSupport.park();
+
+    public static final int NANOS = 100_000_000;
+
+    public static void main(String[] args) {
+        demonstrateMeasurementIntervals();
+        var latch = new CountDownLatch(1);
+        var future1 = CompletableFuture.runAsync(() -> {
+            uncheck(() -> latch.await());
             var start = System.nanoTime();
-            sleepNano(10);
+            sleepNano(NANOS);
             var end = System.nanoTime();
-            var duration = formatter.format(end - start);
-            System.out.printf("Duration calculated with System.nanoTime: %s ns%n", duration);
+            System.out.printf("Duration calculated with System.nanoTime: %,11d ns. Notice this is always greater than (or equal to) %,d and much closer to %,d%n", end - start, NANOS, NANOS);
         });
-        var thread2 = new Thread(() -> {
-            LockSupport.park();
+
+        var future2 = CompletableFuture.runAsync(() -> {
+            uncheck(() -> latch.await());
             var startInstant = Instant.now();
-            sleepNano(10);
-            var endInstant = Instant.now(); // Since Instant.now() is not in nanosecond precision, startInstant end endInstant get the same value,
-            // hence the duration becomes zero.
-            // However, this is does not mean Instant.now is running faster, actually the opposite is true, System.nano is faster,
-            // since thread2 is unlocked first but thread1 output comes first to the console suggesting it finishes first, although started later.
-            var duration = formatter.format(Duration.between(startInstant, endInstant).toNanos());
-            System.out.printf("Duration calculated with Instant.now    : %s ns%n", duration);
+            sleepNano(NANOS);
+            var endInstant = Instant.now();
+            System.out.printf("Duration calculated with Instant.now    : %,11d ns. Notice this might be even less than %,d, because wait is done with System.nanoTime(), but this uses Instant.now(). The difference with %,d is much larger as well. %n", Duration.between(startInstant, endInstant).toNanos(), NANOS, NANOS);
         });
-        thread1.start();
-        thread2.start();
-        LockSupport.unpark(thread2);
-        LockSupport.unpark(thread1);
-        thread1.join();
-        thread2.join();
+        latch.countDown();
+        future1.join();
+        future2.join();
+        sleep(5_000);
+    }
+
+    private static void demonstrateMeasurementIntervals() {
+        var formatter = NumberFormat.getInstance();
+        final int length = 1_000_000;
+        long[] duration = new long[length];
+        var start = System.nanoTime();
+        long end;
+        for (int i = 0; i < length; i++) {
+            end = System.nanoTime();
+            duration[i] = end - start;
+            start = end;
+        }
+        System.out.println("Distinct duration intervals");
+        System.out.println(Arrays.stream(duration).distinct().sorted().limit(100).mapToObj(formatter::format).collect(Collectors.joining("%n".formatted())));
+    }
+
+    /**
+     * Tries to achieve wait for the given nanos.
+     * We introduced this method here, because with the {@link com.sanver.basics.utils.Utils#sleep(long)}, the durations become much higher.
+     * Try removing this and using the {@link com.sanver.basics.utils.Utils#sleep(long)}
+     *
+     * @param nanos nanoseconds to wait for
+     */
+    private static void sleepNano(long nanos) {
+        var start = System.nanoTime();
+        while (System.nanoTime() - start < nanos) ;
     }
 }
