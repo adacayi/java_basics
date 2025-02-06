@@ -9,16 +9,23 @@ public class ScannerSample {
         try (Scanner scanner = new Scanner(System.in)) {
             String[] tags = {"Name", "Age", "Weight"};
             int width = 10;
-            System.out.printf("%-" + width + "s: ", tags[0]);
+            var format = "%-" + width + "s: ";
+            System.out.printf(format, tags[0]);
             String name = scanner.nextLine();
-            System.out.printf("%-" + width + "s: ", tags[1]);
+            System.out.printf(format, tags[1]);
             int age = scanner.nextInt();
-            System.out.printf("%-" + width + "s: ", tags[2]);
+            System.out.printf(format, tags[2]);
             double weight = scanner.nextDouble();
-            System.out.printf("\n\n%-" + width + "s: %s\n%-" + width + "s: %d\n%-" + width + "s: %.2f\n", tags[0], name, tags[1], age, tags[2], weight);
+            var format2 = "%n%-" + width + "s: %s%n%-" + width + "s: %d%n%-" + width + "s: %f%n";
+            System.out.printf(format2, tags[0], name, tags[1], age, tags[2], weight);
         }
-        String inputString = "3 5\n7 9\nThis is a text\n3.14159265 2.71828";
-        ByteArrayInputStream input = new ByteArrayInputStream(inputString.getBytes());
+        String inputString = """
+        3 5
+        7 9
+        This is a text
+        3.14159265 2.71828
+        """;
+        var input = new ByteArrayInputStream(inputString.getBytes());
         try (Scanner scanner = new Scanner(input)) {
             System.out.println(scanner.nextInt());
             System.out.println(scanner.nextInt());
@@ -33,8 +40,8 @@ public class ScannerSample {
         }
 
         //region to show hasNext usage
-        try (Scanner scanner = new Scanner(new ByteArrayInputStream("2 3 4 5 7".getBytes()))) {
-            System.out.println("\nShowing scanner.hasNext usage");
+        try (var scanner = new Scanner(new ByteArrayInputStream("2 3 4 5 7".getBytes()))) {
+            System.out.printf("%nShowing scanner.hasNext() usage%n");
             while (scanner.hasNextInt()) {
                 System.out.printf("%d ", scanner.nextInt());
             }
