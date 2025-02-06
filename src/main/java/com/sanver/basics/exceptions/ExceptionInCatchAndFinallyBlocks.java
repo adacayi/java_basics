@@ -53,7 +53,8 @@ public class ExceptionInCatchAndFinallyBlocks {
 
         @Override
         public void close() {
-            method(i);
+            System.out.println("Closing " + i);
+            throw new RuntimeException("Runtime exception when closing " + i);
         }
     }
 }
