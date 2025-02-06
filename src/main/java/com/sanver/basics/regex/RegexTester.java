@@ -34,7 +34,10 @@ public class RegexTester {
                 try {
                     pattern = Pattern.compile(patternString);
                     matcher = pattern.matcher(text);
-                    groupCount = matcher.groupCount();
+                    groupCount = matcher.groupCount(); // The groupCount is determined by the number of capturing groups (parentheses) in the pattern itself, not by what is matched in each find() operation.
+                    // Even if using optional groups ()? or alternations in the pattern (() | ()()) or ()+ in the pattern (which just returns the last matched group as the captured group as explained in GroupSample), the total number of groups is fixed when the Pattern is compiled.
+                    // Some groups might be null depending on which alternative matched, but the total group count remains constant.
+                    // That is why we set the groupCount here and not inside the while loop, since it won't change.
                 } catch (Exception e) {
                     System.out.println("Pattern is erroneous.");
                     continue;
