@@ -41,7 +41,7 @@ public class AggressiveMatching {
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(message);
 
-        boolean result = matcher.find();
+        boolean result = matcher.find(); // We didn't use matcher.matches() here, otherwise, the following calls to matcher.find() would always return false, regardless of the content. matcher.find() does not change the result of matcher.matches() though, as can be seen on line 59.
 
         if (!result) {
             System.out.println("Not matched, even partially.");
