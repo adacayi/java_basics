@@ -41,7 +41,9 @@ public class AggressiveMatching {
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(message);
 
-        boolean result = matcher.find(); // We didn't use matcher.matches() here, otherwise, the following calls to matcher.find() would always return false, regardless of the content. matcher.find() does not change the result of matcher.matches() though, as can be seen on line 59.
+        boolean result = matcher.find(); // We didn't use matcher.matches() here, otherwise, the subsequent calls to matcher.find() would always return false, regardless of the content. matcher.find() does not change the result of matcher.matches() though, as can be seen on line 59.
+        // Also, matcher.matches() attempts to match the entire region against the pattern, we want to see partial matches as well.
+        // We can use matcher.matches() and then use matcher.reset() to prevent matcher.find() to return false in the subsequent calls.
 
         if (!result) {
             System.out.println("Not matched, even partially.");
