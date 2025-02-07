@@ -4,20 +4,26 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Use {@link java.util.Scanner} to read data from console for more flexibility instead of {@link java.io.InputStreamReader}.
+ *
+ * @see com.sanver.basics.console.ScannerSample
+ */
 public class ReadingAndWritingToConsole {
 
-	public static void main(String[] args) {
-		String name;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("Enter your name: ");
+    public static void main(String[] args) {
+        try (var reader = new BufferedReader(new InputStreamReader(System.in))) {
+            System.out.print("Name: ");
 
-		try {
-			name = reader.readLine();
-			System.out.println("Selamunaleykum " + name);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
+            String name = reader.readLine();
+            System.out.println("Name: " + name);
+            System.out.print("Age : ");
+            String ageString = reader.readLine();
+            int age = Integer.parseInt(ageString);
+            System.out.println("Age : " + age);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 }
