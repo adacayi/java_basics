@@ -42,7 +42,14 @@ public class PeriodSample {
         var periodBetween = Period.between(startDate, endDate);
         System.out.printf(format, "startDate = LocalDate.of(2020, 2, 29)", startDate);
         System.out.printf(format, "endDate = LocalDate.of(2023, 2, 28)", endDate);
-        System.out.printf(format, "periodBetween = Period.between(startDate, endDate)", Period.between(startDate, endDate));
+        System.out.printf(format, "periodBetween = Period.between(startDate, endDate)", Period.between(startDate, endDate)); // Note that this results in P2Y11M30D, but startDate.plusYears(3) and startDate.plus(Period.ofYears(3)) also equals endDate in this case.
+        System.out.printf(format, "startDate.plus(Period.between(startDate, endDate))", startDate.plus(Period.between(startDate, endDate)));
+        System.out.printf(format, "startDate.plus(Period.ofYears(3))", startDate.plus(Period.ofYears(3)));
+        System.out.printf(format, "startDate.plusYears(3)", startDate.plusYears(3));
+        System.out.printf(format, "Period.between(startDate, endDate).equals(Period.ofYears(3))", Period.between(startDate, endDate).equals(Period.ofYears(3)));
+        System.out.printf(format, "Period.ofMonths(12).equals(Period.ofYears(1))", Period.ofMonths(12).equals(Period.ofYears(1)));
+        System.out.printf(format, "Period.ofDays(30).equals(Period.ofMonths(1))", Period.ofDays(30).equals(Period.ofMonths(1)));
+        System.out.printf(format, "Period.ofDays(365).equals(Period.ofYears(1))", Period.ofDays(365).equals(Period.ofYears(1)));
         System.out.printf(format, "periodBetween.getYears()", periodBetween.getYears());
         System.out.printf(format, "periodBetween.getMonths()", periodBetween.getMonths());
         System.out.printf(format, "ChronoUnit.MONTHS.between(startDate, endDate)", ChronoUnit.MONTHS.between(startDate, endDate));
