@@ -15,11 +15,19 @@ public class GeneratingStreamsWithIterate {
             sleep(1000);
             return x + 1;
         };
+
+        IntUnaryOperator generatorWithThreadId = x -> {
+            System.out.printf("Iterating %d. Thread Id: %s%n", x, Thread.currentThread().threadId());
+            sleep(1);
+            return x + 1;
+        };
+
         measure(() -> {
             var result = IntStream.iterate(1, generator).limit(5).toArray();
             System.out.printf("%s%n%n", Arrays.toString(result));
         });
         System.out.printf("%nNote that the seed is the first element and 4 other values are generated through the iterate operator. The time elapsed shows that as well. It took around 4 seconds.%n%n");
+
 
         sleep(7_000);
         measure(() -> IntStream.iterate(1, generator).skip(4).limit(5).forEach(System.out::println));
@@ -28,5 +36,13 @@ public class GeneratingStreamsWithIterate {
         sleep(7_000);
         System.out.printf("%nBelow is the same iterate method with limit and skip order changed to show the order affects the result.%n%n");
         measure(() -> IntStream.iterate(1, generator).limit(5).skip(4).forEach(System.out::println)); // This is to show that skip and limit order changes the result
+
+        sleep(7_000);
+        measure(() -> {
+            System.out.printf("%nBelow is the iterate method with parallel stream. Even though set to parallel, only one thread is used and iteration count is dramatically increased. Result is correct though and ordered.%n%n");
+            sleep(7_000);
+            var result = IntStream.iterate(1, generatorWithThreadId).parallel().limit(5).toArray();
+            System.out.printf("%s%n%n", Arrays.toString(result));
+        });
     }
 }
