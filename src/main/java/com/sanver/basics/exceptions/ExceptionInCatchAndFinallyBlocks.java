@@ -20,7 +20,8 @@ public class ExceptionInCatchAndFinallyBlocks {
         System.out.printf("%n%nExample 2%n%n");
 
         try {
-            try(var a = new A(1)) {
+            try(var a = new A(1);
+            var a2 = new A(0)) {
                 A.method(2);
             } catch (Exception e) { // This exception has the exception thrown from A.method(2) and also contains the exception thrown from the close method of a in its suppressedExceptions.
                 printExceptionMessages(e);
