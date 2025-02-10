@@ -22,6 +22,7 @@ public class EnhancedSwitchSample {
      * Demonstrates switch statement
      * <h3>Exhaustiveness</h3>
      * When using switch statements, it doesn’t really matter if all cases are covered.
+     * Note that, for pattern matching, even for switch statements, all cases needs to be covered.
      */
     private static void printAnimalTypeWithSwitchStatement(Animal animal) {
         switch(animal) {

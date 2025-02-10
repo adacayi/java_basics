@@ -38,7 +38,7 @@ public class SwitchPatternMatchingSample {
 
     /**
      * Demonstrates pattern matching in enhanced switch statement
-     *
+     * Note that, for pattern matching, even for switch statements, all cases needs to be covered.
      * @param obj Object to be described
      */
     public static void describe(Object obj) {
