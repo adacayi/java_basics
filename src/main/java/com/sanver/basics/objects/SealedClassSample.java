@@ -29,8 +29,8 @@ public class SealedClassSample {
     /**
      * Sealed superclass {@code Shape}, which permits only specific subclasses (Circle, Rectangle, and Triangle).
      */
-    public static sealed class Shape permits Circle, Rectangle, Triangle { // Note: In case when all permitted subclasses are declared in the same file there is no need to mention the explicitly and permits part of a declaration can be omitted.
-        public double area(){
+    public static sealed class Shape permits Circle, Rectangle, Triangle { // Note: In case when all permitted subclasses are declared in the same file, there is no need to use permits, but if we want to prevent some classes in the same file to not extend the sealed class, we still need the permits. e.g. if we remove permits here, Square can extend Shape as well, but with this usage, it results in a compile error.
+        public double area() {
             return 0;
         }
     }
@@ -67,6 +67,15 @@ public class SealedClassSample {
         @Override
         public double area() {
             return width * height;
+        }
+    }
+
+    /**
+     * Since Rectangle is specified as non-sealed, any class can extend Rectangle, as shown with this {@code Square} class
+     */
+    public static class Square extends Rectangle {
+        public Square(double length) {
+            super(length, length);
         }
     }
 
@@ -121,6 +130,7 @@ public class SealedClassSample {
 
     /**
      * Switch pattern matching is finalized in Java 21
+     *
      * @param shape the shape to process
      */
     public static void processShapeWithSwitchPatternMatching(Shape shape) {
@@ -158,7 +168,7 @@ public class SealedClassSample {
     }
 
     public static void processShapes(Consumer<Shape> shapeProcessor, Shape... shapes) {
-        for (var shape: shapes) {
+        for (var shape : shapes) {
             shapeProcessor.accept(shape);
         }
     }
