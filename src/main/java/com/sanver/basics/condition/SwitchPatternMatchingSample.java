@@ -1,0 +1,92 @@
+package com.sanver.basics.condition;
+
+import java.io.File;
+import java.time.Month;
+import java.util.List;
+
+/**
+ * Demonstrates pattern matching in switch statements in Java 21.
+ *
+ * <p>Java 21 enhances switch statements with pattern matching capabilities.
+ * This allows you to match against specific types within a switch and
+ * deconstruct objects directly, improving readability and reducing boilerplate code.
+ *
+ * <p>Key Features:
+ * <ul>
+ *   <li>Type checks with patterns (e.g., `case Integer i`).</li>
+ *   <li>Conditional patterns using `when` clauses.</li>
+ *   <li>Deconstruction of objects in `case` labels for structured types.</li>
+ * </ul>
+ *
+ * <p>Example Scenarios:
+ * <ul>
+ *   <li>Processing objects of different types differently.</li>
+ *   <li>Extracting fields from structured objects during the match.</li>
+ * </ul>
+ *
+ * <p>This example demonstrates pattern matching with a `switch` statement
+ * on a variety of object types, including String, Integer, and a custom record type.
+ */
+public class SwitchPatternMatchingSample {
+
+    public static void main(String[] args) {
+        var objects = List.of((byte) 2, (byte) 123, (short) 128, 20_000, 'f', Month.SEPTEMBER, "Abdullah", new Person("Abdullah", 40), new File("Non existent"));
+        objects.forEach(x -> describe(x));
+        System.out.println();
+        objects.forEach(x -> System.out.println(getDescription(x)));
+    }
+
+    /**
+     * Demonstrates pattern matching in enhanced switch statement
+     *
+     * @param obj Object to be described
+     */
+    public static void describe(Object obj) {
+        switch (obj) {
+
+            case Byte b when b < 10 ->
+                    System.out.println("Byte smaller than 10 " + b); // Note we cannot use byte as of Java 21. Primitive types in patterns, instanceof and switch are not supported at language level '21'
+            case Byte b ->
+                    System.out.println("Byte " + b); // Note that this won't be executed if obj is a Byte < 10, satisfying the above case. Also, if we move this case above the first case we will get an error: Label is dominated by a preceding case label 'Byte b'
+            case Short s -> System.out.println("Short " + s);
+            case Integer i -> System.out.println("Integer " + i);
+            case Character c -> System.out.println("Character " + c);
+            case Enum<?> e -> System.out.println("Enum " + e);
+            case String s -> System.out.println("String " + s);
+            case Person(String name, int age) -> System.out.printf("Person %s at age %d%n", name, age);
+            case Object o ->
+                    System.out.println("Object " + o);  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
+//            default -> System.out.println("Object " + obj); // We can either have the default case or the case Object.
+        }
+    }
+
+    /**
+     * Demonstrates pattern matching in switch expression
+     *
+     * @param obj Object to be described
+     * @return Description for the object
+     */
+    private static String getDescription(Object obj) {
+        return switch (obj) {
+
+            case Byte b when b < 10 ->
+                    "Byte smaller than 10 " + b; // Note we cannot use byte as of Java 21. Primitive types in patterns, instanceof and switch are not supported at language level '21'
+            case Byte b ->
+                    "Byte " + b; // Note that this won't be executed if obj is a Byte < 10, satisfying the above case. Also, if we move this case above the first case we will get an error: Label is dominated by a preceding case label 'Byte b'
+            case Short s -> "Short " + s;
+            case Integer i -> "Integer " + i;
+            case Character c -> "Character " + c;
+            case Enum<?> e -> "Enum " + e;
+            case String s -> "String " + s;
+            case Person(String name, int age) -> "Person %s at age %d%n".formatted(name, age);
+            case Object o ->
+                    "Object " + o;  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
+//            default -> "Object " + obj; // We can either have the default case or the case Object.
+        };
+    }
+
+
+    record Person(String name, int age) {
+    }
+}
+
