@@ -1,13 +1,9 @@
 package com.sanver.basics.concurrentcollections;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CountDownLatch;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
-
-import static com.sanver.basics.utils.RethrowAsUnchecked.uncheck;
 
 /**
  * Demonstrates the features of the ConcurrentSkipListSet in Java.
@@ -48,15 +44,12 @@ public class ConcurrentSkipListSetSample {
     // Use ConcurrentHashMap.newKeySet() to see unordered results.
 
     public static void main(String[] args) {
-        var latch = new CountDownLatch(1);
-        IntConsumer populate = i -> {
-            uncheck(() -> latch.await());
-            IntStream.range(0, 100).forEach(j -> values.add("%03d".formatted(100 * i + j))); // %03d is used, so that the order of the strings are the same as their corresponding integer values.
-        };
+        IntConsumer populate = i ->
+                IntStream.range(0, 100).forEach(j -> values.add("%03d".formatted(100 * i + j))); // %03d is used, so that the order of the strings are the same as their corresponding integer values.
 
-        var futures = IntStream.range(0, 10).mapToObj(i -> CompletableFuture.runAsync(() -> populate.accept(i))).toArray(CompletableFuture[]::new);
-        latch.countDown();
-        CompletableFuture.allOf(futures).join();
+
+        IntStream.range(0, 10).parallel().forEach(populate);
+
         System.out.println("values.remove(\"001\") : " + values.remove("001"));
         System.out.println("values.ceiling(\"001\"): " + values.ceiling("001"));
         System.out.println("values.ceiling(\"002\"): " + values.ceiling("002"));
