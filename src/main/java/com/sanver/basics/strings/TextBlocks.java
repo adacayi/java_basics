@@ -20,6 +20,8 @@ public class TextBlocks {
                 
                     Inside text blocks, double-quotes "" don’t have to be escaped.
                 We could even use three double-quotes \""" again in our text block by escaping one of them.
+                \\ can be escaped as well by using \\\\.
+                Note that we can still use \t \\t \n\\n etc. (\\n can be replaced by simply introducing the newline though)
                 
                     To aid with variable substitution, a new method formatted was added that allows calling the String.format method directly on a String literal:
                 
