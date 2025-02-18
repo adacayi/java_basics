@@ -1,6 +1,7 @@
 package com.sanver.basics.objects;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class RecordSample {
     /**
@@ -31,9 +32,9 @@ public class RecordSample {
      * </ul>
      * <a href = "https://www.baeldung.com/java-record-keyword">Source</a>
      */
-    record Person(String name, int age) {
-        public static String DEFAULT_NAME = "John"; // We can have non-final static fields in a record. This is just for demonstration purposes.
-        public static final int DEFAULT_AGE = 30;
+    record Person(String name, int age, String... addresses) {
+        public static String DEFAULT_NAME = "John"; // We can have non-final static fields (public or private or package private)  in a record. This is just for demonstration purposes.
+        private static final int DEFAULT_AGE = 30;
 //        public String address = ""; // This would result in a compile error. Instance fields are not allowed in records.
         
         /**
@@ -108,6 +109,9 @@ public class RecordSample {
             // This is just to demonstrate that static non-final fields in a record can be changed.
             Person.DEFAULT_NAME = "MIKE";
             System.out.println(new Person(12));
+            System.out.println(new Person(12).addresses().length);
+            System.out.println(new Person("Janet", 28).addresses().length);
+            System.out.println(Arrays.toString(new Person("Harry", 30, "Street1", "Street2").addresses()));
         }
 
         /**
