@@ -51,7 +51,7 @@ enum Days implements Capitalize { // Note: all enum types implicitly extend the 
 
     Days(int index) {  // This is a private constructor and its access modifier cannot be changed (e.g. it cannot be made public)
         this.index = index;
-    }
+    } // This is a private constructor. Enums can only have private constructors.
 
     public int getIndex() { // You can define methods like normal classes
         return index;
