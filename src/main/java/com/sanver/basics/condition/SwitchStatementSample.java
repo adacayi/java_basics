@@ -29,7 +29,7 @@ public class SwitchStatementSample {
             case TIGER:
                 result = "wild animal";
                 break;
-            default:
+            default: // This does not need to be the last case, unlike the switch pattern matching scenario. Assume it is the first case, then it will be executed if animal does not match any other cases.
                 result = "unknown animal";
                 break;
         }
