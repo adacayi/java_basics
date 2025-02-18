@@ -56,7 +56,8 @@ public class SwitchPatternMatchingSample {
             case Person(String name, int age) -> System.out.printf("Person %s at age %d%n", name, age);
             case Object o ->
                     System.out.println("Object " + o);  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
-//            default -> System.out.println("Object " + obj); // We can either have the default case or the case Object.
+//            default -> System.out.println("Object " + obj); // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
+//            Also, we can either have the default case or the case Object, not both.
         }
     }
 
@@ -81,7 +82,8 @@ public class SwitchPatternMatchingSample {
             case Person(String name, int age) -> "Person %s at age %d%n".formatted(name, age);
             case Object o ->
                     "Object " + o;  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
-//            default -> "Object " + obj; // We can either have the default case or the case Object.
+//            default -> "Object " + obj; // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
+//            Also, we can either have the default case or the case Object, not both.
         };
     }
 
