@@ -55,6 +55,14 @@ public class InstanceofPatternMatching {
         return (obj instanceof String str) ? str.toUpperCase() : null;
     }
 
+    public static void printPerson(Object object) {
+        if (object instanceof Person(var name, var age) && age > 18) {
+            System.out.printf("An adult %s at age %d%n", name, age );
+        } else{
+            System.out.println("Not an adult person");
+        }
+
+    }
     /**
      * Main method to demonstrate pattern matching with {@code instanceof}.
      */
@@ -63,10 +71,11 @@ public class InstanceofPatternMatching {
         Object integerObject = 42;
         Object negativeIntegerObject = -10;
         Object nonStringObject = 3.14;
+        Object person = new Person("Ahmet", 21);
 
         // Example 1: Checking and printing length of a String
         printStringLength(stringObject);
-        printStringLength(integerObject); // Not a String, should return "not a String."
+        printStringLength(integerObject); // Not a String, print "The object is not a String."
 
         // Example 2: Checking for positive Integer
         checkPositiveInteger(integerObject);       // Positive Integer
@@ -75,6 +84,13 @@ public class InstanceofPatternMatching {
         // Example 3: Converting to uppercase if the object is a String
         System.out.println("Converted to uppercase: " + convertToUpperIfString(stringObject));
         System.out.println("Converted to uppercase: " + convertToUpperIfString(nonStringObject)); // Not a String, should return null
+
+        // Example 4: Record pattern matching
+        printPerson(person);
+    }
+
+    record Person(String name, int age) {
+
     }
 }
 
