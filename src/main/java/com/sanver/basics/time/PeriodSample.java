@@ -72,9 +72,9 @@ public class PeriodSample {
         System.out.printf(format, "period1.isNegative()", period1.isNegative());
 
         // Example 6: Adding and Subtracting Periods
-        Period period2 = Period.of(1, 2, 10);  // 1 year, 2 months, 10 days
+        Period period2 = Period.of(1, 4, 25);  // 1 year, 2 months, 10 days
         System.out.printf(format, "period1 = Period.of(2, 3, 15)", period1);
-        System.out.printf(format, "period2 = Period.of(1, 2, 10)", period2);
+        System.out.printf(format, "period2 = Period.of(1, 4, 25)", period2);
         System.out.printf(format, "period1.plus(period2)", period1.plus(period2)); // Note that Period is immutable. period1 is not changed after invoking this method.
         System.out.printf(format, "period1.minus(period2)", period1.minus(period2));
         System.out.printf(format, "period1.minusYears(5)", period1.minusYears(5));
@@ -83,8 +83,8 @@ public class PeriodSample {
 
         // Example 7: Changing a part of the period
         System.out.printf(format, "period1.withYears(19)", period1.withYears(19));
-        System.out.printf(format, "period1.withMonths(7)", period1.withMonths(7));
-        System.out.printf(format, "period1.withDays(31)", period1.withDays(31));
+        System.out.printf(format, "period1.withMonths(-3)", period1.withMonths(-3));
+        System.out.printf(format, "period1.withDays(32)", period1.withDays(32));
     }
 }
 
