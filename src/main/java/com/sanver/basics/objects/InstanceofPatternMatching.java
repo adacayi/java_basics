@@ -57,9 +57,16 @@ public class InstanceofPatternMatching {
 
     public static void printPerson(Object object) {
         if (object instanceof Person(var name, var age) && age > 18) {
-            System.out.printf("An adult %s at age %d%n", name, age );
+                System.out.printf("An adult %s at age %d%n", name, age);
+        } else if (object instanceof Person(var name, var age)) {
+            System.out.printf("Not an adult %s at age %d%n", name, age);
+        }
+        if (object instanceof GenericPerson(String name, Integer age) && age > 18) { // For generic records these don't work: object instanceof GenericPerson(var name, var age) && age > 18, since age is inferred as Object
+            // object instanceof GenericPerson<>(String name, Integer age) && age > 18
+            // object instanceof GenericPerson<String, Integer>(String name, Integer age) && age > 18
+            System.out.printf("A generic person %s at age %d%n", name, age );
         } else{
-            System.out.println("Not an adult person");
+            System.out.println("Not a generic person");
         }
 
     }
@@ -72,6 +79,8 @@ public class InstanceofPatternMatching {
         Object negativeIntegerObject = -10;
         Object nonStringObject = 3.14;
         Object person = new Person("Ahmet", 21);
+        Object genericPerson = new GenericPerson<>("Ahmet", 21);
+        Object genericPerson2 = new GenericPerson<>(1, 2);
 
         // Example 1: Checking and printing length of a String
         printStringLength(stringObject);
@@ -87,9 +96,14 @@ public class InstanceofPatternMatching {
 
         // Example 4: Record pattern matching
         printPerson(person);
+        printPerson(genericPerson);
+        printPerson(genericPerson2);
     }
 
     record Person(String name, int age) {
+
+    }
+    record GenericPerson<X,Y>(X name, Y age) {
 
     }
 }
