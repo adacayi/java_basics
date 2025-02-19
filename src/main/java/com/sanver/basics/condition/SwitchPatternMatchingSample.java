@@ -53,7 +53,7 @@ public class SwitchPatternMatchingSample {
             case Character c -> System.out.println("Character " + c);
             case Enum<?> e -> System.out.println("Enum " + e);
             case String s -> System.out.println("String " + s);
-            case Person(String name, int age) -> System.out.printf("Person %s at age %d%n", name, age);
+            case Person(var name, var age) -> System.out.printf("Person %s at age %d%n", name, age); // We can also use Person(String name, int age)
             case Object o ->
                     System.out.println("Object " + o);  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> System.out.println("Object " + obj); // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
@@ -79,7 +79,7 @@ public class SwitchPatternMatchingSample {
             case Character c -> "Character " + c;
             case Enum<?> e -> "Enum " + e;
             case String s -> "String " + s;
-            case Person(String name, int age) -> "Person %s at age %d%n".formatted(name, age);
+            case Person(var name, var age) -> "Person %s at age %d%n".formatted(name, age); // We can also use Person(String name, int age)
             case Object o ->
                     "Object " + o;  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> "Object " + obj; // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
