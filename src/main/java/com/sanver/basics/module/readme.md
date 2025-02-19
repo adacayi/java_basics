@@ -82,9 +82,16 @@ java -p 'target/com.client;target/com.greeter;target/com.hellogreeter' -m com.cl
     jar --create --file com.client.jar --main-class com.client.Application -C target/com.client .
     jar --create --file com.greeter.jar -C target/com.greeter .
     jar --create --file com.hellogreeter.jar -C target/com.hellogreeter .
-    jar --create --file com.higreeter.jar -C target/com.higreeter . 
+    jar --create --file com.higreeter.jar -C target/com.higreeter .
+    
+    or
+    
+    jar -cfe com.client.jar com.client.Application -C target\com.client .
+    jar -cf com.greeter.jar -C target\com.greeter .
+    jar -cf com.hellogreeter.jar -C target\com.hellogreeter .
+    jar -cf com.higreeter.jar -C target\com.higreeter . 
 ```
-Note that `--main-class` specifies the main class in the jar. 
+Note that `--main-class` or `-e` specifies the main class in the jar. `-c` is for `--create` and `-f` is for `--file`. 
 
 The `-C` option is to make the jar command change its working directory before adding files to the jar.
 
@@ -103,6 +110,10 @@ The `.` at the end means including everything in the current directory to the ja
 8. It is possible to use a modular jar just like a non-modular jar. But this way, we lose all the benefits of the module like the services. For example, we won't see the services when `com.client.Application` is run even with the implementations are provided in the classpath.
 ```
     java -cp 'com.client.jar;com.greeter.jar;com.hellogreeter.jar;com.higreeter.jar' com.client.Application
+```
+Note that the below won't work because the `-jar` option is used to run a single executable JAR file, and when it's specified, the `-cp` (classpath) option is ignored.
+```
+    java -cp 'com.greeter.jar;com.hellogreeter.jar;com.higreeter.jar' -jar com.client.jar    
 ```
 9. Listing modules in a module path
 ```
@@ -130,8 +141,24 @@ The `.` at the end means including everything in the current directory to the ja
     jdeps --module-path 'com.client.jar;com.greeter.jar' -m com.client -verbose // same as -verbose:class -filter:none
     jdeps --module-path 'com.client.jar;com.greeter.jar' -m com.client -filter:module // Filter dependences within the same module. default is -filter:package
     jdeps -m java.base
+    
+    jdeps --module-path 'com.client.jar;com.greeter.jar' -m com.client -verbose:class
 ```
 
+Note that there is no shorter version for `--module-path` for `jdeps`.
+
+`-verbose:class` prints class level dependencies excluding dependences within the same package by default
+
+`--jdk-internals` finds class-level dependences on JDK internal APIs.
+
+Usage with a `jar` or a `.class` file
+```
+   jdeps com.greeter.jar
+   jdeps target\com.client\com\client\Application.class
+   
+   jdeps --jdk-internals com.greeter.jar
+   jdeps --module-path 'com.client.jar;com.greeter.jar' com.client.jar // -cp or --classpath does not work here since the com.client requires a module com.greeter
+```
 ## Key points
 1. **Module declaration** is defined in a file named `module-info.java`.
 2. Compiling the module declaration creates the **module descriptor**, which is stored in a file named `module-info.class` in the module’s root folder.

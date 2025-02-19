@@ -43,6 +43,7 @@ public class RecordSample {
          *
          * @param name the name of the person
          * @param age  the age of the person, which must be non-negative
+         * @param addresses the addresses of the person
          * @throws IllegalArgumentException if the age is negative
          */
         public Person {
@@ -60,7 +61,7 @@ public class RecordSample {
         }
 
 //        Since we have the compact constructor, which has the same name and age arguments, we cannot have this constructor with the same arguments. Otherwise, this is possible as well.
-//        public Person(String name, int age) {
+//        public Person(String name, int age, String... addresses) {
 //            this.name = name;
 //            this.age = age;
 //        }
