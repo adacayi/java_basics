@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalDouble;
@@ -49,7 +50,16 @@ public class CollectorAggregation {
                 supplier.get().max(comparator).orElse(new Person("", 0)));
         optionalIntResult = supplier.get().mapToInt(p -> p.age).max();
         System.out.println("Maximum age is " + optionalIntResult.orElse(0));
-        System.out.println("Summary: " + supplier.get().collect(Collectors.summarizingInt(Person::age)));
+        DoubleSummaryStatistics doubleSummary = supplier.get().collect(Collectors.<Person>summarizingDouble(p -> p.age() * 0.1)); // We can have summarizingInt and summarizingLong methods as well, resulting in IntSummaryStatistics and LongSummaryStatistics, based on the sum, min, average and max of the results of the ToIntFunction or ToLongFunction passed to the method.
+        System.out.println("doubleSummary: " + doubleSummary);
+        System.out.println("doubleSummary.getCount(): " + doubleSummary.getCount());
+        System.out.println("doubleSummary.getSum(): " + doubleSummary.getSum()); // getSum() returns double for DoubleSummaryStatistics
+        System.out.println("doubleSummary.getMin(): " + doubleSummary.getMin()); // getMin() returns double for DoubleSummaryStatistics
+        System.out.println("doubleSummary.getMax(): " + doubleSummary.getMax()); // getMax() returns double for DoubleSummaryStatistics
+        System.out.println("doubleSummary.getAverage(): " + doubleSummary.getAverage()); // getAverage() returns double for DoubleSummaryStatistics
+        System.out.println("Empty stream summarizingDouble: " +Stream.empty().collect(Collectors.summarizingDouble(x->1)));
+        System.out.println("Empty stream summarizingInt: " +Stream.empty().collect(Collectors.summarizingInt(x->1)));
+        System.out.println("Empty stream summarizingLong: " +Stream.empty().collect(Collectors.summarizingLong(x->1)));
         System.out.println(supplier.get().map(p -> p.name + " with age " + p.age)
                 .collect(Collectors.joining(" and ", "People in the collection are ", ".")));
         System.out.println(
