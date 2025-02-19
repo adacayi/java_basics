@@ -28,7 +28,7 @@ public class NoFieldOverride {
         }
 
         void print() {
-            System.out.printf("A.value = %d B.value = %d%n", super.value, value); // This is to show how to access a field of a super class
+            System.out.printf("A.value = %d B.value = %d%n", super.value, value); // This is to show how to access a field of a super class. We can also do ((A)this).value.
         }
     }
 
@@ -42,7 +42,7 @@ public class NoFieldOverride {
 
         @Override
         void print() {
-            System.out.printf("A.value = %d, B.value = %d C.value = %s%n", ((A)this).value, super.value, this.value); // we cannot use super.super.value to access value field of class A, but we can use ((A)this).value instead.
+            System.out.printf("A.value = %d, B.value = %d C.value = %s%n", ((A)this).value, super.value, value); // we cannot use super.super.value to access value field of class A, but we can use ((A)this).value instead.
         }
     }
 
