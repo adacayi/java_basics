@@ -57,19 +57,29 @@ public class InstanceofPatternMatching {
 
     public static void printPerson(Object object) {
         if (object instanceof Person(var name, var age) && age > 18) {
-                System.out.printf("An adult %s at age %d%n", name, age);
+            System.out.printf("An adult %s at age %d%n", name, age);
         } else if (object instanceof Person(var name, var age)) {
             System.out.printf("Not an adult %s at age %d%n", name, age);
         }
-        if (object instanceof GenericPerson(String name, Integer age) && age > 18) { // For generic records these don't work: object instanceof GenericPerson(var name, var age) && age > 18, since age is inferred as Object
+        if (object instanceof GenericPerson(String name, Integer age) && age > 18) {
+            // This won't work: object instanceof GenericPerson(var name, var age) && age > 18
+            // since `object`'s reference type is Object (printPerson(Object object)), thus name and age variable types cannot be inferred, so they are set as Object. Thus, age > 18 will result in a compile error.
+            // If it was GenericPerson<String, Integer>, it would work.
+            // Try this:
+            GenericPerson<String, Integer> gp = (GenericPerson<String, Integer>) object;
+            if (gp instanceof GenericPerson(var name1, var age1) && age1 > 50) { // age1's type is inferred as Integer since `gp`'s reference type is GenericPerson<String, Integer>
+                System.out.printf("An old generic person %s at age %d%n", name1, age1);
+            }
+            // For generic records these don't work:
             // object instanceof GenericPerson<>(String name, Integer age) && age > 18
             // object instanceof GenericPerson<String, Integer>(String name, Integer age) && age > 18
-            System.out.printf("A generic person %s at age %d%n", name, age );
-        } else{
+            System.out.printf("A generic person %s at age %d%n", name, age);
+        } else {
             System.out.println("Not a generic person");
         }
 
     }
+
     /**
      * Main method to demonstrate pattern matching with {@code instanceof}.
      */
@@ -103,7 +113,8 @@ public class InstanceofPatternMatching {
     record Person(String name, int age) {
 
     }
-    record GenericPerson<X,Y>(X name, Y age) {
+
+    record GenericPerson<X, Y>(X name, Y age) {
 
     }
 }
