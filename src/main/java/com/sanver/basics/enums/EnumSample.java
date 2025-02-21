@@ -52,9 +52,11 @@ enum Days implements Capitalize { // Note: all enum types implicitly extend the 
     };
 
     private final int index; // You can define instance variables like normal classes
+    public String capitalizedName;
 
     Days(int index) {  // This is a private constructor and its access modifier cannot be changed (e.g. it cannot be made public)
         this.index = index;
+        capitalizedName = capitalize();
     } // This is a private constructor. Enums can only have private constructors.
 
     abstract void print(); // This is to show that enums can have abstract methods, which can be implemented in the enum constants as seen above.
@@ -72,6 +74,14 @@ enum Days implements Capitalize { // Note: all enum types implicitly extend the 
     public String capitalize() {
         return IntStream.range(0, name().length()).mapToObj(i -> i == 0 ? String.valueOf(name().charAt(0)).toUpperCase() : String.valueOf(name().charAt(i)).toLowerCase()).collect(Collectors.joining(""));
     }
+
+    private class SomeClass{ } // We can define inner classes, static classes abstract classes and interfaces in an enum
+
+    private static class SomeStaticClass{}
+
+    public abstract class SomeAbstractClass{}
+
+    protected interface SomeInterface{}
 }
 
 interface Capitalize {
@@ -100,6 +110,7 @@ public class EnumSample {
         System.out.printf("%nDistinct days sorted by TreeSet%n");
         var distinctDays = new TreeSet<>(randomDays); // Since Enum implements Comparable and compares based on the ordinal value, it will sort the set accordingly.
         System.out.println(distinctDays);
+        System.out.println(Days.TUESDAY.capitalizedName);
     }
 
     public static <T extends Enum<T>> T getRandomEnum(Class<T> type) {
