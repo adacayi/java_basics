@@ -4,54 +4,60 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * {@link Enum} implements {@link Comparable} which compares based on the ordinal value.
+ * {@link Enum#compareTo}
+ */
 enum Days implements Capitalize { // Note: all enum types implicitly extend the java.lang.Enum. enums cannot extend another class. e.g. enum Days extends Object is not allowed. Implements is allowed though.
     // The first thing in an enum must be its list of constants
-    SUNDAY(7){ // This calls the private constructor of the enum.
+    SUNDAY(7) { // This calls the private constructor of the enum.
+
         void print() { // This overrides the print method
             System.out.println("The day is Sunday");
         }
     }, // This calls the constructor with parameter 7 to generate the SUNDAY instance of the Days enum.
-    MONDAY(1){
+    MONDAY(1) {
         void print() {
             System.out.println("The day is Monday");
         }
     },
-    TUESDAY(2){
+    TUESDAY(2) {
         void print() {
             System.out.println("The day is Tuesday");
         }
     },
-    WEDNESDAY(3){
+    WEDNESDAY(3) {
         void print() {
             System.out.println("The day is Wednesday");
         }
     },
-    THURSDAY(4){
+    THURSDAY(4) {
         void print() {
             System.out.println("The day is Thursday");
         }
     },
-    FRIDAY(5){
+    FRIDAY(5) {
         void print() {
             System.out.println("The day is Friday");
         }
     },
-    SATURDAY(6){
+    SATURDAY(6) {
         void print() {
             System.out.println("The day is Saturday");
         }
     };
-
-    abstract void print(); // This is to show that enums can have abstract methods, which can be implemented in the enum constants as seen above.
 
     private final int index; // You can define instance variables like normal classes
 
     Days(int index) {  // This is a private constructor and its access modifier cannot be changed (e.g. it cannot be made public)
         this.index = index;
     } // This is a private constructor. Enums can only have private constructors.
+
+    abstract void print(); // This is to show that enums can have abstract methods, which can be implemented in the enum constants as seen above.
 
     public int getIndex() { // You can define methods like normal classes
         return index;
@@ -87,8 +93,13 @@ public class EnumSample {
             System.out.printf("%-9s ordinal: %d, index %d%n", day, day.ordinal(), day.getIndex());
         }
 
-        System.out.println("10 random days");
-        IntStream.range(0, 10).forEach(x -> System.out.println(getRandomEnum(Days.class)));
+        System.out.printf("%n10 random days%n");
+        var randomDays = IntStream.range(0, 10).mapToObj(x -> getRandomEnum(Days.class)).toList();
+        System.out.println(randomDays);
+
+        System.out.printf("%nDistinct days sorted by TreeSet%n");
+        var distinctDays = new TreeSet<>(randomDays); // Since Enum implements Comparable and compares based on the ordinal value, it will sort the set accordingly.
+        System.out.println(distinctDays);
     }
 
     public static <T extends Enum<T>> T getRandomEnum(Class<T> type) {
