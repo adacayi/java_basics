@@ -38,7 +38,15 @@ public class NumberFormatSample {
         // Example 2: Basic number formatting with default locale and compact number instance
         numFormat = NumberFormat.getCompactNumberInstance();
         formattedNumber = numFormat.format(12345.6789);
-        System.out.println("Default locale compact number: " + formattedNumber);
+        System.out.println("Default locale compact number (Style SHORT): " + formattedNumber);
+
+        numFormat = NumberFormat.getCompactNumberInstance(Locale.getDefault(), NumberFormat.Style.SHORT);
+        formattedNumber = numFormat.format(12345.6789);
+        System.out.println("Default locale compact number SHORT style: " + formattedNumber);
+
+        numFormat = NumberFormat.getCompactNumberInstance(Locale.getDefault(), NumberFormat.Style.LONG);
+        formattedNumber = numFormat.format(12345.6789);
+        System.out.println("Default locale compact number LONG style: " + formattedNumber);
 
         // Example 3: Currency formatting with US locale
         NumberFormat usCurrencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
@@ -65,6 +73,7 @@ public class NumberFormatSample {
         preciseFormat.setMinimumFractionDigits(3);
         preciseFormat.setMaximumFractionDigits(5);
         System.out.println("Precise number: " + preciseFormat.format(123.456789));
+        System.out.println("Precise number: " + preciseFormat.format(123.45));
 
         // Example 9: Parsing numeric strings
         try {
