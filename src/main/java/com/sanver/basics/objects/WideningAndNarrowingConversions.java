@@ -40,8 +40,8 @@ public class WideningAndNarrowingConversions {
 //        Integer i1 = b; Integer i2 = (Integer) b;// These won't compile. Java does not perform implicit or explicit widening conversion to non-primitive (wrapper) types.
         Integer i1 = (int)b; // This works, because int can be boxed automatically to Integer.
         int i2 = Byte.valueOf((byte)0); // Java allows unboxing and implicit widening in a single step.
-//         b = (byte)Integer.valueOf(2);// This does not work either. We cannot explicitly convert a wrapper type to a different primitive type. java.lang.Integer cannot be converted to byte.
-         b = (byte)Byte.valueOf((byte)2);// This works
+//         b = (byte)Integer.valueOf(2);// This does not work. We cannot explicitly convert a wrapper type to a narrower primitive type. java.lang.Integer cannot be converted to byte.
+        l = (long)Integer.valueOf(2); // This works. We don't need to do this explicitly though, since unboxing automatically and implicit widening is possible as shown above.
         Double d1 = (double)Byte.valueOf((byte)2); // This also works, where we do an explicit conversion from Byte to double and then an autoboxing is done.
         // b = (byte)Double.valueOf(2); // This does not work
         b = (byte)(double)Double.valueOf(2);// This works
