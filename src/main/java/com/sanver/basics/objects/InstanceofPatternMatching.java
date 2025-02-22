@@ -56,11 +56,16 @@ public class InstanceofPatternMatching {
     }
 
     public static void printPerson(Object object) {
-        if (object instanceof Person(var name, var age) && age > 18) {
+        if (object instanceof Person(var name, var age, var address) && age > 18) { // Note that we need to specify all the fields of Person like address, even though we don't need to access them later in the if block.
             System.out.printf("An adult %s at age %d%n", name, age);
-        } else if (object instanceof Person(var name, var age)) {
+        } else if (object instanceof Person(var name, var age, var address)) {
             System.out.printf("Not an adult %s at age %d%n", name, age);
         }
+
+        if (object instanceof Person(var name, var age, Address(var street, var doorNumber))) { // Note that record pattern matching can be used for inner records as well
+            System.out.printf("Person's address is: %s Street, No: %d%n", street, doorNumber);
+        }
+
         if (object instanceof GenericPerson(String name, Integer age) && age > 18) {
             // This won't work: object instanceof GenericPerson(var name, var age) && age > 18
             // since `object`'s reference type is Object (printPerson(Object object)), thus name and age variable types cannot be inferred, so they are set as Object. Thus, age > 18 will result in a compile error.
@@ -88,7 +93,7 @@ public class InstanceofPatternMatching {
         Object integerObject = 42;
         Object negativeIntegerObject = -10;
         Object nonStringObject = 3.14;
-        Object person = new Person("Ahmet", 21);
+        Object person = new Person("Ahmet", 21, new Address("Baker", 22));
         Object genericPerson = new GenericPerson<>("Ahmet", 21);
         Object genericPerson2 = new GenericPerson<>(1, 2);
 
@@ -110,11 +115,15 @@ public class InstanceofPatternMatching {
         printPerson(genericPerson2);
     }
 
-    record Person(String name, int age) {
+    record Person(String name, int age, Address address) {
 
     }
 
     record GenericPerson<X, Y>(X name, Y age) {
+
+    }
+
+    record Address(String street, int doorNumber) {
 
     }
 }
