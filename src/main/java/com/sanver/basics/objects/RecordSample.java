@@ -50,10 +50,27 @@ public class RecordSample {
             if (age < 0) {
                 throw new IllegalArgumentException("Age cannot be negative");
             }
-//            System.out.println(this.age); // This will result in a compile error. java: variable age might not have been initialized
-//             this.age = age; // Note that we do not need to and cannot assign the final field variables in the compact constructor. It will result in a compile error.  java: cannot assign a value to final variable age
-            System.out.println("age(): " + age()); // This works fine and will always print 0 indicating that at this stage the final field values are not assigned to their values.
+            // In a compact constructor, the constructor body is executed before the record's fields are assigned the values of the parameters.
+            // After the constructor body runs, the fields are assigned the (possibly modified) values of the parameters.
+//            System.out.println(this.age); // Although, in Java, instance fields are initialized to their default values before any constructor code runs,
+//            for final fields, we cannot access their values after they are assigned in our code explicitly.
+//            Thus, at this point this.age will result in a compile error: java: variable age might not have been initialized
+//             this.age = age; // Note that we cannot assign the final field variables in the compact constructor. It will result in a compile error.  java: cannot assign a value to final variable age
+            System.out.println("age(): " + age()); // This works fine and will always print 0, since in Java, instance fields are initialized to their default values before any constructor code runs
+            // (but remember, we cannot directly access it with this.age), since age is final, but age() works.
+            // For a non-final field in a class, we can access it directly as well and see its default value:
+            // e.g.
+            /*
+            class Baby{
+                int age; // If this was final, the `System.out.println(this.age)` in the constructor below would result in a compile error.
+
+                Baby(int age) {
+                    System.out.println(this.age); // Note that we can access this, since this.age is not final, and its value is the default value for int, which is 0.
+                    this.age = age;
+                }
+            }*/
             System.out.println("age  : " + age); // This works fine and will always print the age value passed to the constructor.
+            age += 100; // This is to show that the record fields are assigned the values of the compact constructor's parameters after the compact constructor's body is executed.
         }
 
         /**
