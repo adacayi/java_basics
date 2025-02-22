@@ -50,6 +50,10 @@ public class RecordSample {
             if (age < 0) {
                 throw new IllegalArgumentException("Age cannot be negative");
             }
+//            System.out.println(this.age); // This will result in a compile error. java: variable age might not have been initialized
+//             this.age = age; // Note that we do not need to and cannot assign the final field variables in the compact constructor. It will result in a compile error.  java: cannot assign a value to final variable age
+            System.out.println("age(): " + age()); // This works fine and will always print 0 indicating that at this stage the final field values are not assigned to their values.
+            System.out.println("age  : " + age); // This works fine and will always print the age value passed to the constructor.
         }
 
         /**
