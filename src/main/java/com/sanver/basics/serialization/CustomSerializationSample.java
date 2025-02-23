@@ -52,7 +52,7 @@ public class CustomSerializationSample {
         }
 
         // Custom serialization method
-        private void writeObject(ObjectOutputStream out) throws IOException {
+        private void writeObject(ObjectOutputStream out) throws IOException { // If the access privilege is not private, or the method signature is different, this method won't be executed when serializing
             // First, call the default serialization implementation
             out.defaultWriteObject();
 
@@ -67,7 +67,7 @@ public class CustomSerializationSample {
         }
 
         // Custom deserialization method
-        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException { // If the access privilege is not private, or the method signature is different, this method won't be executed when deserializing
             // First, call the default deserialization implementation
             in.defaultReadObject();
 
