@@ -16,6 +16,7 @@ public class NoStaticOverride {
             // but unlike hidden fields, even though technically possible,
             // by design choice return types that are not of instance of the hidden method's return type are not allowed.
             // i.e. static int getType(){return 1} or static void getType(){} are not allowed.
+            // Also, we cannot assign weaker access privileges (e.g. getType() here cannot be private)
             // We can have different return types for static methods in interfaces though.
             System.out.println("Returning type for C");
             return "C";
@@ -29,7 +30,8 @@ public class NoStaticOverride {
     }
 
     interface E extends D {
-        static String getValue() { // Different return type is allowed in a static method with the same name of a method in a base interface.
+        static String getValue() { // Different return type and assigning weaker access privilege is allowed in a static method with the same name of a method in a base interface.
+            // Note that in an interface static method access privilege is by default public, and it can only be public or private.
             return "E";
         }
     }
