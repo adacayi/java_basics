@@ -42,48 +42,65 @@ import java.util.TreeSet;
 public class SortedSetSample {
     public static void main(String[] args) {
         // Create a SortedSet using TreeSet
-        SortedSet<String> set = new TreeSet<>();
+        SortedSet<Integer> set = new TreeSet<>();
 
         // Demonstrate adding elements (automatically sorted)
-        set.add("Banana");
-        set.add("Apple");
-        set.add("Cherry");
-        set.add("Date");
-        set.add("Apple"); // Duplicate, will be ignored
+        set.add(3);
+        set.add(2);
+        set.add(4);
+        set.add(5);
+        set.add(2); // Duplicate, will be ignored
 
 //        set.addFirst("Orange"); // This will throw UnsupportedOperationException, since we cannot add an element to a random place in a SortedSet.
 //        set.addLast("Watermelon"); // This will throw UnsupportedOperationException, since we cannot add an element to a random place in a SortedSet.
         System.out.println("Original sorted set: " + set);
 
         // Demonstrate first and last
-        System.out.println("First element: " + set.first());
-        System.out.println("Last element: " + set.last());
+        System.out.println("set.first(): " + set.first());
+        System.out.println("set.last(): " + set.last());
 
         // Demonstrate first and last
-        System.out.println("First element: " + set.getFirst()); // getFirst() calls first()
-        System.out.println("Last element: " + set.getLast()); // getLast() calls last
+        System.out.println("set.getFirst(): " + set.getFirst()); // getFirst() calls first()
+        System.out.println("set.getLast(): " + set.getLast()); // getLast() calls last
 
         // Demonstrate subset operations
-        SortedSet<String> head = set.headSet("Cherry");
-        System.out.println("Elements before 'Cherry': " + head);
+        SortedSet<Integer> head = set.headSet(4);
+        System.out.println("head = set.headSet(4): " + head);
 
-        SortedSet<String> tail = set.tailSet("Banana");
-        System.out.println("Elements from 'Banana' onward: " + tail);
+        SortedSet<Integer> tail = set.tailSet(3);
+        System.out.println("tail = set.tailSet(3): " + tail);
 
-        SortedSet<String> sub = set.subSet("Apple", "Date");
-        System.out.println("Elements from 'Apple' to 'Date': " + sub);
+        SortedSet<Integer> sub = set.subSet(2, 4);
+        System.out.println("sub = set.subSet(2, 4): " + sub);
+
 
         // Demonstrate removal of first and last (using remove)
-        System.out.println("remove first: " + set.removeFirst());
-        System.out.println("remove last: " + set.removeLast());
-        System.out.println("set: " + set);
+        System.out.println("set.removeFirst(): " + set.removeFirst());
+        System.out.println("set.removeLast(): " + set.removeLast());
+        print(head, tail, sub, set); // This is to demonstrate that sub sets are affected as well.
+
+        // Demonstrating changes to a set/subset changes other subsets and the original set
+        set.add(7);
+        tail.add(6);
+        tail.add(5);
+//        sub.add(8); we can only add numbers between the first and last element of the original set to the subsets, (e.g. head, tail, sub)
+        System.out.println("set.add(7);");
+        System.out.println("tail.add(6);");
+        System.out.println("tail.add(5);");
+        print(head, tail, sub, set);
 
         // Add new elements to see sorting in action
-        set.add("Elderberry");
-        set.add("Apricot");
+
         System.out.println("After adding new elements: " + set);
 
         // Demonstrate comparator (natural ordering in this case)
         System.out.println("Comparator: " + (set.comparator() == null ? "Natural ordering" : set.comparator()));
+    }
+
+    private static void print(SortedSet<Integer> head, SortedSet<Integer> tail, SortedSet<Integer> sub, SortedSet<Integer> set) {
+        System.out.println("set: " + set);
+        System.out.println("head: " + head);
+        System.out.println("tail: " + tail);
+        System.out.println("sub: " + sub);
     }
 }
