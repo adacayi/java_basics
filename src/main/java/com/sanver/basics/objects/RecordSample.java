@@ -32,7 +32,7 @@ public class RecordSample {
      * </ul>
      * <a href = "https://www.baeldung.com/java-record-keyword">Source</a>
      */
-    record Person(String name, int age, String... addresses) {
+    record Person(String name, int age, String... addresses) { // This is static by default and cannot access any instance members of its outer class (e.g. RecordSample.this.someMember won't compile)
         private static final int DEFAULT_AGE = 30;
         public static String DEFAULT_NAME = "John"; // We can have final/non-final static fields with any access modifier (public, protected, private and package private) in a record.
 //      public String address = ""; // This would result in a compile error. Instance fields are not allowed in records.

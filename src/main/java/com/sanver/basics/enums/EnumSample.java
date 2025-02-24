@@ -17,7 +17,7 @@ public class EnumSample {
      * {@link Enum} implements {@link Comparable} which compares based on the ordinal value.
      * {@link Enum#compareTo}
      */
-    enum Days implements Capitalize { // This is automatically static(i.e. no need to write `static enum Days implements Capitalize{..}`)
+    enum Days implements Capitalize { // This is automatically static(i.e. no need to write `static enum Days implements Capitalize{..}`) and cannot access any instance members of its outer class (e.g. EnumSample.this.someMember won't compile)
         // Note: all enum types implicitly extend the java.lang.Enum. enums cannot extend another class. e.g. enum Days extends Object is not allowed. Implements is allowed though.
         // The first thing in an enum must be its list of constants
         SUNDAY(7) { // This calls the private constructor of the enum.
