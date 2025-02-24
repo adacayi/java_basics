@@ -44,10 +44,15 @@ public class SimpleOverrideSample {
 		static Number getStaticNumber() {
 			return 30;
 		}
+
+		static int getStaticPrimitiveNumber() {
+			return 40;
+		}
 	}
 
 	static class E extends D{
-		Integer getNumber() { // Overriding method return type can only be a covariant return type of the overridden method. Boxing/unboxing, implicit conversion is not allowed.
+		Integer getNumber() { // Overriding method return type can only be a covariant return type of the overridden method.
+			// Boxing/unboxing, implicit conversion are not allowed.
 			return 2;
 		}
 
@@ -58,13 +63,14 @@ public class SimpleOverrideSample {
 
 		static Integer getStaticNumber() { // There is no static method override, check NoStaticOverride,
 			// but still static methods should have the covariant return type of the static method in the base class they are hiding (not overriding).
+			// Boxing/unboxing, implicit conversion are not allowed.
 			return 3;
 		}
 
 //		static Object getStaticNumber() { return 3;} // This won't compile
 //		static int getStaticNumber() { return 3;} // This won't compile
-//		static byte getStaticNumber() { return 3;} // This won't compile
-//		static long getStaticNumber() { return 3;} // This won't compile
+//		static byte getStaticPrimitiveNumber() { return 3;} // This won't compile
+//		static long getStaticPrimitiveNumber() { return 3;} // This won't compile
 
 	}
 
