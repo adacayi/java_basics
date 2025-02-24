@@ -1,15 +1,16 @@
 package com.sanver.basics.collections;
 
-import java.util.SequencedSet;
 import java.util.LinkedHashSet;
+import java.util.SequencedSet;
 
 /**
- * Demonstrates the usage of SequencedSet interface, introduced in Java 21,
+ * Demonstrates the usage of {@link SequencedSet} interface, introduced in Java 21,
  * to enhance sets with sequence-aware operations while maintaining uniqueness.
- * A SequencedSet provides methods to access elements in a defined order,
+ * It extends {@link java.util.SequencedCollection}.
+ * A {@link SequencedSet} provides methods to access elements in a defined order,
  * with support for operations at both ends of the set, and ensures no duplicate elements.
  *
- * <p>The SequencedSet interface inherits from SequencedCollection and defines the following methods:
+ * <p>The {@link SequencedSet} interface inherits from {@link java.util.SequencedCollection} and defines the following methods:
  * <ul>
  *   <li>{@code addFirst(E e)} - Adds an element at the beginning if not already present</li>
  *   <li>{@code addLast(E e)} - Adds an element at the end if not already present</li>
@@ -49,9 +50,9 @@ public class SequencedSetSample {
         // Demonstrate addFirst and addLast
         set.addFirst("First");
         set.addLast("Last");
+        set.addFirst("New Last");
         set.addFirst("New First");
-        set.addLast("New Last");
-        set.addLast("First"); // Duplicate, will be ignored
+        set.addLast("New Last"); // Although duplicate, it will change the order of the New Last as the last element. Comment out to see the difference.
 
         System.out.println("Original set: " + set);
 
@@ -77,7 +78,7 @@ public class SequencedSetSample {
         reversed.addFirst("newFirst"); // Adds to end of original set
         reversed.addLast("newLast");   // Adds to start of original set
         System.out.println("Reversed after addFirst and addLast: " + reversed);
-        System.out.println("Original after reversed modifications: " + set);
+        System.out.println("Original after reversed modifications: " + set); // Note that changes to the reversed also changes the original
         System.out.println("reversed.getFirst(): " + reversed.getFirst());
         System.out.println("reversed.getLast(): " + reversed.getLast());
         System.out.println("reversed.removeFirst(): " + reversed.removeFirst());

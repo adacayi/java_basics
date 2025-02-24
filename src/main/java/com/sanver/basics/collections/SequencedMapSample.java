@@ -1,15 +1,16 @@
 package com.sanver.basics.collections;
 
+import java.util.LinkedHashMap;
 import java.util.SequencedMap;
 import java.util.TreeMap;
 
 /**
- * Demonstrates the usage of the SequencedMap interface, introduced in Java 21,
+ * Demonstrates the usage of the {@link SequencedMap} interface, introduced in Java 21,
  * to enhance map collections with sequence-aware operations.
  * A SequencedMap provides methods to access entries in a defined order,
  * supporting operations at both ends of the map based on its entry sequence.
  *
- * <p>The SequencedMap interface defines the following key methods:
+ * <p>The {@link SequencedMap} interface defines the following key methods:
  * <ul>
  *   <li>{@code firstEntry()} - Returns the first entry (key-value pair) in the map</li>
  *   <li>{@code lastEntry()} - Returns the last entry in the map</li>
@@ -49,8 +50,15 @@ import java.util.TreeMap;
  */
 public class SequencedMapSample {
     public static void main(String[] args) {
+        SequencedMap<Integer, String> map = new LinkedHashMap<>();
+        map.putFirst(3, "Three");
+        map.putLast(2, "Two");
+        map.putFirst(1, "One");
+        map.putLast(3, "Three"); // Note that even this has a duplicate key, the order will change
+        System.out.println("Original map for LinkedHashMap: " + map);
+
         // Create a SequencedMap using TreeMap (natural key order)
-        SequencedMap<Integer, String> map = new TreeMap<>();
+        map = new TreeMap<>();
 
         // Add entries using standard put
         map.put(3, "Three");
@@ -62,7 +70,7 @@ public class SequencedMapSample {
 //        map.putFirst(1, "One");  // Inserts as first due to natural ordering
 //        map.putLast(4, "Four");  // Inserts as last due to natural ordering
 
-        System.out.println("Original map: " + map);
+        System.out.println("Original map for TreeMap: " + map);
 
         // Demonstrate firstEntry and lastEntry
         System.out.println("First entry: " + map.firstEntry());
@@ -84,6 +92,7 @@ public class SequencedMapSample {
         reversed.put(5, "Five");
 //        reversed.putLast(7, "Seven"); // This will result in an UnsupportedOperationException
         System.out.println("Reversed view: " + reversed);
+        System.out.println("Original: " + map); // Note that changes to the reversed also changes the original
 
         // Demonstrate sequenced views
         System.out.println("Sequenced keys: " + map.sequencedKeySet());
