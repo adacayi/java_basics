@@ -24,6 +24,9 @@ import java.util.LinkedList;
  * <p>Below are common implementations of {@link java.util.SequencedCollection} in the Java standard library:
  *
  * <ul>
+ *   <li>{@link java.util.List}</li>
+ *   <li>{@link java.util.Deque}: Note that {@link java.util.Queue} only extends {@link java.util.Collection}</li>
+ *   <li>{@link java.util.SequencedSet}</li>
  *   <li><b>{@link java.util.ArrayList}</b>: A resizable array implementation that supports sequenced operations.
  *       It maintains insertion order and provides efficient random access, making it suitable for
  *       general-purpose sequenced collections.</li>
