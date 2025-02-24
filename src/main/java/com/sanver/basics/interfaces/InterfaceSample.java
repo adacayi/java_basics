@@ -31,6 +31,14 @@ interface Payable {
     abstract class SomeAbstractClass { // This is public and static, but not final, and cannot be made protected, package private or private.
 
     }
+
+    record Person(String name, int age){ // This is public, static and final, and cannot be made protected, package private or private.
+
+    }
+
+    enum Days { // This is public, static and final, and cannot be made protected, package private or private. If put, final keyword will result in a compile error though.
+        MONDAY, TUESDAY
+    }
 }
 
 class Pay implements Payable {
