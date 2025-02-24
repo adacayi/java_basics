@@ -26,10 +26,13 @@ import java.util.TreeMap;
  *
  * <p>Common implementations of {@link java.util.SequencedMap} in the Java standard library include:
  * <ul>
- *   <li><b>{@link java.util.TreeMap}</b>: A red-black tree-based implementation that maintains
+ *   <li>{@link java.util.SortedMap}</li>
+ *   <li>{@link java.util.NavigableMap}</li>
+ *   <li>{@link java.util.concurrent.ConcurrentNavigableMap}</li>
+ *   <li>{@link java.util.TreeMap} A red-black tree-based implementation that maintains
  *       entries in natural key order (or a custom comparator). It provides efficient ordered
  *       operations and supports sequenced access to first and last entries.</li>
- *   <li><b>{@link java.util.LinkedHashMap}</b>: A hash table and linked list implementation that
+ *   <li>{@link java.util.LinkedHashMap} A hash table and linked list implementation that
  *       preserves insertion order. It supports sequenced operations and provides predictable
  *       iteration order, making it suitable for applications requiring stable entry sequencing.</li>
  * </ul>

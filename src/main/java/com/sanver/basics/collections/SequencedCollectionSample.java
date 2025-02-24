@@ -26,20 +26,21 @@ import java.util.LinkedList;
  * <ul>
  *   <li>{@link java.util.List}</li>
  *   <li>{@link java.util.Deque}: Note that {@link java.util.Queue} only extends {@link java.util.Collection}</li>
+ *   <li>{@link java.util.concurrent.BlockingDeque}</li>
  *   <li>{@link java.util.SequencedSet}</li>
- *   <li><b>{@link java.util.ArrayList}</b>: A resizable array implementation that supports sequenced operations.
+ *   <li>{@link java.util.ArrayList}: A resizable array implementation that supports sequenced operations.
  *       It maintains insertion order and provides efficient random access, making it suitable for
  *       general-purpose sequenced collections.</li>
- *   <li><b>{@link java.util.LinkedList}</b>: A doubly-linked list implementation that excels at
+ *   <li>{@link java.util.LinkedList}: A doubly-linked list implementation that excels at
  *       adding or removing elements at both ends. It implements {@link java.util.Deque} and
  *       {@link java.util.SequencedCollection}, offering efficient first and last element operations.</li>
- *   <li><b>{@link java.util.ArrayDeque}</b>: A double-ended queue implementation based on a
+ *   <li>{@link java.util.ArrayDeque}: A double-ended queue implementation based on a
  *       circular array. It provides high performance for adding and removing elements at both ends,
  *       making it a preferred choice for sequenced operations like stacks and queues.</li>
- *   <li><b>{@link java.util.TreeSet}</b> (when wrapped or viewed): A sorted set implementation
+ *   <li>{@link java.util.TreeSet} (when wrapped or viewed): A sorted set implementation
  *       that maintains elements in a natural or custom order. While not a direct implementation,
  *       it can be adapted to {@link java.util.SequencedCollection} via views or wrappers in specific contexts.</li>
- *   <li><b>{@link java.util.LinkedHashSet}</b>: A hash set that preserves insertion order.
+ *   <li>{@link java.util.LinkedHashSet}: A hash set that preserves insertion order.
  *       It combines the benefits of a hash table with sequenced access, supporting operations
  *       like retrieving the first and last elements added.</li>
  * </ul>
