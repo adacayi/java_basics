@@ -18,9 +18,12 @@ import java.util.function.Consumer;
  * <p><b>Constraints:</b></p>
  * A sealed class imposes three important constraints on its permitted subclasses:
  * <ol>
- *     <li>All permitted subclasses must belong to the same module as the sealed class.</li>
+ *     <li>If in a named module, all permitted subclasses must belong to the same module as the sealed class (They can be in different packages though).</li>
+ *     <li>If in an unnamed module, all permitted subclasses must belong to the same package as the sealed class.</li>
  *     <li>Every permitted subclass must explicitly extend the sealed class.</li>
- *     <li>Every permitted subclass must define a modifier: final, sealed, or non-sealed.</li>
+ *     <li>Every permitted subclass must define a modifier: {@code final}, {@code sealed}, or {@code non-sealed}.</li>
+ *     <li>If there is no {@code permits} clause in the sealed class, a class in the same file as the sealed class can extend it,
+ *     but in that case there should be at least one class extending the sealed class in the same file. </li>
  * </ul>
  * <a href="https://www.baeldung.com/java-sealed-classes-interfaces">Source</a>
  */
