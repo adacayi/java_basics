@@ -83,5 +83,14 @@ public class SequencedCollectionSample {
 
         // Original collection remains unchanged
         System.out.println("Original after reverse: " + collection);
+
+        // Note that reversed() also returns a SequencedCollection
+        reversed.addFirst("newFirst");
+        reversed.addLast("newLast");
+        System.out.println("reversed after addFirst and addLast: " + reversed);
+        System.out.println("reversed.getFirst(): " + reversed.getFirst());
+        System.out.println("reversed.getLast(): " + reversed.getFirst());
+        System.out.println("reversed.removeFirst(): " + reversed.removeFirst());
+        System.out.println("reversed.removeLast(): " + reversed.removeLast());
     }
 }
