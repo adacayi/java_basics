@@ -60,7 +60,7 @@ public class SequencedCollectionSample {
         SequencedCollection<String> collection = new LinkedList<>();
 
         // Demonstrate addFirst and addLast
-        collection.addFirst("First");
+        collection.addFirst("First"); // Note, unlike the Collection.add() which returns boolean, addFirst and addLast don't return anything.
         collection.addLast("Last");
         collection.addFirst("New First");
         collection.addLast("New Last");

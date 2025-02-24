@@ -48,7 +48,7 @@ public class SequencedSetSample {
         SequencedSet<String> set = new LinkedHashSet<>();
 
         // Demonstrate addFirst and addLast
-        set.addFirst("First");
+        set.addFirst("First"); // Note, unlike the Collection.add() which returns boolean, addFirst and addLast don't return anything.
         set.addLast("Last");
         set.addFirst("New Last");
         set.addFirst("New First");
