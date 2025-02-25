@@ -35,7 +35,8 @@ interface InterfaceWithDefault {
  * <ul>
  *     <li>A static field reference only initializes the class or interface that
  *         declares it, regardless of whether it's accessed through a subclass,
- *         subinterface, or implementing class</li>
+ *         subinterface, or implementing class.
+ *         For classes, it will cause the superclass initialization as well, but for interfaces it does not</li>
  *     <li>Certain reflective methods in {@link java.lang.Class} and
  *         {@link java.lang.reflect} package can trigger initialization</li>
  *     <li>No initialization occurs under any other circumstances</li>
@@ -57,6 +58,7 @@ public class ClassInitialization {
         System.out.println("CONSTANT_VALUE: " + SubClass.CONSTANT_VALUE);
 
         // These WILL trigger initialization (Comment out the previous codes to see initialization for each case
+        System.out.println(C1.b); // Since b is not a constant, this will trigger initialization of B (where b is defined) and also its subclasses.
         System.out.println("SECOND_COUNTER value: " + SubClass.SECOND_COUNTER);
         System.out.println("Constant value: " + SubClass.getConstantValue());
         System.out.println("--- Creating instance ---");
@@ -77,6 +79,28 @@ public class ClassInitialization {
         System.out.println("C.b = " + C.b); // Only initializes B, since bb static field is defined in the B interface.
         System.out.println("C.b = " + C.bb);
         System.out.println("C.cc = " + C.cc);
+    }
+
+    static class A1{
+        static {
+            System.out.println("Static block A1");
+        }
+
+        public static int a = 2;
+    }
+
+    static class B1 extends A1 {
+        static {
+            System.out.println("Static block B1");
+        }
+
+        static int b =  2;
+    }
+
+    static class C1 extends B1{
+        static{
+            System.out.println("Static block C1");
+        }
     }
 
     interface A {
