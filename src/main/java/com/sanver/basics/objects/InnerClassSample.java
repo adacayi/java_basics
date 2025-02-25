@@ -12,6 +12,11 @@ package com.sanver.basics.objects;
 public class InnerClassSample {
     String name;
 
+    // We can have inner classes, enums, records and interfaces inside a class.
+    private enum Days{} // This is static by default. It is final also, but writing final causes compile error. It can have any access modifier.
+    interface MyInterface{} // This is static. It can have any access modifier.
+    protected record Person(String name){} // This is static and final. It can have any access modifier.
+
     public static void main(String[] args) {
         var a = new InnerClassSample().new A();
         var b = a.new B();
