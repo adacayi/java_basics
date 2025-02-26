@@ -71,6 +71,42 @@ public class InterfaceSample {
         pay.increaseRate(0.3);
         System.out.println("Increased rate is " + pay.getRate());
         System.out.println("Max rate is " + pay.getMaxRate());
+
+        // Accessing static fields and calling static methods
+
+//         new C().print(); // This won't compile, since a static method may only be called on its containing interface
+//         B.printA(); // This won't compile, since a static method may only be called on its containing interface
+        B.print();
+        A.print();
+        A.printA();
+        System.out.println("new C().value2: " + new C().value2); // Unlike static methods, we can access static fields of an interface through the implementing class or extending interface
+        System.out.println("B.value2: " + B.value2); // Unlike static methods, we can access static fields of an interface through the implementing class or extending interface
+//        System.out.println(new C().value); // This will result in a compile error though, since reference to 'value' is ambiguous, both 'A. value' and 'B. value' match
+        System.out.println("B.value: " + B.value); // This will work fine, since B.value hides A.value
     }
 
+    interface A {
+        int value = 5; // Note that this is public static final
+        int value2 = 10; // Note that this is public static final
+
+        static void printA() {
+            System.out.println("printA method");
+        }
+
+        static void print() {
+            System.out.println("A print");
+        }
+    }
+
+    interface B extends A {
+        String value = "hello"; // Note that this is public static final
+
+        static void print() {
+            System.out.println("B print");
+        }
+    }
+
+    static class C implements A, B {
+
+    }
 }
