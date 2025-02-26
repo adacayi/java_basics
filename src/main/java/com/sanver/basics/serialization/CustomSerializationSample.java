@@ -52,6 +52,7 @@ public class CustomSerializationSample {
         }
 
         // Custom serialization method
+        // Note that we can have a custom serialization with writeObject method and omit a readObject method for standard deserialization and vice versa.
         private void writeObject(ObjectOutputStream out) throws IOException { // If the access privilege is not private, or the method signature is different, this method won't be executed when serializing
             // First, call the default serialization implementation
             out.defaultWriteObject();
@@ -67,6 +68,8 @@ public class CustomSerializationSample {
         }
 
         // Custom deserialization method
+        // Note that we can omit a writeObject method for a standard serialization and have a custom readObject method custom deserialization.
+        // Try removing the above writeObject method and use defaultReadObject() and assigning password to a constant value in the below method.
         private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException { // If the access privilege is not private, or the method signature is different, this method won't be executed when deserializing
             // First, call the default deserialization implementation
             in.defaultReadObject();
