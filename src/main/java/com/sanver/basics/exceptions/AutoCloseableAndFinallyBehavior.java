@@ -1,6 +1,6 @@
 package com.sanver.basics.exceptions;
 
-public class AutoClosableAndFinallyBehavior {
+public class AutoCloseableAndFinallyBehavior {
     public static void main(String[] args) {
         try (var obj = new MyClosableClass(1);
              var obj2 = new MyClosableClass(2)) { // last object is closed first.
