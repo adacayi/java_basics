@@ -21,13 +21,13 @@ public class OperatorPrecedenceSample {
         System.out.println(result);
 
         int i = 5;
-        i += (i = 10); // Even though  i = 10 is calculated first, and 10 is added, it is added to i's initial value of 5, not the current value of 10 and the result is not 20, but 15.
+        i += (i = 10); // This is equal to i = i + (i = 10) and when processed the initial value of i (5) is put to the stack first, then i = 10 is calculated and 10 is put to the stack, and i became 10, but finally the two values in the stack 5 and 10 are added and assigned to i, making i 15.
         System.out.println("int i = 5;");
-        System.out.println("i += (i = 10): " + i);
-        i = i + (i = 3); // This is not 6 as well, but 15 + (i = 3) = 18. The last value of i is not used, but the initial one is used.
-        System.out.println("i = i + (i = 3): " + i);
-        i = (i = 36) / i; // This time though, it uses i's current value  36 / 36 = 1
-        System.out.println("i = i + (i = 3): " + i);
+        System.out.println("i += (i = 10)     : " + i);
+        i = i + (i = 3); // This is not 6 as well, 15 + (i = 3) = 18.
+        System.out.println("i  = i + (i = 3)  : " + i);
+        i = (i = 36) / i; // When processed i = 36 is calculated first and its value put to the stack and i became 36. Next, i's current value (36) is put to the stack and the two values in the stack 36 and 36 are divided, resulting in 1.
+        System.out.println("i  = (i = 36) / i : " + i);
     }
 
     static class A {
