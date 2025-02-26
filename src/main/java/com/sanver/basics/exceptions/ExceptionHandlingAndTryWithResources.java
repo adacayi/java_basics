@@ -5,6 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ExceptionHandlingAndTryWithResources {
+	static class A implements AutoCloseable{
+		public void close() {
+			System.out.println("Closing a instance");
+		}
+	}
 
 	public static void main(String[] args) {
 		try (FileInputStream stream = new FileInputStream("non-existing-file.txt")) {
@@ -15,6 +20,11 @@ public class ExceptionHandlingAndTryWithResources {
 		} finally{
 			// stream.close(); // This line would give a compile error, since stream is only accessible from within the try with resources block.
 			System.out.println("Process finished");
+		}
+
+		A a = new A();
+		try (a) { // This is a valid try-with-resources usage and since no exception is thrown from the close method of A, we don't need a catch block
+
 		}
 	}
 }
