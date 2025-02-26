@@ -19,6 +19,10 @@ public class RecordSample {
      * </ul>
      * <p>Features demonstrated:
      * <ul>
+     *   <li>The record {@code components} of a record class, if any, are specified in the header of a record declaration.</li>
+     *   <li>Each record component consists of a type (optionally preceded by one or more annotations) and an identifier that specifies the name of the record component.</li>
+     *   <li>A record component corresponds to two members of the record class: a private field declared implicitly, and a public accessor method declared explicitly or implicitly <a href = "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.10.3">(§8.10.3)</a>.</li>
+     *   <li>If a record class has no record components, then an empty pair of parentheses appears in the header of the record declaration.</li>
      *   <li><b>Automatic Generation of Accessor Methods</b>: Each component (field) of the record automatically has
      *       a public accessor method with the same name as the field.</li>
      *   <li><b>Compact Constructor</b>: Records support a compact constructor format for validation or
@@ -140,6 +144,11 @@ public class RecordSample {
             System.out.println(new Person(12).addresses().length);
             System.out.println(new Person("Janet", 28).addresses().length);
             System.out.println(Arrays.toString(new Person("Harry", 30, "Street1", "Street2").addresses()));
+
+            // Showing a record with no fields
+            var dummy1 = new Dummy();
+            var dummy2 = new Dummy();
+            System.out.printf("dummy1: %s dummy2: %s, dummy1.hashCode(): %d, dummy2.hashCode(): %d, dummy1.equals(dummy2): %s%n", dummy1, dummy2, dummy1.hashCode(), dummy2.hashCode(), dummy1.equals(dummy2));
         }
 
         /**
@@ -152,4 +161,5 @@ public class RecordSample {
         }
     }
 
+    record Dummy(){} // This is a valid record definition with no components.
 }
