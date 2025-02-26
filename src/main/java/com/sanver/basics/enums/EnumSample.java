@@ -58,6 +58,14 @@ public class EnumSample {
             }
         };
 
+        static { // Unlike interfaces, static blocks are allowed in enums.
+            System.out.println("Days static block executed");
+        }
+
+        { // Unlike interfaces and records, non-static blocks are allowed in enums.
+            System.out.println("Days non-static block executed");
+        }
+
         private final int index; // You can define instance variables like normal classes
         public String capitalizedName;
 

@@ -3,6 +3,9 @@ package com.sanver.basics.interfaces;
 interface Payable {
     double MAX_RATE = 0.78; // This is automatically public, static and final. Another access modifier is
     // not permitted.
+//    static { // Static or non-static blocks are not allowed in an interface
+//        System.out.println("Interface initialized");
+//    }
 
     static boolean isIncreaseRateValid(double increaseRate) {
         return increaseRate <= MAX_RATE;

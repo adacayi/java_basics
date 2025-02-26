@@ -38,6 +38,10 @@ public class RecordSample {
         public static String DEFAULT_NAME = "John"; // We can have final/non-final static fields with any access modifier (public, protected, private and package private) in a record.
 //      public String address = ""; // This would result in a compile error. Instance fields are not allowed in records.
 
+        static { // Note that non-static blocks are not allowed.
+            System.out.println("Person initialized");
+        }
+
         /**
          * Compact constructor to add validation logic when creating a new {@code Person} record.
          * For example, here it ensures the {@code age} is not negative.
