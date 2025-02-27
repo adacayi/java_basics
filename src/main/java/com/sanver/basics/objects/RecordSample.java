@@ -88,7 +88,7 @@ public class RecordSample {
          * @param age the age of the person
          */
         public Person(int age) {
-            this(DEFAULT_NAME, age);
+            this(DEFAULT_NAME, age); // Note that the first line of every non-canonical constructor must be a call to another constructor, otherwise it will fail to compile (even if we assign values to the record components in the constructor body)
         }
 
 //        Since we have the compact constructor, which has the same name and age arguments, we cannot have this constructor with the same arguments. Otherwise, this is possible as well.
