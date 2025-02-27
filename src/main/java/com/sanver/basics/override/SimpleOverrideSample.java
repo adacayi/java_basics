@@ -28,7 +28,8 @@ public class SimpleOverrideSample {
 		@Override
 		void getName() {
 			System.out.println("C");
-			super.getName();
+			super.getName(); // Note that we can only access the overridden method in the parent class B.
+			// We cannot access the getName() method in A. super.super.getName() does not work, neither A.this.getName()
 		}
 	}
 
@@ -72,12 +73,53 @@ public class SimpleOverrideSample {
 //		static byte getStaticPrimitiveNumber() { return 3;} // This won't compile
 //		static long getStaticPrimitiveNumber() { return 3;} // This won't compile
 
+//		int getStaticPrimitiveNumber() { // Instance method cannot override static method
+//			return 50;
+//		}
+
+//		static int getPrimitiveNumber() { // Static method cannot override instance method
+//			return 60;
+//		}
+
 	}
 
 	static class F extends E{
 //		int getNumber() {return 50;} // This does not work, although the parent method return type is Integer
 	}
 
+	interface A1{
+		static void print() {
+			System.out.println();
+		}
+
+		static void print2() {
+			System.out.println();
+		}
+
+		static void print3() {
+			System.out.println();
+		}
+
+		void print4();
+
+		default void print5() {
+			System.out.println();
+		}
+	}
+
+	interface B1 extends A1{
+		void print();
+		default void print2(){}
+		private void print3(){}
+
+//		static void print4(){ // This is not allowed. Static method cannot override instance method.
+//			System.out.println();
+//		}
+
+//		static void print5() { // This is not allowed. Static method cannot override instance method.
+//
+//		}
+	}
 	/**
 	 * @param args
 	 */
