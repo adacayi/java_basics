@@ -68,10 +68,15 @@ public class EnumSample {
 
         private final int index; // You can define instance variables like normal classes
         public String capitalizedName;
+        public static String prefix = "some prefix";
 
         Days(int index) {  // This is a private constructor and its access modifier cannot be changed (e.g. it cannot be made public)
             this.index = index;
-            capitalizedName = capitalize();
+            capitalizedName = capitalize(); // capitalize() + prefix would result in a compile error, since Enum constants are implicitly static and final and are created first, calling this constructor, and at that point, the prefix static variable is not initialized yet.
+            // However, if we made prefix final, this would work, since the prefix variable is declared as static final, making it a compile-time constant.
+            // In Java, static final constants are inlined at compile time, meaning "some prefix " is directly substituted in the constructor before any instance is created.
+            // Since prefix is now a constant expression, there is no illegal forward reference issue.
+
         } // This is a private constructor. Enums can only have private constructors.
 
         abstract void print(); // This is to show that enums can have abstract methods, which can be implemented in the enum constants as seen above.
