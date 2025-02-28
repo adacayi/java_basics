@@ -149,14 +149,19 @@ public class AtomicIntegerSample {
     public static void main(String[] args) {
         Runnable runnable = () -> {
             for (int i = 0; i < 100_000; i++) {
-                sum.incrementAndGet(); // Increment by 1
-                sum.accumulateAndGet(3, (prev, x) -> prev + 2 * x); // Increment by 6. The first operand in the binary operator (prev) is the AtomicInteger, and the second one (x) is the first parameter of the accumulateAndGet method (i.e. 3 in this example). Thus, this means incrementing the value by 6.
-                sum.addAndGet(5);
-                // sum.getAndSet(sum.get() - 1); // This is not thread-safe since different threads can get the same value with sum.get() - 1, before passing it to the getAndSet method
+                sum.incrementAndGet();  // Increment by 1. getAndIncrement is also available.
+                sum.decrementAndGet(); // Decrement by 1. getAndDecrement is also available.
+                sum.addAndGet(5); // getAndAdd is also available
+                sum.accumulateAndGet(3, (prev, x) -> prev + 2 * x);// Increment by 6. The first operand in the binary operator (prev) is the AtomicInteger,
+                // and the second one (x) is the first parameter of the accumulateAndGet method (i.e. 3 in this example). Thus, this means incrementing the value by 6.
+                // accumulateAndGet is also available.
+                sum.getAndUpdate(x -> x - 1); // updateAndGet is also available
+                // sum.getAndSet(sum.get() - 1); // This is not thread-safe since different threads can get the same value with sum.get() - 1,
+                // before passing it to the getAndSet method.
                 // The primary use case for getAndSet() is when you need to:
-                //Atomically set a variable to a new value.
-                //Simultaneously know what the previous value was.
-                sum.decrementAndGet(); // Decrement by 1
+                // 1- Atomically set a variable to a new value.
+                // 2- Simultaneously know what the previous value was.
+                // Note that setAndGet does not exist
             }
         };
 
