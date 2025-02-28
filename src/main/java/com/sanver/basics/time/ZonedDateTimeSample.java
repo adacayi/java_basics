@@ -9,10 +9,17 @@ import java.time.temporal.ChronoUnit;
 
 public class ZonedDateTimeSample {
 
+    public static final String US_EASTERN = "US/Eastern";
+
     public static void main(String[] args) {
-        Instant instant = Instant.now();
-        ZonedDateTime zoned = ZonedDateTime.ofInstant(instant, ZoneId.of("Canada/Atlantic"));
-        System.out.println(zoned);
+        var zonedDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of(US_EASTERN)); // Note that the time value did not change, only the zone information is added.
+        // This is because LocalDateTime represents a date and time without any time zone information, so there is no way to convert it to a different zone, if there is no zone information.
+        System.out.println(zonedDateTime);
+        zonedDateTime = ZonedDateTime.ofInstant(Instant.now(), ZoneId.of(US_EASTERN)); // Since instant.now() queries the system UTC clock to obtain the current instant,
+        // it represents a specific point on the UTC (Coordinated Universal Time) timeline. It represents a timestamp since the epoch.
+        // ofInstant method converts the UTC timestamp (the Instant) to a date and time representation within the specified time zone (US/Eastern).
+        // Thus, the final time in ZonedDateTime is different from the Instant.now().
+        System.out.println(zonedDateTime);
 
         demonstrateDayLightSaving();
     }
@@ -28,10 +35,10 @@ public class ZonedDateTimeSample {
     }
 
     private static void print(LocalDateTime ld1, LocalDateTime ld2) {
-        ZonedDateTime zd1 = ZonedDateTime.of(ld1, ZoneId.of("US/Eastern"));
+        ZonedDateTime zd1 = ZonedDateTime.of(ld1, ZoneId.of(US_EASTERN));
         System.out.println("First zoned date time : " + zd1);
 
-        ZonedDateTime zd2 = ZonedDateTime.of(ld2, ZoneId.of("US/Eastern"));
+        ZonedDateTime zd2 = ZonedDateTime.of(ld2, ZoneId.of(US_EASTERN));
         System.out.println("Second zoned date time: " + zd2);
         System.out.println("Hours between: " + ChronoUnit.HOURS.between(zd1, zd2));
     }
