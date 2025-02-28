@@ -26,10 +26,10 @@ public class ZonedDateTimeSample {
 
     private static void demonstrateDayLightSaving() {
         LocalDateTime ld1 = LocalDateTime.of(2025, Month.MARCH, 9, 0, 0);
-        LocalDateTime ld2 = LocalDateTime.of(2025, Month.MARCH, 9, 2, 0); // Since at 2:00, the time is set to 3:00 there is no 2:00, thus the time is directly set to 3:00, which is 2 hours from midnight.
+        LocalDateTime ld2 = LocalDateTime.of(2025, Month.MARCH, 9, 2, 0); // Since at 2:00, the time is set to 3:00 there is no 2:00, thus the time is directly set to 3:00 for the US/Eastern Zone, which is 2 hours from midnight.
         print(ld1, ld2);
         ld1 = LocalDateTime.of(2025, Month.NOVEMBER, 2, 0, 0);
-        ld2 = LocalDateTime.of(2025, Month.NOVEMBER, 2, 2, 0); // Since at 2:00, the time is set to 1:00, 2:00 can exist, so 2:00 at that date means 3 hours from midnight.
+        ld2 = LocalDateTime.of(2025, Month.NOVEMBER, 2, 2, 0); // Since at 2:00, the time is set to 1:00 for the US/Eastern Zone, 2:00 can exist, so 2:00 at that date means 3 hours from midnight.
         System.out.println();
         print(ld1, ld2);
     }
@@ -42,5 +42,4 @@ public class ZonedDateTimeSample {
         System.out.println("Second zoned date time: " + zd2);
         System.out.println("Hours between: " + ChronoUnit.HOURS.between(zd1, zd2));
     }
-
 }
