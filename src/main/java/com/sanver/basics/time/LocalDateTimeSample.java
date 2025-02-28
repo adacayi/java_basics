@@ -39,7 +39,7 @@ import java.time.temporal.ChronoUnit;
 
 public class LocalDateTimeSample {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSSSSSSSS");
-    private static final String FORMAT = "%-68s: %s%n";
+    private static final String FORMAT = "%-80s: %s%n";
     public static void main(String... args) {
         var now = LocalDateTime.now();
         var aPriorDate = now.plusDays(-2).plusWeeks(-1).
@@ -96,7 +96,10 @@ public class LocalDateTimeSample {
         System.out.printf(FORMAT, "duration.getNano()", duration.getNano());
 
         // Converting to an Instant
-        System.out.printf(FORMAT, "now.toInstant(ZoneOffset.UTC)", now.toInstant(ZoneOffset.UTC));
+        System.out.printf(FORMAT, "now.toInstant(ZoneOffset.UTC)", now.toInstant(ZoneOffset.UTC)); // Note that toInstant requires ZoneOffset, while ofInstant requires ZoneId. ZoneOffset extends ZoneId, thus ZoneOffset can be used in ofInstant as well.
+        System.out.printf(FORMAT, "now.toInstant(ZoneOffset.ofHours(-5))", now.toInstant(ZoneOffset.ofHours(-5)));
+        System.out.printf(FORMAT, "LocalDateTime.ofInstant(now.toInstant(ZoneOffset.UTC), ZoneId.of(\"GMT-5\"))", LocalDateTime.ofInstant(now.toInstant(ZoneOffset.UTC), ZoneId.of("GMT-5")));
+        System.out.printf(FORMAT, "LocalDateTime.ofInstant(now.toInstant(ZoneOffset.UTC), ZoneOffset.ofHours(-5))", LocalDateTime.ofInstant(now.toInstant(ZoneOffset.UTC), ZoneOffset.ofHours(-5)));
         System.out.printf(FORMAT, "now.toInstant(ZoneOffset.ofHours(-5))", now.toInstant(ZoneOffset.ofHours(-5)));
         System.out.printf(FORMAT, "now.toInstant(ZoneId.systemDefault().getRules().getOffset(now))", now.toInstant(ZoneId.systemDefault().getRules().getOffset(now)));
     }
