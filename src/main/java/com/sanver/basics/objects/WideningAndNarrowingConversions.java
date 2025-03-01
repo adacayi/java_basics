@@ -31,6 +31,10 @@ public class WideningAndNarrowingConversions {
 
         final char c1 = 127;
         b = c1; // since c1 is final, the compiler knows it can be assigned to a byte.
+        // Note that this only works for types int, short, char, byte. It doesn't work for long, double or float.
+        // e.g. final long l = 1; int i = l; This won't compile.
+//        final int i1 = 127;
+//        byte b1 = i1; // This will work
 
         // Explicit narrowing
         i = 128;
