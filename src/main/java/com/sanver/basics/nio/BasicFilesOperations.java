@@ -25,7 +25,7 @@ public class BasicFilesOperations {
         Files.copy(Path.of(rootPathString + "/sub1/sub1-file1.txt"), sub2File1Path, StandardCopyOption.REPLACE_EXISTING); // There is no explicit option to not replace if exists. We need to check file existence ourselves, before copying. If we did not have the StandardCopyOption.REPLACE_EXISTING, it would throw a FileAlreadyExistsException if the file existed in the target path.
         Files.writeString(sub2File1Path, System.lineSeparator() + "sub 2 file content appended", StandardOpenOption.APPEND); // We can have StandardOpenOption.CREATE, StandardOpenOption.APPEND together, meaning if the file does not exist, it will create a new file, and if it exists it will append to it.
         createFileWithContent(rootPathString + "/sub1/sub2-file2.txt", "sub2-file2.txt content");
-        Files.move(Path.of(rootPathString + "/sub1/sub2-file2.txt"), Path.of(rootPathString + "/sub1/sub2/sub2-file2.txt"), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(Path.of(rootPathString + "/sub1/sub2-file2.txt"), Path.of(rootPathString + "/sub1/sub2/sub2-file2.txt"), StandardCopyOption.REPLACE_EXISTING); // By default (without any CopyOption), this method attempts to move the file to the target file, failing if the target file exists except if the source and target are the same file, in which case this method has no effect.
 
 
         System.out.printf("All txt files under %s%n%n", rootPath);
