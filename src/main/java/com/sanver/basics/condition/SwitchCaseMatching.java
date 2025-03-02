@@ -3,7 +3,10 @@ package com.sanver.basics.condition;
 public class SwitchCaseMatching {
     public static void main(String[] args) {
         char c = 65;
-        switch (c) {
+        switch (c) { // Case constants (e.g., 2, 64) must be compatible with the type of the switch variable (char in this case).
+            // The compiler attempts implicit conversion of each case constant to the type of the switch variable.
+            // If a case constant's type is incompatible, or its value is out of the range that can be safely represented by the switch variable's type,
+            // a compile error (e.g., "incompatible types: possible lossy conversion") occurs.
             default ->
                     System.out.println("Some character"); // Notice, although not advisable we can have default in switch statements as not the last case. This cannot be done with switch pattern matching.
             case 2 -> {
