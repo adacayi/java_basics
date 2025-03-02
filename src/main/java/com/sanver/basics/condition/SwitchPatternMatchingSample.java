@@ -15,13 +15,13 @@ import java.util.List;
  * <ul>
  *   <li>Type checks with patterns (e.g., `case Integer i`).</li>
  *   <li>Conditional patterns using `when` clauses.</li>
- *   <li>Deconstruction of objects in `case` labels for structured types.</li>
+ *   <li>Deconstruction of records in `case` labels</li>
  * </ul>
  *
  * <p>Example Scenarios:
  * <ul>
  *   <li>Processing objects of different types differently.</li>
- *   <li>Extracting fields from structured objects during the match.</li>
+ *   <li>Extracting fields from records during the match.</li>
  * </ul>
  *
  * <p>This example demonstrates pattern matching with a `switch` statement
@@ -37,7 +37,9 @@ public class SwitchPatternMatchingSample {
     }
 
     /**
-     * Demonstrates pattern matching in enhanced switch statement
+     * <p>
+     * Demonstrates pattern matching in enhanced switch statement.
+     * </p>
      * Note that, for pattern matching, even for switch statements, all cases needs to be covered.
      * @param obj Object to be described
      */
@@ -51,9 +53,9 @@ public class SwitchPatternMatchingSample {
             case Short s -> System.out.println("Short " + s);
             case Integer i -> System.out.println("Integer " + i);
             case Character c -> System.out.println("Character " + c);
-            case Enum<?> e -> System.out.println("Enum " + e);
+            case Enum<?> e -> System.out.println("Enum " + e); // Note that, "case Enum e ->" compiles as well.
             case String s -> System.out.println("String " + s);
-            case Person(var name, var age) -> System.out.printf("Person %s at age %d%n", name, age); // We can also use Person(String name, int age)
+            case Person(var name, var age) -> System.out.printf("Person %s at age %d%n", name, age); // We can also use Person(String name, int age). Deconstruction pattern can only be applied to a record.
             case Object o ->
                     System.out.println("Object " + o);  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> System.out.println("Object " + obj); // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
@@ -77,7 +79,7 @@ public class SwitchPatternMatchingSample {
             case Short s -> "Short " + s;
             case Integer i -> "Integer " + i;
             case Character c -> "Character " + c;
-            case Enum<?> e -> "Enum " + e;
+            case Enum<?> e -> "Enum " + e; // Note that, "case Enum e ->" compiles as well.
             case String s -> "String " + s;
             case Person(var name, var age) -> "Person %s at age %d%n".formatted(name, age); // We can also use Person(String name, int age)
             case Object o ->
