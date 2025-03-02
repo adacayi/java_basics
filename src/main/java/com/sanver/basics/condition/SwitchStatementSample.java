@@ -1,6 +1,7 @@
 package com.sanver.basics.condition;
 
 import static com.sanver.basics.condition.SwitchStatementSample.Animal.CAT;
+import static com.sanver.basics.condition.SwitchStatementSample.Animal.DOG;
 import static com.sanver.basics.condition.SwitchStatementSample.Animal.TIGER;
 
 public class SwitchStatementSample {
@@ -17,15 +18,27 @@ public class SwitchStatementSample {
         printAnimalType(CAT);
         var tigerType = getAnimalType(TIGER);
         System.out.println(tigerType);
+        System.out.println(getAnimalType2(DOG));
+        System.out.println(getAnimalType4(DOG));
     }
 
     public static void printAnimalType(Animal animal) {
         String result;
         switch (animal) {
             case DOG:
-               // tempResult = "Dog" // This will result in a compile error, since tempResult is not defined yet.
-            case CAT: // These two cases can be combined into one case as shown in the below getAnimalType() method.
+                // tempResult = "Dog" // This will result in a compile error, since tempResult is not defined yet.
+            case BIRD:
+            case CAT:
+                // These three cases can be combined into one case as shown in the below getAnimalType() method.
+                // Other combining options are shown in getAnimalType2() and getAnimalType3() methods.
                 String tempResult = "cat"; // tempResult is defined within the scope of the switch statement, thus can be accessed within the case CAT: block and any subsequent case blocks after it.
+                // Note that this wouldn't compile if we had the below combinations.
+                // It will compile if  String tempResult = "cat"; is not the first statement after CAT:,
+                // but second or later.
+                // CASE DOG:
+                // case BIRD: // or just BIRD:
+                // CAT:
+                // String tempResult = "cat"; // This will result in a compile error.
                 result = "domestic animal";
                 break;
             case TIGER:
@@ -44,7 +57,54 @@ public class SwitchStatementSample {
 
     public static String getAnimalType(Animal animal) {
         switch (animal) {
-            case DOG, CAT:
+            case DOG, CAT, BIRD:
+                return "domestic animal";
+            case TIGER:
+                return "wild animal";
+            default:
+                return "unknown animal";
+        }
+    }
+
+    public static String getAnimalType2(Animal animal) {
+        switch (animal) {
+            case DOG:
+                CAT:
+                BIRD:
+                return "domestic animal";
+            case TIGER:
+                return "wild animal";
+            default:
+                return "unknown animal";
+        }
+    }
+
+    public static String getAnimalType3(Animal animal) {
+        switch (animal) {
+            case DOG:
+            case CAT:
+                BIRD:
+                // Note that this way of combining cases does not allow defining a variable within the scope of the switch statement as the first line.
+                // String tempResult = "cat"; // This would result in an error, as it is in the first line.
+                //  This would work:
+                // System.out.println();
+                // String tempResult = "cat";
+                return "domestic animal";
+            case TIGER:
+                return "wild animal";
+            default:
+                return "unknown animal";
+        }
+    }
+
+    public static String getAnimalType4(Animal animal) {
+        switch (animal) {
+            case DOG:
+//            CAT:
+//            case BIRD: // Note that this way of combining cases does not work if we don't have any statement for the CAT: case.
+                CAT:
+                System.out.println("Dog or cat"); // If we have code here, this works and DOG and CAT will fall through to the next case.
+            case BIRD:
                 return "domestic animal";
             case TIGER:
                 return "wild animal";
@@ -54,6 +114,6 @@ public class SwitchStatementSample {
     }
 
     public enum Animal {
-        DOG, CAT, TIGER
+        DOG, CAT, BIRD, TIGER
     }
 }
