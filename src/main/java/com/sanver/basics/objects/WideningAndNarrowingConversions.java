@@ -63,5 +63,53 @@ public class WideningAndNarrowingConversions {
 //        Assigns the reference to d2
         System.out.println("d2 += 10: " + d2);
 //        d2 = 3 + 5; // This won't work. Java does not perform implicit or explicit widening conversion to non-primitive (wrapper) types.
+        probe(d); // Since there is no probe with double parameter, double will be boxed into a Double and class Double extends Number.
+        // Therefore, a Double can be passed to the method that takes Number. A Double can also be passed to a method that takes Object, but Number is more specific than Object therefore probe(Number) will be called.
+        probe(b); // Since there is no probe with byte parameter, auto-widening takes place and probe(short) will be called. You can comment out probe(short) to see that, the next widening is to int and so on.
+        // Note that boxing is not done and probe(Byte) is not called, in these scenarios.
+    }
+
+    static void probe(Object o) {
+        System.out.println("Object " + o);
+    }
+
+    static void probe(Number n) {
+        System.out.println("Number " + n);
+    }
+
+    static void probe(Double d) {
+        System.out.println("Double " + d);
+    }
+
+    static void probe(Long l) {
+        System.out.println("Long " + l);
+    }
+
+    static void probe(Byte b) {
+        System.out.println("Byte " + b);
+    }
+
+//    static void probe(double d) {
+//        System.out.println("double " + d);
+//    }
+
+    static void probe(float f) {
+        System.out.println("float " + f);
+    }
+
+    static void probe(long l) {
+        System.out.println("long " + l);
+    }
+
+    static void probe(int i) {
+        System.out.println("int " + i);
+    }
+
+    static void probe(short s) {
+        System.out.println("short " + s);
+    }
+
+    static void probe(char c) {
+        System.out.println("char " + c);
     }
 }
