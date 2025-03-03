@@ -1,56 +1,47 @@
 package com.sanver.basics.lambda;
 
-import org.springframework.expression.spel.ast.MethodReference;
-
+import java.util.Arrays;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class MethodReferenceSample {
-    private final String name;
-
-    public MethodReferenceSample(String name) {
-        this.name = name;
-    }
-
     public static void main(String[] args) {
-        new MethodReferenceSample("1").print();
+        // 1. Static method reference
+        Function<String, Number> parser = Integer::parseInt; // It should be a static method with return type Number or a subclass of Number and with one parameter with String or its super class.
+        // So we can use MethodReferenceSample::myParser as well.
+        System.out.println(parser.apply("42")); // Output: 42
+        parser = MethodReferenceSample::myParser;
+        System.out.println(parser.apply("421")); // Output: 3
+
+        // 2. Instance method of a particular object
+        String greeting = "Hi";
+        Consumer<String> greeter = greeting::concat; // It should be an instance method of greeting, with any return type and String or its super class as parameter.
+        greeter.accept(" there"); // No direct output, but concatenates
+        greeter = new MethodReferenceSample()::concat;
+
+        // 3. Instance method of an arbitrary object
+        BiFunction<MethodReferenceSample, Integer, CharSequence> toString = MethodReferenceSample::toString; // Functional interface method's first parameter must be the arbitrary object's class.
+        // In our case BiFunction<String,Integer, CharSequence> has the method CharSequence apply(MethodReferenceSample, Integer).
+        // Thus, the method reference class must be MethodReferenceSample.
+        // The method must have Integer or any super class as its parameter and return type should be CharSequence or any subclass
+        System.out.println(toString.apply(new MethodReferenceSample(),12)); // Output: 12
+
+        // 4. Constructor reference
+        Function<Integer, int[]> arrayMaker = int[]::new;
+        int[] arr = arrayMaker.apply(5);
+        System.out.println(Arrays.toString(arr)); // Output: [0, 0, 0, 0, 0]
     }
 
-    public static String getStaticString() {
-        return "Static String";
+    static int myParser(CharSequence chars) {
+        return chars.length();
     }
 
-    public void print() {
-        var text = "Text";
-        Supplier<String> s = text::toUpperCase; // this refers to text.toUpperCase()
-        System.out.println(s.get());
-        s = this::getString; // this refers to this.getString()
-        System.out.println(s.get());
-        s = MethodReferenceSample::getStaticString; // this refers to MethodReferenceSample.getStaticString()
-        System.out.println(s.get());
-//        s = this::getStaticString; // This will result in a compile error, because a static method referenced through non-static qualifier
-        Function<MethodReferenceSample, String> getName = MethodReferenceSample::getName2; // this refers to a static method in MethodReferenceSample static String getName2(MethodReferenceSample)
-        // or a non-static method in MethodReferenceSample String getName2().
-        // If both are present in MethodReferenceSample, it will result in a compile error.
-        // Comment out the static getName2 to see the compile error.
-        System.out.println(getName.apply(this));
-        getName = this::getName; // This refers to String getName(MethodReferenceSample)
-        System.out.println(getName.apply(this));
+    String concat(CharSequence initial) {
+        return "concat " + initial;
     }
 
-//    public static String getName2(MethodReferenceSample obj) {
-//        return "static ";
-//    }
-
-    public String getName2() {
-        return "name2: " + name;
-    }
-
-    public String getName(MethodReferenceSample obj) {
-        return "name: " + obj.name;
-    }
-
-    public String getString() {
-        return "non - static string";
+    String toString(Number number) {
+        return number + "";
     }
 }
