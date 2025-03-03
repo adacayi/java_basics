@@ -26,5 +26,9 @@ public class ExceptionHandlingAndTryWithResources {
 		try (a) { // This is a valid try-with-resources usage and since no exception is thrown from the close method of A, we don't need a catch block
 
 		}
+
+		try(a; var b = new A()){ // This is also valid
+
+		}
 	}
 }
