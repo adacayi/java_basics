@@ -67,6 +67,8 @@ public class WideningAndNarrowingConversions {
         // Therefore, a Double can be passed to the method that takes Number. A Double can also be passed to a method that takes Object, but Number is more specific than Object therefore probe(Number) will be called.
         probe(b); // Since there is no probe with byte parameter, auto-widening takes place and probe(short) will be called. You can comment out probe(short) to see that, the next widening is to int and so on.
         // Note that boxing is not done and probe(Byte) is not called, in these scenarios.
+        probe(Integer.valueOf(1)); // In this case it first looks for probe(Integer), and if not found looks for probe(super class of Integer) and runs probe(Number),
+        // if not, does auto-unboxing and calls for probe(int). If probe(int) does not exist, it uses auto-widening and calls for probe(long). Comment out relevant functions to test the behavior.
     }
 
     static void probe(Object o) {
