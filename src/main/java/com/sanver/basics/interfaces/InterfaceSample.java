@@ -80,6 +80,8 @@ public class InterfaceSample {
         A.print();
         A.printA();
         System.out.println("new C().value2: " + new C().value2); // Unlike static methods, we can access static fields of an interface through the implementing class or extending interface
+        System.out.println("C.value2: " + C.value2); // Unlike static methods, we can access static fields of an interface through the implementing class or extending interface
+        // If there was a value2 in B or in another interface that C implements (look at the commented out D interface, and make C implement D), then this would result in a compile error because of the ambiguity.
         System.out.println("B.value2: " + B.value2); // Unlike static methods, we can access static fields of an interface through the implementing class or extending interface
 //        System.out.println(new C().value); // This will result in a compile error though, since reference to 'value' is ambiguous, both 'A. value' and 'B. value' match
         System.out.println("B.value: " + B.value); // This will work fine, since B.value hides A.value
@@ -150,6 +152,10 @@ public class InterfaceSample {
 //            System.out.println("Processing B 5");
 //        }
     }
+
+//    interface D{
+//        int value2 =20;
+//    }
 
     static class C implements A, B {
         public void process() {
