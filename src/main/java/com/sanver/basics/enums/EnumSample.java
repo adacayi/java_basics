@@ -113,6 +113,8 @@ public class EnumSample {
 
         System.out.printf("Today is %s%n%n", today);
         today.print();
+        System.out.println("Days.valueOf(\"TUESDAY\"): " + Days.valueOf("TUESDAY"));
+        System.out.println("Enum.valueOf(Days.class, \"TUESDAY\"): " + Enum.valueOf(Days.class, "TUESDAY"));
 
         for (Days day : days) {
             System.out.printf("%-9s ordinal: %d, index %d%n", day, day.ordinal(), day.getIndex());
