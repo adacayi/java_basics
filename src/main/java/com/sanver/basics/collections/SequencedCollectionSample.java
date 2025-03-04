@@ -19,7 +19,8 @@ import java.util.LinkedList;
  *   <li>{@code removeLast()} - Removes and returns the last element</li>
  *   <li>{@code reversed()} - Returns a reverse-ordered view of the collection</li>
  * </ul>
- * <p>Additional inherited methods from Collection interface are also available.
+ * <p>{@link SequencedCollection} extends {@link java.util.Collection Collection}.
+ * <br>Thus, additional inherited methods from {@link java.util.Collection Collection} interface are also available.
  *
  * <p>Below are common implementations of {@link java.util.SequencedCollection} in the Java standard library:
  *
