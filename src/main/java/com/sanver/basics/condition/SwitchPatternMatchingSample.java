@@ -2,7 +2,7 @@ package com.sanver.basics.condition;
 
 import java.io.File;
 import java.time.Month;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Demonstrates pattern matching in switch statements in Java 21.
@@ -30,7 +30,7 @@ import java.util.List;
 public class SwitchPatternMatchingSample {
 
     public static void main(String[] args) {
-        var objects = List.of((byte) 2, (byte) 123, (short) 128, 20_000, 'f', Month.SEPTEMBER, "Abdullah", new Person("Abdullah", 40), new File("Non existent"));
+        var objects = Arrays.asList((byte) 2, (byte) 123, (short) 128, 20_000, 'f', Month.SEPTEMBER, "Abdullah", new Person("Abdullah", 40), new File("Non existent"), null);
         objects.forEach(x -> describe(x));
         System.out.println();
         objects.forEach(x -> System.out.println(getDescription(x)));
@@ -55,11 +55,17 @@ public class SwitchPatternMatchingSample {
             case Character c -> System.out.println("Character " + c);
             case Enum<?> e -> System.out.println("Enum " + e); // Note that, "case Enum e ->" compiles as well.
             case String s -> System.out.println("String " + s);
-            case Person(var name, var age) -> System.out.printf("Person %s at age %d%n", name, age); // We can also use Person(String name, int age). Deconstruction pattern can only be applied to a record.
+            case Person(var name, var age) -> System.out.printf("Person %s at age %d%n", name, age); // We can also use Person(String name, int age).
+            // Note that deconstruction pattern can only be applied to a record.
+            case Person p -> System.out.printf("Without deconstruction. Person %s at age %d%n", p.name, p.age); // Note that this also works.
+//            Interestingly, we can have this after the deconstruction pattern, and it won't result into a compile error and only the deconstruction pattern will be executed.
+            // Reverse order however results in a compilation error.
             case Object o ->
                     System.out.println("Object " + o);  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> System.out.println("Object " + obj); // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
 //            Also, we can either have the default case or the case Object, not both.
+            case null -> System.out.println("Null"); // Note that case Object or default won't cover the null case, thus not leading to a Label is dominated by a preceding case label error.
+            // If we don't cover the null case, then if a null object is passed to switch, it will result into a NullPointerException
         }
     }
 
@@ -82,10 +88,16 @@ public class SwitchPatternMatchingSample {
             case Enum<?> e -> "Enum " + e; // Note that, "case Enum e ->" compiles as well.
             case String s -> "String " + s;
             case Person(var name, var age) -> "Person %s at age %d%n".formatted(name, age); // We can also use Person(String name, int age)
+            case Person p -> String.format("Without deconstruction. Person %s at age %d%n", p.name, p.age);// Interestingly, we can have this after the deconstruction pattern,
+            // and it won't result into a compile error and only the deconstruction pattern will be executed.
+            // Reverse order however results in a compilation error.
+
             case Object o ->
                     "Object " + o;  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> "Object " + obj; // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
 //            Also, we can either have the default case or the case Object, not both.
+            case null -> "Null"; // Note that case Object or default won't cover the null case, thus not leading to a Label is dominated by a preceding case label error.
+            // If we don't cover the null case, then if a null object is passed to switch, it will result into a NullPointerException
         };
     }
 
