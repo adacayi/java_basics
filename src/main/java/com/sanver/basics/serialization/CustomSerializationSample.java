@@ -8,6 +8,92 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/**
+ * <h3>Key Points</h3>
+ * <ol>
+ *     <li>
+ *     Developers can change how a particular class is serialized by implementing two methods inside the class file. These methods are:
+ *     <pre>
+ *         {@code
+ *          private void writeObject(ObjectOutputStream out) throws IOException;
+ *          private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException;
+ *         }
+ *     </pre>
+ * Notice that both methods are (and must be) declared private, proving that neither method is inherited and overridden or overloaded.
+ * The trick here is that the virtual machine will automatically check to see if either method is declared during the corresponding method call.
+ * The virtual machine can call private methods of your class whenever it wants but no other objects can.
+ * Thus, the integrity of the class is maintained and the serialization protocol can continue to work as normal.
+ * </li>
+ * <li>
+ * If an object is being deserialized, that means the class of that object implements Serializable.
+ * Therefore, its constructor will never be called. However, constructor for the super class may be invoked if the super class does not implement serializable interface.
+ * While deserializing a record, a new record object is created by invoking the record class’s canonical constructor, passing values deserialized from the stream as arguments to the canonical constructor.
+ * This is secure because it means the record class can validate the values before assigning them to fields,
+ * just like when an ordinary Java program creates a record object via new.
+ * </li>
+ * <li>
+ *     If the object graph contains non-serializable objects, an exception is thrown and nothing is serialized. Object graph means all the objects that are linked/referenced by the first object (directly or indirectly) that is being serialized.
+ *     Fields of an Object that are marked as transient are not serialized and so they do not cause an exception. Any field that is not marked transient but points to an object of a class that does not implement Serializable, will cause an exception to be thrown.
+ * </li>
+ * <li>
+ *     If a serializable class extends a non-serializable class, the base classes members are not serialized and when deserializing the default constructor of the non-serializable base class will be called (if that does not exist, it will result in a runtime error).
+ *     The base class members will be assigned to their default values.
+ *     <pre>
+ *         {@code
+ *             public static void main(String[] args) {
+ *         var path = Path.of("serialize.txt");
+ *         try (var fos = Files.newOutputStream(path);
+ *              var fis = Files.newInputStream(path);
+ *         var oos = new ObjectOutputStream(fos);
+ *         var ois = new ObjectInputStream(fis)) {
+ *             oos.writeObject(new B("b1",15));
+ *             oos.flush();
+ *             var b = (B) ois.readObject();
+ *             System.out.println(b);
+ *         } catch (IOException | ClassNotFoundException e) {
+ *             throw new RuntimeException(e);
+ *         }
+ *     }
+ *
+ *     static class A {
+ *         String name;
+ *
+ *         public A() { // Since A is not serializable, when deserializing B, default constructor of A is needed. If this does not exist, it will result in a runtime error in deserialization. java.io.InvalidClassException: B; no valid constructor
+ *         // Note that, serialization will work without an issue, even this constructor does not exist.
+ *             name = "default";
+ *         }
+ *
+ *         public A(String name) {
+ *             this.name = name;
+ *         }
+ *
+ *         public String toString() {
+ *             return "A[" + name + "]";
+ *         }
+ *     }
+ *
+ *     static class B extends A implements Serializable{
+ *         @Serial
+ *         private static final long serialVersionUID = 1L;
+ *
+ *         private int age;
+ *
+ *         public B(String name, int age) {
+ *             super(name);
+ *         }
+ *
+ *         public String toString() {
+ *             return "B[" + name + ", " + age + "]";
+ *         }
+ *     }
+ *         }
+ *     </pre>
+ *     Output:
+ *     <pre>
+ *     B[default, 0]
+ *     </pre>
+ * </li>
+ */
 public class CustomSerializationSample {
     public static void main(String[] args) {
         // Create an employee
