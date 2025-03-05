@@ -65,6 +65,7 @@ package com.sanver.basics.console;
  *
  * <h3>Examples:</h3>
  * <pre>
+ *     {@code
  * // Format a floating-point value with commas and two decimal places:
  * System.out.printf("Total is: $%,.2f%n", dblTotal);
  *
@@ -80,6 +81,7 @@ package com.sanver.basics.console;
  * // Print a hashcode for an object:
  * String s = "Hello World";
  * System.out.printf("The String object %s is at hash code %h%n", s, s);
+ * }
  * </pre>
  */
 
