@@ -95,13 +95,17 @@ public class EnumSample {
             return IntStream.range(0, name().length()).mapToObj(i -> i == 0 ? String.valueOf(name().charAt(0)).toUpperCase() : String.valueOf(name().charAt(i)).toLowerCase()).collect(Collectors.joining(""));
         }
 
-        private class SomeClass{ } // We can define inner classes, static classes abstract classes and interfaces in an enum
+        private class SomeClass{ } // We can define inner classes, static classes, abstract classes, interfaces, enums and records in an enum with any access modifiers.
 
-        private static class SomeStaticClass{}
+        protected static class SomeStaticClass{}
 
-        public abstract class SomeAbstractClass{}
+        private abstract class SomeAbstractClass{}
 
         protected interface SomeInterface{}
+
+        protected enum SomeEnum{}
+
+        private record SomeRecord(){}
     }
 
     private static final Random RANDOM = new Random();

@@ -159,6 +159,18 @@ public class RecordSample {
         public boolean isAdult() {
             return age >= 18;
         }
+
+        private class SomeClass{ } // We can define inner classes, static classes, abstract classes, interfaces, enums and records in a record with any access modifiers.
+
+        protected static class SomeStaticClass{}
+
+        private abstract class SomeAbstractClass{}
+
+        protected interface SomeInterface{}
+
+        protected enum SomeEnum{}
+
+        private record SomeRecord(){}
     }
 
     record Dummy(){} // This is a valid record definition with no components.
