@@ -1,7 +1,10 @@
 package com.sanver.basics.time;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 /**
  * This class demonstrates the usage of the {@link java.time.format.DateTimeFormatter} class
@@ -67,10 +70,44 @@ import java.time.format.DateTimeFormatter;
 public class DateTimeFormatterSample {
     public static void main(String[] args) {
         // Example of using DateTimeFormatter with predefined format
+        String format = "%-69s : %s%n";
         var now = LocalDateTime.now();
+        var zoned = ZonedDateTime.of(now, ZoneId.systemDefault());
+
+        // DateTimeFormatter.ofPattern
         var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        var formattedDate = now.format(formatter);
-        System.out.println("Formatted DateTime: " + formattedDate);
+        System.out.printf(format, "now.format(DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm:ss.SSS\"))", now.format(formatter));
+        System.out.println();
+
+        // DateTimeFormatter.ofLocalizedDate
+
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))", now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)));
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))", now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))", now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))", now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
+        System.out.println();
+
+        // DateTimeFormatter.ofLocalizedDateTime
+        // Note that FULL and LONG formats need Zone information for ofLocalizedDateTime, which LocalDateTime does not have, resulting in a runtime error. This would result in a runtime error for OffsetDateTime as well.
+
+//        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL))", now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL))); // This results in a runtime error, since LocalDateTime has no zone information: Unable to extract ZoneId from temporal
+//        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG))", now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG))); // This results in a runtime error, since LocalDateTime has no zone information: Unable to extract ZoneId from temporal
+        System.out.printf(format, "zoned.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL))", zoned.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)));
+        System.out.printf(format, "zoned.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG))", zoned.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG)));
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))", now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))", now.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)));
+        System.out.println();
+
+        // DateTimeFormatter.ofLocalizedTime
+        // Note that FULL and LONG formats need Zone information for ofLocalizedTime, which LocalDateTime does not have, resulting in a runtime error. This would result in a runtime error for OffsetDateTime as well.
+
+//        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL))", now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL))); // This results in a runtime error, since LocalDateTime has no zone information: Unable to extract ZoneId from temporal
+//        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.LONG))", now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.LONG))); // This results in a runtime error, since LocalDateTime has no zone information: Unable to extract ZoneId from temporal
+        System.out.printf(format, "zoned.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL))", zoned.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL)));
+        System.out.printf(format, "zoned.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.LONG))", zoned.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.LONG)));
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM))", now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM)));
+        System.out.printf(format, "now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))", now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)));
+        System.out.println();
 
         // Parsing example
         var dateStr = "2025-02-05 14:30:00.172";
