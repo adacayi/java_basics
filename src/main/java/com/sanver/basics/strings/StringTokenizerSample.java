@@ -5,7 +5,10 @@ import java.util.StringTokenizer;
 
 /**
  * <p>This class demonstrates the usage of the <code>StringTokenizer</code> class in Java.
- * <code>StringTokenizer</code> is a utility class used for splitting strings into tokens.
+ * <p>{@code StringTokenizer} is a legacy class that is retained for compatibility reasons although its use is discouraged in new code.
+ * <br>It is recommended that anyone seeking this functionality use the {@link String#split(String)}, {@link String#split(String, int)} , {@link String#splitWithDelimiters}
+ * or the {@code java.util.regex} package instead.
+ * <p><code>StringTokenizer</code> is a utility class used for splitting strings into tokens.
  * It is part of the <code>java.util</code> package and provides a way to break a string
  * into tokens based on specified delimiters.
  * </p>
@@ -30,31 +33,35 @@ public class StringTokenizerSample {
      * Demonstrates the usage of <code>StringTokenizer</code> by splitting a sample sentence
      * into words based on specified delimiters.
      *
-     * @param sentence  the sentence to be tokenized
-     * @param delimiter the delimiter used for splitting the sentence
+     * @param sentence     the sentence to be tokenized
+     * @param delimiter    the delimiter used for splitting the sentence
+     * @param returnDelims flag indicating whether to return the delimiters as tokens.
      */
-    public static void demonstrateStringTokenizer(String sentence, String delimiter) {
+    public static void demonstrateStringTokenizer(String sentence, String delimiter, boolean returnDelims) {
         System.out.println("Sentence : " + sentence);
         System.out.printf("Delimiter: \"%s\"%n%n", delimiter);
 
-        StringTokenizer tokenizer = new StringTokenizer(sentence, delimiter);
+        StringTokenizer tokenizer = new StringTokenizer(sentence, delimiter, returnDelims);
 
-        System.out.println("Total tokens: " + tokenizer.countTokens());
+        System.out.printf("Total tokens %s: %d%n", returnDelims ? "with delimiters" : "without delimiters", tokenizer.countTokens());
 
         while (tokenizer.hasMoreTokens()) {
             System.out.println("Token: " + tokenizer.nextToken());
         }
+        System.out.println();
     }
 
     public static void main(String[] args) {
-        String sentence = "Java is fun to learn!";
-        String delimiter = " ";
+        String sentence = "Java=is=fun==to=learn!===";
+        String delimiter = "=";
 
-        demonstrateStringTokenizer(sentence, delimiter);
+        demonstrateStringTokenizer(sentence, delimiter, false);
+        demonstrateStringTokenizer(sentence, delimiter, true);
         sentence = "First sentence; Second sentence- Third sentence!";
         delimiter = ";-!";
         System.out.println();
-        demonstrateStringTokenizer(sentence, delimiter);
-        System.out.println(Arrays.toString(sentence.split(";-!")));
+        demonstrateStringTokenizer(sentence, delimiter, false);
+        demonstrateStringTokenizer(sentence, delimiter, true);
+        System.out.println("sentence.split(\";-!\") : " + Arrays.toString(sentence.split(";-!")));
     }
 }
