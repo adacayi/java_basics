@@ -52,7 +52,8 @@ public class SequencedSetSample {
         set.addLast("Last");
         set.addFirst("New Last");
         set.addFirst("New First");
-        set.addLast("New Last"); // Although duplicate, it will change the order of the New Last as the last element. Comment out to see the difference.
+        set.addLast("New Last"); // Unlike the add method, although duplicate, it will change the order of the "New Last" as the last element. addFirst behaves the same way as well.
+        // Comment out to see the difference.
 
         System.out.println("Original set: " + set);
 
