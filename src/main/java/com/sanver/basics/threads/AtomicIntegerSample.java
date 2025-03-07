@@ -154,7 +154,7 @@ public class AtomicIntegerSample {
                 sum.addAndGet(5); // getAndAdd is also available
                 sum.accumulateAndGet(3, (prev, x) -> prev + 2 * x);// Increment by 6. The first operand in the binary operator (prev) is the AtomicInteger,
                 // and the second one (x) is the first parameter of the accumulateAndGet method (i.e. 3 in this example). Thus, this means incrementing the value by 6.
-                // accumulateAndGet is also available.
+                // getAndAccumulate is also available.
                 sum.getAndUpdate(x -> x - 1); // updateAndGet is also available
                 // sum.getAndSet(sum.get() - 1); // This is not thread-safe since different threads can get the same value with sum.get() - 1,
                 // before passing it to the getAndSet method.
