@@ -81,6 +81,9 @@ public class SortedMapSample {
         System.out.println("map.put(7, \"Seven\");");
         System.out.println("tail.put(6, \"Six\");");
         System.out.println("tail.put(5, \"Five\");");
+//        tail.put(2, "Two Updated"); // This will result in IllegalArgumentException: key out of range, since we can only add items to tail from key 3 (3 inclusive)
+//        head.put(4, "Four Updated"); // This will result in IllegalArgumentException: key out of range, since we can only add items to head to key 4 (4 exclusive)
+//        sub.put(4, "Four Updated"); // This will result in IllegalArgumentException: key out of range, since we can only add items to sub from key 2 (2 inclusive) to key 4 (4 exclusive)
         print(head, tail, sub, map);
 
         // Demonstrate comparator (natural ordering in this case)

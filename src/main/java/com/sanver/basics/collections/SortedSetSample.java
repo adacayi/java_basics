@@ -83,7 +83,9 @@ public class SortedSetSample {
         set.add(7);
         tail.add(6);
         tail.add(5);
-//        sub.add(8); we can only add numbers between the first and last element of the original set to the subsets, (e.g. head, tail, sub)
+//        tail.add(2); // This will result in IllegalArgumentException: key out of range, since we can only add items to tail from key 3 (3 inclusive)
+//        head.add(4); // This will result in IllegalArgumentException: key out of range, since we can only add items to head to key 4 (4 exclusive)
+//        sub.add(4); // This will result in IllegalArgumentException: key out of range, since we can only add items to sub from key 2 (2 inclusive) to key 4 (4 exclusive)
         System.out.println("set.add(7);");
         System.out.println("tail.add(6);");
         System.out.println("tail.add(5);");

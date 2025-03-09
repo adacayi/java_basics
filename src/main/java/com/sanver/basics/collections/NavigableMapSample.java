@@ -73,7 +73,8 @@ public class NavigableMapSample {
         // Demonstrate subset operations (inherited from SortedMap)
         System.out.println("Entries before 'Cherry': " + map.headMap("Cherry"));
         System.out.println("Entries from 'Banana' onward: " + map.tailMap("Banana"));
-        System.out.println("Entries from 'Apple' to 'Date': " + map.subMap("Apple", "Date"));
+        System.out.println("Entries from 'Apple' to 'Cherry': " + map.subMap("Apple", "Date"));
+        System.out.println("Entries from 'Banana' to 'Date': " + map.subMap("Apple", false, "Date", true));
 
         // Demonstrate poll operations
         System.out.println("Poll first: " + map.pollFirstEntry());

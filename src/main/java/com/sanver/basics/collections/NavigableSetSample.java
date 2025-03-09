@@ -65,7 +65,8 @@ public class NavigableSetSample {
         // Demonstrate subset operations (inherited from SortedSet)
         System.out.println("Elements before 'Cherry': " + set.headSet("Cherry"));
         System.out.println("Elements from 'Banana' onward: " + set.tailSet("Banana"));
-        System.out.println("Elements from 'Apple' to 'Date': " + set.subSet("Apple", "Date"));
+        System.out.println("Elements from 'Apple' to 'Cherry': " + set.subSet("Apple", "Date"));
+        System.out.println("Elements from 'Banana' to 'Date': " + set.subSet("Apple", false, "Date", true));
 
         // Demonstrate poll operations
         System.out.println("Poll first: " + set.pollFirst());
