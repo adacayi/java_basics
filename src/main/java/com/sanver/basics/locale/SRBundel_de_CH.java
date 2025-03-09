@@ -7,7 +7,7 @@ public class SRBundel_de_CH extends ListResourceBundle {// It is necessary for t
 	protected Object[][] getContents() {
 		Object[][] resources = new Object[1][2];
 		resources[0][0] = "Hello";
-		resources[0][1] = "Guten Tag";
+		resources[0][1] = "Guten Tag {0}";
 		return resources;
 	}
 }

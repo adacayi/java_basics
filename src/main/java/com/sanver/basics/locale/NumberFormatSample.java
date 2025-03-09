@@ -77,7 +77,7 @@ public class NumberFormatSample {
 
         // Example 9: Parsing numeric strings
         try {
-            Number parsedNumber = numFormat.parse("12,345.679");
+            Number parsedNumber = NumberFormat.getInstance(Locale.of("en")).parse("12,345.679");
             System.out.println("Parsed value: " + parsedNumber.doubleValue());
         } catch (ParseException e) {
             System.err.println("Parse error: " + e.getMessage());

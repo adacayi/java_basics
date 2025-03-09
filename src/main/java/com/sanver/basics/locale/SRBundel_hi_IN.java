@@ -7,7 +7,7 @@ public class SRBundel_hi_IN extends ListResourceBundle {// It is necessary for t
 	protected Object[][] getContents() {
 		Object[][] resources = new Object[1][2];
 		resources[0][0] = "Hello";
-		resources[0][1] = "Namaste";
+		resources[0][1] = "Namaste {0}";
 		return resources;
 	}
 }
