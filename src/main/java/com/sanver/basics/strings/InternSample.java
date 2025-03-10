@@ -43,11 +43,11 @@ public class InternSample {
         var message3 = "some text value1";
         System.out.printf(format, "message1 = \"some text value\" + i", message1);
         System.out.printf(format, "message2 = \"some text value\" + i", message2);
-        System.out.printf(format, "message3 = \"some text value1", message3);
+        System.out.printf(format, "message3 = \"some text value1\"", message3);
         System.out.printf(format, "message1 == message2", message1 == message2);
         System.out.printf(format, "message1 == message3", message1 == message3);
         System.out.printf(format, "message2 == message3", message2 == message3);
-        var message1Intern = message1.intern();
+        var message1Intern = message1.intern(); // Note that, if we moved this before var message3 = "some text value1", then message1 == message1Intern and message1 == message3 will return true
         var message2Intern = message2.intern();
         System.out.printf(format, "message1Intern = message1.intern()", message1Intern);
         System.out.printf(format, "message2Intern = message2.intern()", message2Intern);
