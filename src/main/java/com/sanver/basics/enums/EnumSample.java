@@ -21,6 +21,8 @@ public class EnumSample {
         // Note: all enum types implicitly extend the java.lang.Enum. enums cannot extend another class. e.g. enum Days extends Object is not allowed. Implements is allowed though.
         // The first thing in an enum must be its list of constants
         // We can have inner classes, enums, records and interfaces inside an enum.
+        // Since enum maintains exactly one instance of its constants, you cannot clone it.
+        // You cannot even override the clone method in an enum because java.lang.Enum makes it final.
         SUNDAY(7) { // This calls the private constructor of the enum.
 
             void print() { // This overrides the print method
@@ -86,8 +88,8 @@ public class EnumSample {
         }
 
         @Override
-        public String toString() {
-            return name().charAt(0) + name().substring(1).toLowerCase(); // name is a final method in enum that returns the name as a String
+        public String toString() { // toString() returns name field in Enum class, which is the name of this enum constant exactly as declared in its enum declaration.
+            return name().charAt(0) + name().substring(1).toLowerCase(); // name() is a public final method in enum that returns the name of this enum constant, exactly as declared in its enum declaration. as a String.
         }
 
         @Override
@@ -117,11 +119,11 @@ public class EnumSample {
 
         System.out.printf("Today is %s%n%n", today);
         today.print();
-        System.out.println("Days.valueOf(\"TUESDAY\"): " + Days.valueOf("TUESDAY"));
+        System.out.println("Days.valueOf(\"TUESDAY\"): " + Days.valueOf("TUESDAY")); // valueOf() method tries to match the String argument exactly (i.e. case-sensitive) with an enum constant and returns that constant if successful otherwise it throws java.lang.IllegalArgumentException.
         System.out.println("Enum.valueOf(Days.class, \"TUESDAY\"): " + Enum.valueOf(Days.class, "TUESDAY"));
 
         for (Days day : days) {
-            System.out.printf("%-9s ordinal: %d, index %d%n", day, day.ordinal(), day.getIndex());
+            System.out.printf("%-9s ordinal: %d, index %d%n", day, day.ordinal(), day.getIndex()); // ordinal() is a public final method and returns the index (starting with 0) of the enum constant i.e. the position of that constant in its enum declaration.
         }
 
         System.out.printf("%n10 random days%n");
@@ -131,6 +133,7 @@ public class EnumSample {
         System.out.printf("%nDistinct days sorted by TreeSet%n");
         var distinctDays = new TreeSet<>(randomDays); // Since Enum implements Comparable and compares based on the ordinal value, it will sort the set accordingly.
         System.out.println(distinctDays);
+        System.out.println(Days.TUESDAY.name()); // name is a public final method in Enum
         System.out.println(Days.TUESDAY.capitalizedName);
     }
 
