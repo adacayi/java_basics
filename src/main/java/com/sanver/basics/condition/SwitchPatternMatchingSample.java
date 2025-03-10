@@ -64,8 +64,11 @@ public class SwitchPatternMatchingSample {
                     System.out.println("Object " + o);  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> System.out.println("Object " + obj); // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
 //            Also, we can either have the default case or the case Object, not both.
-            case null -> System.out.println("Null"); // Note that case Object or default won't cover the null case, thus not leading to a Label is dominated by a preceding case label error.
-            // If we don't cover the null case, then if a null object is passed to switch, it will result into a NullPointerException
+            case null -> System.out.println("Null");
+            // Note that Object or default cases won't cover the null case.
+            // If we don't cover the null case, then if a null object is passed to switch, it will result into a NullPointerException.
+            // Also, while Object label does not dominate null, default label dominates null.
+            // So, if we have a default label, we cannot have a null label afterward.
         }
     }
 
@@ -96,8 +99,11 @@ public class SwitchPatternMatchingSample {
                     "Object " + o;  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> "Object " + obj; // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
 //            Also, we can either have the default case or the case Object, not both.
-            case null -> "Null"; // Note that case Object or default won't cover the null case, thus not leading to a Label is dominated by a preceding case label error.
-            // If we don't cover the null case, then if a null object is passed to switch, it will result into a NullPointerException
+            case null -> "Null";
+            // Note that Object or default cases won't cover the null case.
+            // If we don't cover the null case, then if a null object is passed to switch, it will result into a NullPointerException.
+            // Also, while Object label does not dominate null, default label dominates null.
+            // So, if we have a default label, we cannot have a null label afterward.
         };
     }
 
