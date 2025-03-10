@@ -11,6 +11,22 @@ public class WideningAndNarrowingConversions {
         // if b is final though, char c = b will work, since the compiler knows b is within the char range. This only works for byte, char, short and int.
         // e.g. final long l = 5; char c = l; will not work, although l is final and within the range of char. Check implicit narrowing section in this class.
         short s = b; // Note that short s = c won't compile and vice versa since char is unsigned while short is signed.
+        // The below won't work, because operands of mathematical operators are ALWAYS promoted to AT LEAST int. (i.e. for byte * byte both bytes will be first promoted to int.) and the return value will be AT LEAST int.
+        // It would work, if b was final.
+//        s = b + b;
+//        s = b - b;
+//        s = b * b;
+//        s = b / b;
+//        s = b % b;
+        // The below compound assignment expressions work, because a compound assignment expression of the form E1 op= E2 is equivalent to E1 = (T)((E1) op (E2)), after the operator is applied, the result is casted to the first operand's type.
+        s += b;
+        s -= b;
+        s *= b;
+        s /= b;
+        s %= b;
+        s *= 1000000000L;
+        s += 0.3;
+
         int i = b;
         i = c;
         i = s;
