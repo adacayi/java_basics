@@ -14,8 +14,10 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
         var file = new File("serialize.ser");
         serialize(file); // Run first with serialize and then, comment this line and uncomment the below line.
 //        deserialize(file);
-        // Note that only constructors, static, non-static field instantiations and static, non-static code block executions are done for the non-serializable base classes.
-        // No constructor, static, non-static field instantiations are done for the serializable classes.
+        // Note that, when deserializing, only constructors, non-static field instantiations and  non-static code block executions are done for the non-serializable base classes.
+        // No constructor, non-static field instantiations are done for the serializable classes.
+        // Static code blocks and static field instantiations are done for both serializable and non-serializable classes during deserialization (if they weren't instantiated before).
+        // Only the top level non-serializable class's no-argument constructor is invoked (which in turn invokes the constructor of its base class based on its implementation (e.g. in our case B() constructor calls super(int)))
     }
 
     private static void serialize(File file) {
@@ -23,6 +25,9 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
                 var fos = new FileOutputStream(file);
                 var oos = new ObjectOutputStream(fos)) {
             var object = new C(7);
+            ((A)object).value2 = -1;
+            ((B)object).value2 = -2;
+            object.value2 = -3;
             System.out.println();
             oos.writeObject(object);
         } catch (IOException e) {
@@ -36,6 +41,9 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
                 var ois = new ObjectInputStream(fis)) {
             var copy = (C) ois.readObject();
             System.out.println(copy.value);
+            System.out.println(((A)copy).value2);
+            System.out.println(((B)copy).value2);
+            System.out.println(copy.value2);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -49,6 +57,7 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
         }
 
         int value = calculateValue();
+        transient int value2 = calculateValueForTransient();
 
         {
             System.out.println("Non-static block in A");
@@ -59,7 +68,7 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
         }
 
         public A(int i) {
-            System.out.println("A Constructor with int parameter run");
+            System.out.printf("A Constructor with %d parameter run%n", i);
         }
 
         static int calculateStaticValue() {
@@ -71,9 +80,14 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
             System.out.println("Calculating non-static value for A");
             return 3;
         }
+
+        static int calculateValueForTransient() {
+            System.out.println("Calculating non-static transient value for A");
+            return 8;
+        }
     }
 
-    static class B extends A implements Serializable {
+    static class B extends A {
         static int staticValue = calculateStaticValue();
 
         static {
@@ -81,17 +95,19 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
         }
 
         int value = calculateValue();
+        transient int value2 = calculateValueForTransient();
 
         {
             System.out.println("Non-static block in B");
         }
 
         public B() {
+            super(5);
             System.out.println("B Constructor with no parameter run");
         }
 
         public B(int i) {
-            System.out.println("B Constructor with int parameter run");
+            System.out.printf("B Constructor with %d parameter run%n", i);
         }
 
         static int calculateStaticValue() {
@@ -102,6 +118,11 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
         static int calculateValue() {
             System.out.println("Calculating non-static value for B");
             return 3;
+        }
+
+        static int calculateValueForTransient() {
+            System.out.println("Calculating non-static transient value for B");
+            return 9;
         }
     }
 
@@ -123,6 +144,7 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
         }
 
         int value = calculateValue();
+        transient int value2 = calculateValueForTransient();
 //        A a = new A(); // Since A is not serializable this would result in an error in serialization.
         // However, if this is added later, and we try to deserialize a prior instance without this field, deserialization would work fine.
 
@@ -147,6 +169,11 @@ public class SerializationDeserializationWithNonSerializableBaseClass {
         static int calculateValue() {
             System.out.println("Calculating non-static value for C");
             return 3;
+        }
+
+        static int calculateValueForTransient() {
+            System.out.println("Calculating non-static transient value for C");
+            return 10;
         }
     }
 }
