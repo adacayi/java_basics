@@ -62,7 +62,7 @@ public class RecordSample {
             // In a compact constructor, the constructor body is executed before the record's fields are assigned the values of the parameters.
             // After the constructor body runs, the fields are assigned the (possibly modified) values of the parameters.
 //            System.out.println(this.age); // Although, in Java, instance fields are initialized to their default values before any constructor code runs,
-//            for final fields, we cannot access their values after they are assigned in our code explicitly.
+//            for final fields, we cannot access their values before they are assigned in our code explicitly.
 //            Thus, at this point this.age will result in a compile error: java: variable age might not have been initialized
 //             this.age = age; // Note that we cannot assign the final field variables in the compact constructor. It will result in a compile error.  java: cannot assign a value to final variable age
             System.out.println("age(): " + age()); // This works fine and will always print 0, since in Java, instance fields are initialized to their default values before any constructor code runs
