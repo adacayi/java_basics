@@ -15,7 +15,9 @@ public class FileOutputStreamSample {
                 
                 """;
 
-        try (FileOutputStream stream = new FileOutputStream(fileName)) { // If the file does not exist, it will be created. It will always overwrite the content if the file exists. If new FileOutputStream(fileName, true) is used instead, the file will be created if it does not exist and if it does then bytes will be written to the end of the file.
+        try (FileOutputStream stream = new FileOutputStream(fileName)) { // If the file does not exist, it will be created. It will always overwrite the content if the file exists
+            // (e.g. if the original file had AB as content, and we write C, the content will be just C, not AC).
+            // If new FileOutputStream(fileName, true) is used instead, the file will be created if it does not exist and if it does then bytes will be written to the end of the file.
             stream.write(message.getBytes());
         } catch (IOException e) {
             System.out.println(e.getMessage());

@@ -65,6 +65,7 @@ import java.io.RandomAccessFile;
  * @see java.io.RandomAccessFile
  */
 public class RandomAccessFileSample {
+    public static final String CONTENT_AFTER_MODIFICATION = "File Content: %n%n";
     private static final String FILE_NAME = "test_random_access.txt";
 
     /**
@@ -86,7 +87,10 @@ public class RandomAccessFileSample {
 
     private static void createFileAndWriteData() throws IOException {
         try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "rw")) {
-            file.writeUTF("Initial data written to the file.");
+            file.writeBytes("""
+                    First line
+                    Second line
+                    Third line""");
             System.out.println("File created and initial data written.");
         }
     }
@@ -94,19 +98,17 @@ public class RandomAccessFileSample {
     private static void demonstrateFileOperations() throws IOException {
         // Read-only mode
         try (RandomAccessFile readOnlyFile = new RandomAccessFile(FILE_NAME, "r")) {
-            System.out.println("Opened file in read only mode");
-            String readData = readOnlyFile.readUTF();
-            System.out.println("Read data in read only mode: " + readData);
+            System.out.printf("%nOpened file in read only mode%n");
+            System.out.println("Read data in read only mode");
+            readFile(readOnlyFile);
         }
 
         // Read-write mode
         try (RandomAccessFile readWriteFile = new RandomAccessFile(FILE_NAME, "rw")) {
-            System.out.println("Opened file in read/write mode");
+            System.out.printf("%nOpened file in read/write mode%n");
+            readWriteFile.write("First - 1".getBytes()); // Writes from the beginning of the file, overwriting the existing content, but not truncating all the file (unlike the FileOutputStream behavior for existing files with the constructors not containing the boolean append parameter)
             readWriteFile.seek(0); // Go to the beginning of the file
-            readWriteFile.writeUTF("Modified data using read/write mode.");
-            readWriteFile.seek(0); //reset position
-            String readData = readWriteFile.readUTF();
-            System.out.println("Read data after modifications: " + readData);
+            readFile(readWriteFile);
         }
 
         // Read-write-sync mode
@@ -114,30 +116,36 @@ public class RandomAccessFileSample {
         // The primary benefit of "rws" is that it provides the strongest guarantees of data integrity.
         // If your program or the system crashes or loses power immediately after a write() operation returns, you can be confident that the data you just wrote (and the file's metadata) has been safely stored on the disk.
         try (RandomAccessFile readWriteSyncFile = new RandomAccessFile(FILE_NAME, "rws")) {
-            System.out.println("Opened file in read/write/sync mode");
-            readWriteSyncFile.seek(0);
-            readWriteSyncFile.writeUTF("Data modified with sync mode.");
-            readWriteSyncFile.seek(0);
-            String readData = readWriteSyncFile.readUTF();
-            System.out.println("Read data after modifications with sync: " + readData);
+            System.out.printf("%nOpened file in read/write/sync mode%n");
+            readWriteSyncFile.writeBytes("First line\n");
+            readWriteSyncFile.seek(0); // Go to the beginning of the file
+            readFile(readWriteSyncFile);
         }
 
         // Read-write-sync-data mode
         // "rwd" is similar to "rws" in that it guarantees data synchronization (the content is written to disk immediately). However, it does not guarantee that metadata is synchronized. In other words, file metadata updates may be buffered and written asynchronously. Thus, "rwd" offers a performance advantage over "rws" when metadata updates are not critical to be synchronized.
         try (RandomAccessFile readWriteSyncDataFile = new RandomAccessFile(FILE_NAME, "rwd")) {
-            System.out.println("Opened file in read/write/sync-data mode");
-            readWriteSyncDataFile.seek(0);
-            readWriteSyncDataFile.writeUTF("Data modified with sync-data mode.");
-            readWriteSyncDataFile.seek(0);
-            String readData = readWriteSyncDataFile.readUTF();
-            System.out.println("Read data after modifications with sync-data: " + readData);
+            System.out.printf("%nOpened file in read/write/sync-data mode%n");
+            readWriteSyncDataFile.writeBytes("Is first?");
+            readWriteSyncDataFile.seek(0); // Go to the beginning of the file
+            readFile(readWriteSyncDataFile);
         }
     }
-    private static void deleteFile(){
+
+    private static void readFile(RandomAccessFile readOnlyFile) throws IOException {
+        System.out.printf(CONTENT_AFTER_MODIFICATION);
+        String readData;
+        while ((readData = readOnlyFile.readLine()) != null) {
+            System.out.println(readData);
+        }
+    }
+
+    private static void deleteFile() {
         File file = new File(FILE_NAME);
-        if(file.delete())
+        if (file.delete()) {
             System.out.println("File deleted successfully");
-        else
+        } else {
             System.out.println("File was not deleted");
+        }
     }
 }
