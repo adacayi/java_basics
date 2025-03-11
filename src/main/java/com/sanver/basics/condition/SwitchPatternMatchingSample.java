@@ -34,6 +34,13 @@ public class SwitchPatternMatchingSample {
         objects.forEach(x -> describe(x));
         System.out.println();
         objects.forEach(x -> System.out.println(getDescription(x)));
+
+        switch(new Object()) {
+            case null, default-> System.out.println("null or default"); // Note that in a regular switch statements or expressions,
+            // default cannot be combined with any other case labels. If default label is present, it must be on a separate from other case labels.
+            // However, this is allowed for a switch with pattern matching.
+            // Note that case default, null ->  won't compile though. null must be first and default must be second.
+        }
     }
 
     /**
@@ -99,10 +106,13 @@ public class SwitchPatternMatchingSample {
                     "Object " + o;  // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'Object o'
 //            default -> "Object " + obj; // If we don't make this the last case we will also get errors for each case below it suggesting Label is dominated by a preceding case label 'default'.
 //            Also, we can either have the default case or the case Object, not both.
-            case null -> "Null";
-            // Note that Object or default cases won't cover the null case.
+            case null -> "Null"; // Note that a case null branch does not affect the exhaustiveness of a switch.
+            // A switch can be exhaustive even if case null is not present because to check whether a switch is exhaustive,
+            // only actual reference types that the switch variable can point to are considered.
+            // If, at run time, the input is null, and if a case null branch is not present, a NullPointerException is thrown, which is why providing a branch for null is a good idea in general.
+            // Also note that Object or default cases won't cover the null case.
             // If we don't cover the null case, then if a null object is passed to switch, it will result into a NullPointerException.
-            // Also, while Object label does not dominate null, default label dominates null.
+            // Finally, while Object label does not dominate null, default label dominates null.
             // So, if we have a default label, we cannot have a null label afterward.
         };
     }
