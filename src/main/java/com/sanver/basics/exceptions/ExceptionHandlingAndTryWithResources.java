@@ -24,11 +24,30 @@ public class ExceptionHandlingAndTryWithResources {
         A a2 = new A(2);
         try (a1; a2) { // This is a valid try-with-resources usage and since no exception is thrown from the close method of A, we don't need a catch block
             // Note that a1.close() and a2.close() will be invoked in reverse order.
+            // Note that a1 and a2 needs to be final or effectively final
 
         }
         System.out.println();
 
-        try (a2; var a3 = new A(3)) { // This is also valid
+        A a3 = new A(3);
+        a3 = new A(4);
+//        try(a3){ // This will result in a compile error. java: variable a3 used as a try-with-resources resource neither final nor effectively final
+//
+//        }
+
+
+        A a4;
+
+//        try (a4 = new A(4)){ // This will result in a compile error. java: the try-with-resources resource must either be a variable declaration or an expression denoting a reference to a final or effectively final variable
+//
+//        }
+
+        A a5 = null;
+        try (a5) { // This works fine, and no exception is thrown at runtime. (seems like close is not called on a5)
+
+        }
+
+        try (a2; var a6 = new A(6)) { // This is also valid
 
         }
     }
