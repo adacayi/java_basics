@@ -14,6 +14,8 @@ public class FileWriterFileReaderSample {
         // Writing to the file
         try (FileWriter writer = new FileWriter(fileName)) { // If file does not exist, it will be created.
             // We can also use new FileWriter(file).
+            // It will overwrite the content if the file exists
+            // (e.g. if the original file had AB as content, and we write C, the content will be just C, not AC).
             // new FileWriter(file, true) can be used for appending to an existing file (A new file will be created if the file does not exist).
             // It will throw an IOException if the named file exists but is a directory rather than a regular file,
             // does not exist but cannot be created, or cannot be opened for any other reason.
