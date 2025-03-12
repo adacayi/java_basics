@@ -10,6 +10,7 @@ public class PathSample {
 
     public static void main(String[] args) {
         //combining strings to a path
+        var format = "%-70s : %s%n";
         var basePath = Path.of("src", "main", "java", "com", "sanver", "basics", "nio"); // We can also use Paths.get() introduced in Java 7, but Path.of introduced in Java 11 is more intuitive because it’s a simpler, more direct factory method, aligning with other factory methods introduced in recent Java versions, like List.of(), Set.of(), etc.
         var baseDirectory = "src/main/java/com/sanver/basics/nio/";
         // These also point to the same base path:
@@ -31,55 +32,58 @@ public class PathSample {
         File file = new File(fileName); // Note that this points to the classPath/fileName, which is D:\...\Basics\PathSample.java, not D:\..\Basics\src\main\...\nio\PathSample.java
         var absolutePathString = file.getAbsolutePath();// To get absolute path as path we can use file.toPath().toAbsolutePath(), Path.of(file.getAbsolutePath()) or Paths.get(file.getAbsolutePath())
         Path absolutePath = Path.of(file.getAbsolutePath());
-        System.out.println("baseDirectory: " + baseDirectory);
-        System.out.println("fileName: " + fileName);
-        System.out.println("new File(fileName) " + file);
-        System.out.println("file.getAbsolutePath(): " + absolutePathString);
-        System.out.println("absolutePath = Path.of(file.getAbsolutePath()): " + absolutePath);
-        System.out.println("file.toPath().toAbsolutePath()): " + file.toPath().toAbsolutePath());
-        System.out.println("absolutePath.isAbsolute(): " + absolutePath.isAbsolute());
-        System.out.println("filePath = Path.of(baseDirectory, fileName): " + filePath);
-        System.out.println("filePath.isAbsolute(): " + filePath.isAbsolute());
-        System.out.println("filePath.getFileName(): " + filePath.getFileName());
-        System.out.println("filePath.getFileSystem(): " + filePath.getFileSystem());
-        System.out.println("filePath.getName(0): " + filePath.getName(0));
-        System.out.println("filePath.getParent(): " + filePath.getParent());
-        System.out.println("directoryPath = Path.of(baseDirectory): " + directoryPath);
-        System.out.println("directoryPath.getParent(): " + directoryPath.getParent());
-        System.out.println("filePath.toAbsolutePath(): " + filePath.toAbsolutePath());
-        System.out.println("filePath.toAbsolutePath().getRoot(): " + filePath.toAbsolutePath().getRoot());
-        System.out.println("filePath.toAbsolutePath().subpath(1, 4): " + filePath.toAbsolutePath().subpath(1, 4)); // This is also a Path object
-        System.out.println("filePath.toAbsolutePath().subpath(1, 4).isAbsolute(): " + filePath.toAbsolutePath().subpath(1, 4).isAbsolute());
-        System.out.println("filePath.toAbsolutePath().getName(0): " + filePath.toAbsolutePath().getName(0)); // This is also a Path object
-        System.out.println("filePath.getRoot(): " + filePath.getRoot());
-        System.out.println("filePath.subpath(0, 3): " + filePath.subpath(0, 3));
-        System.out.println("File name for base directory: " + directoryPath.getFileName());
-        System.out.println("filePath.resolve(directoryPath): " + filePath.resolve(directoryPath));
-        System.out.println("directoryPath.resolve(filePath): " + directoryPath.resolve(filePath));
+        System.out.printf(format, "baseDirectory", baseDirectory);
+        System.out.printf(format, "fileName", fileName);
+        System.out.printf(format, "new File(fileName) ", file);
+        System.out.printf(format, "file.getAbsolutePath()", absolutePathString);
+        System.out.printf(format, "absolutePath = Path.of(file.getAbsolutePath())", absolutePath);
+        System.out.printf(format, "file.toPath().toAbsolutePath()", file.toPath().toAbsolutePath());
+        System.out.printf(format, "absolutePath.isAbsolute()", absolutePath.isAbsolute());
+        System.out.printf(format, "filePath = Path.of(baseDirectory, fileName)", filePath);
+        System.out.printf(format, "filePath.isAbsolute()", filePath.isAbsolute());
+        System.out.printf(format, "filePath.getFileName()", filePath.getFileName());
+        System.out.printf(format, "filePath.getFileSystem()", filePath.getFileSystem());
+        System.out.printf(format, "filePath.getName(0)", filePath.getName(0));
+        System.out.printf(format, "filePath.getParent()", filePath.getParent());
+        System.out.printf(format, "directoryPath = Path.of(baseDirectory)", directoryPath);
+        System.out.printf(format, "directoryPath.getParent()", directoryPath.getParent());
+        System.out.printf(format, "filePath.toAbsolutePath()", filePath.toAbsolutePath());
+        System.out.printf(format, "filePath.toAbsolutePath().getRoot()", filePath.toAbsolutePath().getRoot());
+        System.out.printf(format, "filePath.toAbsolutePath().subpath(1, 4)", filePath.toAbsolutePath().subpath(1, 4)); // This is also a Path object
+        System.out.printf(format, "filePath.toAbsolutePath().subpath(1, 4).isAbsolute()", filePath.toAbsolutePath().subpath(1, 4).isAbsolute());
+        System.out.printf(format, "filePath.toAbsolutePath().getName(0)", filePath.toAbsolutePath().getName(0)); // This is also a Path object
+        System.out.printf(format, "filePath.getRoot()", filePath.getRoot());
+        System.out.printf(format, "filePath.subpath(0, 3)", filePath.subpath(0, 3));
+        System.out.printf(format, "directoryPath.getFileName()", directoryPath.getFileName());
+        System.out.printf(format, "directoryPath.resolve(fileName)", directoryPath.resolve(fileName));
+        System.out.printf(format, "directoryPath.getParent().resolve(\"jdbc\")", directoryPath.getParent().resolve("jdbc"));
+        System.out.printf(format, "directoryPath.resolveSibling(\"jdbc\")", directoryPath.resolveSibling("jdbc"));   // This is equal to directoryPath.getParent().resolve("jdbc")
+        System.out.printf(format, "filePath.resolve(directoryPath)", filePath.resolve(directoryPath));
+        System.out.printf(format, "directoryPath.resolve(filePath)", directoryPath.resolve(filePath));
         // If we send absolute path to resolve, the absolute path is returned no matter
         // the calling path
-        System.out.println("directoryPath.resolve(filePath.toAbsolutePath()): "
-                + directoryPath.resolve(filePath.toAbsolutePath()));
-        System.out.println("filePath.resolve(directoryPath.toAbsolutePath()): "
-                + filePath.resolve(directoryPath.toAbsolutePath()));
-        System.out.println("directoryPath.toAbsolutePath().resolve(filePath): "
-                + directoryPath.toAbsolutePath().resolve(filePath));
-        System.out.println("directoryPath.relativize(directoryPath.getParent()): "
-                + directoryPath.relativize(directoryPath.getParent()));
-        System.out.println("directoryPath.relativize(directoryPath.getParent().getParent()): "
-                + directoryPath.relativize(directoryPath.getParent().getParent()));
-        System.out.println("filePath.relativize(directoryPath.getParent().getParent()): "
-                + filePath.relativize(directoryPath.getParent().getParent()));
-        System.out.println("directoryPath.getParent().getParent().relativize(filePath): "
-                + directoryPath.getParent().getParent().relativize(filePath));
-        System.out.println("directoryPath.getParent().getParent(): " + directoryPath.getParent().getParent());
-        System.out.println(
-                "directoryPath.getParent().getParent().resolve(directoryPath.getParent().getParent().relativize(filePath)): "
-                        + directoryPath.getParent().getParent()
+        System.out.printf(format,"directoryPath.resolve(filePath.toAbsolutePath())"
+               , directoryPath.resolve(filePath.toAbsolutePath()));
+        System.out.printf(format,"filePath.resolve(directoryPath.toAbsolutePath())"
+               , filePath.resolve(directoryPath.toAbsolutePath()));
+        System.out.printf(format,"directoryPath.toAbsolutePath().resolve(filePath)"
+               , directoryPath.toAbsolutePath().resolve(filePath));
+        System.out.printf(format,"directoryPath.relativize(directoryPath.getParent())"
+               , directoryPath.relativize(directoryPath.getParent()));
+        System.out.printf(format,"directoryPath.relativize(directoryPath.getParent().getParent())"
+               , directoryPath.relativize(directoryPath.getParent().getParent()));
+        System.out.printf(format,"filePath.relativize(directoryPath.getParent().getParent())"
+               , filePath.relativize(directoryPath.getParent().getParent()));
+        System.out.printf(format,"directoryPath.getParent().getParent().relativize(filePath)"
+               , directoryPath.getParent().getParent().relativize(filePath));
+        System.out.printf(format,"directoryPath.getParent().getParent()", directoryPath.getParent().getParent());
+        System.out.printf(format,
+                "directoryPath.getParent().getParent().resolve(directoryPath.getParent().getParent().relativize(filePath))"
+                       , directoryPath.getParent().getParent()
                         .resolve(directoryPath.getParent().getParent().relativize(filePath)));
         try {
-            System.out.println("Files.isSameFile(filePath, filePath.toAbsolutePath()): "
-                    + Files.isSameFile(filePath, filePath.toAbsolutePath())); // Tests if two paths locate the same file.
+            System.out.printf(format,"Files.isSameFile(filePath, filePath.toAbsolutePath())",
+                    Files.isSameFile(filePath, filePath.toAbsolutePath())); // Tests if two paths locate the same file.
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
