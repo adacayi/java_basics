@@ -95,19 +95,28 @@ public class WideningAndNarrowingConversions {
 //        d2 = d2 + 3 + 5; // This works though, since d2 + 3 will result in a double, and then + 5 will result in another double and finally can be auto boxed to Double.
         probe(d); // Since there is no probe with double parameter, and no probe method with a wider primitive type,
         // double will be boxed into a Double and class Double extends Number.
-        // Therefore, a Double can be passed to the method that takes Number.
-        // A Double can also be passed to a method that takes Object,
-        // but Number is more specific than Object therefore probe(Number) will be called.
+        // Since a Double can be passed to the method that takes Number and also be passed to a method that takes Object,
+        // but Number is more specific than Object, probe(Number) will be called.
         probe(b); // Since there is no probe with byte parameter, auto-widening takes place and probe(short) will be called.
         // You can comment out probe(short) to see the next widening is to int and so on.
         // If there are no probe methods with a wider primitive type then boxing is done and probe(Byte) is called.
         // Comment out the probe methods with primitive parameters to see that.
-        // Note that we also have a probe(long... longs) method. This will be called lastly, if there are no matches found for the boxed type. Comment out probe(Object) and probe(Number) to see that.
+        // Note that we also have a probe(long... longs) method.
+        // This will be called lastly, if there are no matches found for the boxed type.
+        // Comment out probe(Object) and probe(Number) to see that.
         probe(Integer.valueOf(1)); // In this case it first looks for probe(Integer), and if not found looks for probe(super class of Integer) and runs probe(Number),
         // if not, does auto-unboxing and calls for probe(int). If probe(int) does not exist, it uses auto-widening and calls for probe(long).
         // Note that we also have a probe(long... longs) method. This will be called if there are no matches found for the auto-widening type.
         // In the final case, if we also had a probe(Integer... ints) method, there is no priority between the two thus results in a compile error: reference to probe is ambiguous.
         // Comment out relevant functions to test the behavior.
+        final int j = 3;
+        s = j;
+        probe(j); // Comment out all primitive probe methods and just leave probe(short).
+        // Even though j is a final int and s = j works without an error,
+        // probe(j), instead of calling probe(short),
+        // will try to auto-widen int and won't be able to find any primitive methods (since we commented out them),
+        // then box the int and will print Number.
+        // If there was only probe(short), we would get a compile error.
     }
 
     static void probe(Object o) {
