@@ -38,8 +38,19 @@ public class AutoBoxingUnboxingSample {
         System.out.println("Unboxing Boolean to boolean: " + unboxedBoolean);
 
         // Autoboxing in Expressions
+        // When one operand is a primitive, and the other is not, the other will be unboxed and then the operation is done.
+
+        var result = unboxedInt + wrappedDoubleObj; // wrappedDoubleObj will be unboxed to double, and int + double will result in double.
+        System.out.println("unboxedInt + wrappedDoubleObj: " + result);
+        Double d = 3.0;
+        Integer i = 3;
+        byte b = 3;
+        System.out.println("b == d : " + (b == d)); // d will be unboxed to double, this will return true
+        System.out.println("d.equals(b) : " + (d.equals(b))); // b will be boxed into Byte, and since equals method first checks for type (obj instanceof Double),
+        // and since b is not a Double, it will return false.
+//        System.out.println("i == d : " + (i == d)); // There will be no unboxing, and it will return in a compile error, since i is an Integer while d is a Double, and cannot reference to same object.
         Integer sum = 50;   // Autoboxing
-        sum = sum + 100;    // Unboxing sum, performing addition, and then autoboxing result
+        sum = sum + 100;    // Unboxing sum to int, performing addition, and then autoboxing result to Integer
         System.out.println("Autoboxing/Unboxing in expressions: " + sum);
 
         // Passing Wrapper Objects to Methods expecting Primitives
