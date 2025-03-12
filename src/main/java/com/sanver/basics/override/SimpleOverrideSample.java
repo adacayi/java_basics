@@ -52,8 +52,8 @@ public class SimpleOverrideSample {
 	}
 
 	static class E extends D{
-		Integer getNumber() { // Overriding method return type can only be a covariant return type of the overridden method.
-			// Boxing/unboxing, implicit conversion are not allowed.
+		Integer getNumber() { // The return type of the overriding method must match exactly to the return type of the overridden method if the return type is a primitive.
+			// In case of reference types, the return type of the overriding method may be a sub-type of the return type of the overridden method
 			return 2;
 		}
 
